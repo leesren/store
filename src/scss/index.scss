@@ -1,0 +1,12 @@
+[flexbox]{display: flex}
+[flex]{flex:1}
+[flex-center]{align-items: center}
+[flex-end]{justify-content: flex-end}
+.page-wrapper-instock{
+    .ibox-title{padding: 0 12px;}
+    .miboxcontent{top:inherit}
+    .el-form--inline .el-form-item__label{width: 80px;}
+    .my-upload{display: inline-block;padding: 6px 12px;
+        input{display: none;}
+    }
+}

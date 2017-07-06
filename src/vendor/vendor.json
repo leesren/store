@@ -1,0 +1,66 @@
+{
+    "mock_data.js": {
+        "url": "http://indevtest.oss-cn-shenzhen.aliyuncs.com/mock_data.js",
+        "local": "vendor/mock/mock_data.js"
+    },
+    "downloadify.min.js": {
+        "url": "http://indevtest.oss-cn-shenzhen.aliyuncs.com/downloadify.min.js",
+        "local": "vendor/excel/downloadify.min.js"
+    },
+    "element-ui.css": {
+        "url": "http://indevtest.oss-cn-shenzhen.aliyuncs.com/element-ui.css",
+        "local": "vendor/vue/element-ui.css"
+    },
+    "Blob.js": {
+        "url": "http://indevtest.oss-cn-shenzhen.aliyuncs.com/Blob.js",
+        "local": "vendor/excel/Blob.js"
+    },
+    "moment.min.js": {
+        "url": "http://indevtest.oss-cn-shenzhen.aliyuncs.com/moment.min.js",
+        "local": "vendor/moment/moment.min.js"
+    },
+    "vue.min.js": {
+        "url": "http://indevtest.oss-cn-shenzhen.aliyuncs.com/vue.min.js",
+        "local": "vendor/vue/vue.min.js"
+    },
+    "element-ui.js": {
+        "url": "http://indevtest.oss-cn-shenzhen.aliyuncs.com/element-ui.js",
+        "local": "vendor/vue/element-ui.js"
+    },
+    "shim.js": {
+        "url": "http://indevtest.oss-cn-shenzhen.aliyuncs.com/shim.js",
+        "local": "vendor/excel/shim.js"
+    },
+    "xlsx.full.min.js": {
+        "url": "http://indevtest.oss-cn-shenzhen.aliyuncs.com/xlsx.full.min.js",
+        "local": "vendor/excel/xlsx.full.min.js"
+    },
+    "handsontable.full.min.css": {
+        "url": "http://indevtest.oss-cn-shenzhen.aliyuncs.com/handsontable.full.min.css",
+        "local": "vendor/handson-table/handsontable.full.min.css"
+    },
+    "swfobject.js": {
+        "url": "http://indevtest.oss-cn-shenzhen.aliyuncs.com/swfobject.js",
+        "local": "vendor/excel/swfobject.js"
+    },
+    "base64.min.js": {
+        "url": "http://indevtest.oss-cn-shenzhen.aliyuncs.com/base64.min.js",
+        "local": "vendor/excel/base64.min.js"
+    },
+    "FileSaver.js": {
+        "url": "http://indevtest.oss-cn-shenzhen.aliyuncs.com/FileSaver.js",
+        "local": "vendor/excel/FileSaver.js"
+    },
+    "handsontable.full.min.js": {
+        "url": "http://indevtest.oss-cn-shenzhen.aliyuncs.com/handsontable.full.min.js",
+        "local": "vendor/handson-table/handsontable.full.min.js"
+    },
+    "underscore-min.js": {
+        "url": "http://indevtest.oss-cn-shenzhen.aliyuncs.com/underscore-min.js",
+        "local": "vendor/underscore/underscore-min.js"
+    },
+    "yod-mock.min.js": {
+        "url": "http://indevtest.oss-cn-shenzhen.aliyuncs.com/yod-mock.min.js",
+        "local": "vendor/mock/yod-mock.min.js"
+    }
+}

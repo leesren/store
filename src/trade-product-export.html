@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一禾美云门店管理 | 批量入库</title>
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/font-awesome.min.css" rel="stylesheet">
+    <link href="./css/animate.css" rel="stylesheet">
+    <link href="./css/style.css" rel="stylesheet">
+    <link href="./css/custom.css" rel="stylesheet">
+    <!-- Mainly scripts -->
+    <script src="./vendor/jquery-2.1.1.js"></script>
+    <script src="./vendor/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_1473762766_7074292.css">
+    <link rel="stylesheet" href="./vendor/vue/element-ui.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <style>
+        .select-date .el-date-editor.el-input {
+            width: 125px;
+        }
+
+        #sumStock .el-table__row {
+            cursor: pointer
+        }
+    </style>
+</head>
+
+<body>
+    <input type="hidden" value="" id="server_path" />
+    <div id="wrapper">
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <span class="clear">
+                                <span class="block m-t-xs">
+                                    <strong class="font-bold">Welcome!</strong>
+                                </span>
+                                <span class="text-muted text-xs block">
+                                    小* <b class="caret"></b>
+                                </span>
+                            </span>
+                        </a>
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                <li><a href="/modifyPassword">修改密码</a></li>
+                            </ul>
+                        </div>
+                        <div class="logo-element">eher</div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div id="page-wrapper" class="gray-bg page-wrapper-instock">
+            <div class="row border-bottom">
+                <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header">
+                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i>
+                    </a>
+                    </div>
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li>
+                            <a class="logout" href="/logout">
+                            <i class="fa fa-sign-out"></i> 登 出
+                        </a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-top-links navbar-right" id="wxdiv" hidden="true">
+                        <li>
+                            <a class="towx" style="color:#33CCFF" id="wx_door" target="_blank">
+                    		<i class="fa fa-sign-out"></i> 微信公众号管理入口
+                        </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="wrapper wrapper-content animated fadeInRight" id="pager_main">
+
+                <input type="hidden" id="menu_active" value="ResourceManagement-BatchImportManagement" />
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title" flexbox flex-center>
+                        <h4 flex>产品交易明细报表</h4>
+                        <div class="ibox-tools">
+
+                        </div>
+                    </div>
+                    <div class="ibox-content miboxcontent">
+                        <div class="form-horizontal">
+                            <div class="op-header">
+                                <el-button size="small" @click="openSelectStore">选择门店</el-button>
+                                <div style="display:inline-block;margin:0 10px;" class="select-date">
+                                    <span>从</span>
+                                    <el-date-picker size="small" v-model="start" type="date" placeholder="选择日期">
+                                    </el-date-picker>
+                                    <span>到</span>
+                                    <el-date-picker size="small" v-model="end" type="date" placeholder="选择日期">
+                                    </el-date-picker>
+                                </div>
+                                <div style="display:inline-block">
+                                    <el-input v-model="goods_filter.value" size="small" placeholder="按产品名称、产品编号搜索"></el-input>
+                                </div>
+                                <el-button type="primary" size="small">查询</el-button>
+                                <el-button type="success" size="small" @click="handleExport">导出excel</el-button>
+                            </div>
+                            <div class="content-body" style="margin-top:15px">
+                                <el-table :data="dialog.gridData">
+                                    <el-table-column property="stock" label="门店"></el-table-column>
+                                    <el-table-column property="no" label="单据编号"></el-table-column>
+                                    <el-table-column property="in_time" label="单据日期"></el-table-column>
+                                    <el-table-column property="name" label="交易类别" width="100"></el-table-column>
+                                    <el-table-column property="no" label="产品编号"></el-table-column>
+                                    <el-table-column property="name" label="产品名称"></el-table-column>
+                                    <el-table-column property="numbers" label="品类" width="100"></el-table-column>
+                                    <el-table-column property="numbers" label="交易单位" width="100"></el-table-column>
+                                    <el-table-column property="numbers" label="交易数量" width="100"></el-table-column>
+                                </el-table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="footer">
+                <div>
+                    <strong>Copyright</strong> 一禾美云
+                </div>
+            </div>
+        </div>
+
+        <el-dialog title="选择门店" :visible.sync="tree_node.visible">
+            <el-tree :data="tree_node.data.list" accordion="true" show-checkbox node-key="id" :default-expanded-keys="[2, 3]" :default-checked-keys="[5]"
+                :props="tree_node.data.defaultProps">
+            </el-tree>
+            <!--<span slot="footer" class="dialog-footer">
+                <el-button @click="tree_node.visible = false">取 消</el-button>
+                <el-button type="primary" @click="tree_node.visible = false">确 定</el-button>
+            </span>-->
+        </el-dialog>
+    </div>
+
+    <script src="./vendor/vue/vue.min.js"></script>
+    <script src="./vendor/vue/element-ui.js"></script>
+
+    <script src="./vendor/mock/yod-mock.min.js"></script>
+    <script src="./vendor/mock/mock_data.js"></script>
+
+
+    <script src="./js/util.js"></script>
+    <script src="./js/request.js"></script>
+    <script src="./js/trade-product-export.js"></script>
+
+    <!-- excel 导出-->
+    <!--<script src=./vendor/excel/shim.js></script>-->
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/shim.js"></script>
+    <!--<script src=./vendor/excel/Blob.js></script>-->
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/Blob.js"></script>
+    <!--<script src=./vendor/excel/FileSaver.js></script>-->
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/FileSaver.js"></script>
+    <!--<script src=./vendor/excel/swfobject.js></script>-->
+    <script src=http://apps.bdimg.com/libs/swfobject/2.2/swfobject.js></script>
+    <!--<script src=./vendor/excel/downloadify.min.js></script>-->
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/downloadify.min.js"></script>
+    <!--<script src=./vendor/excel/base64.min.js></script>-->
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/base64.min.js"></script>
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/xlsx.full.min.js"></script>
+</body>
+
+</html>

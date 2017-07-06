@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title>一禾美云门店管理 | 批量入库</title>
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/font-awesome.min.css" rel="stylesheet">
+    <link href="./css/animate.css" rel="stylesheet">
+    <link href="./css/style.css" rel="stylesheet">
+    <link href="./css/custom.css" rel="stylesheet">
+    <!-- Mainly scripts -->
+    <script src="./vendor/jquery-2.1.1.js"></script>
+    <script src="./vendor/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_1473762766_7074292.css">
+    <link rel="stylesheet" href="http://indevtest.oss-cn-shenzhen.aliyuncs.com/element-ui.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="http://indevtest.oss-cn-shenzhen.aliyuncs.com/handsontable.full.min.css">
+    <style>
+        .my-dialog-box .data-list-content .list-group-item:hover {
+            background-color: #fafafa;
+        }
+
+        .my-dialog-box .data-list-content a.list-group-item.active {
+            background-color: #b4d7f5;
+            border: 1px solid #b4d7f5;
+            color: #1f2d3d
+        }
+
+        .handsontable td.htInvalid {
+            background-color: #ff4c42!important
+        }
+    </style>
+</head>
+
+<body>
+    <input type="hidden" value="" id="server_path" />
+    <div id="wrapper">
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <span class="clear">
+                                <span class="block m-t-xs">
+                                    <strong class="font-bold">Welcome!</strong>
+                                </span>
+                                <span class="text-muted text-xs block">
+                                    小* <b class="caret"></b>
+                                </span>
+                            </span>
+                        </a>
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                <li><a href="/modifyPassword">修改密码</a></li>
+                            </ul>
+                        </div>
+                        <div class="logo-element">eher</div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div id="page-wrapper" class="gray-bg page-wrapper-instock">
+            <div class="row border-bottom">
+                <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header">
+                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i>
+                    </a>
+                    </div>
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li>
+                            <a class="logout" href="/logout">
+                            <i class="fa fa-sign-out"></i> 登 出
+                        </a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-top-links navbar-right" id="wxdiv" hidden="true">
+                        <li>
+                            <a class="towx" style="color:#33CCFF" id="wx_door" target="_blank">
+                    		<i class="fa fa-sign-out"></i> 微信公众号管理入口
+                        </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="wrapper wrapper-content animated fadeInRight" id="pager_main">
+
+                <input type="hidden" id="menu_active" value="ResourceManagement-BatchImportManagement" />
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title" flexbox flex-center>
+                        <h4 flex>产品出库</h4>
+                        <div class="ibox-tools">
+
+                            <el-button type="primary" size="small" @click="sign" v-if=" id &&  status === 0">审批</el-button>
+                            <el-button type="warning" size="small" @click="unsign" v-if=" id && status === 1">取消审批</el-button>
+                            <el-button type="success" size="small" @click="out_excel">导出</el-button>
+                            <el-button type="primary" size="small">返回</el-button>
+                        </div>
+                    </div>
+                    <div class="ibox-content miboxcontent">
+                        <div class="form-horizontal">
+                            <div class="op-header">
+                                <div flexbox>
+                                    <el-form :inline="true" :model="formInline" :rules="formInlineRules" ref="ruleForm" class="demo-form-inline">
+                                        <el-form-item label="入库时间" prop="in_time">
+                                            <el-date-picker :disabled="_disabled" size="small" type="date" placeholder="选择日期" v-model="formInline.in_time" style="width: 100%;"></el-date-picker>
+                                        </el-form-item>
+                                        <el-form-item label="仓库" prop="store">
+                                            <el-select :disabled="_disabled" size="small" v-model="formInline.store" placeholder="请选择">
+                                                <el-option v-for="item in dataList.storeList" :value="item.id" :label="item.name"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                        <el-form-item label="采购人" prop="buyer">
+                                            <el-select :disabled="_disabled" size="small" v-model="formInline.buyer" placeholder="请选择">
+                                                <el-option :label="el.name" :value="el.id" v-for="el in dataList.signerList"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                        <el-form-item label="备注">
+                                            <el-input :disabled="_disabled" v-model="formInline.desc" placeholder="可选" size="small"></el-input>
+                                        </el-form-item>
+                                    </el-form>
+                                </div>
+                                <div flexbox>
+                                    <div>
+                                        <el-button type="primary" size="small" @click="add" :disabled="_disabled">选择产品</el-button>
+                                        <my-upload :disabled="_disabled" :change="_onChange" type="success" multiple accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                                            从Excel中导入
+                                        </my-upload>
+                                    </div>
+                                    <div flex flexbox flex-center>
+                                        <label for="" style="margin:0 10px 0 40px">输入产品条形码</label>
+                                        <section flex="" class="el-input el-input--small">
+                                            <input autocomplete="off" placeholder="" size="small" type="text" @keyup.enter="submit" class="el-input__inner">
+                                        </section>
+                                        <!--<el-input v-model="formInline.name"></el-input>-->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content-body" style="margin-top:15px">
+                                <div id="tablehook">
+                                    <div id="tablebox"></div>
+                                    <div>
+                                        <el-table :data="tableData" style="width: 100%" id="eltableBox">
+                                            <el-table-column prop="productId" label="产品编号">
+                                            </el-table-column>
+                                            <el-table-column prop="productName" label="产品名称" min-width="160">
+                                            </el-table-column>
+                                            <el-table-column prop="quantity" label="数量" width="100">
+                                                <template scope="scope">
+                                                    <span style="display:none">{{scope.row.quantity}}</span>
+                                                    <el-input @change="_change(scope.$index)" :disabled="_disabled" v-model="scope.row.quantity" size="small"></el-input>
+                                                </template>
+                                            </el-table-column>
+                                            <el-table-column prop="unitName" label="单位" width="80">
+                                            </el-table-column>
+                                            <el-table-column prop="price" label="单价" width="110">
+                                                <template scope="scope">
+                                                    <span style="display:none">{{ scope.row.price}}</span>
+                                                    <el-input v-model="scope.row.price" :disabled="_disabled" size="small"></el-input>
+                                                </template>
+                                            </el-table-column>
+                                            <el-table-column prop="price" label="金额" width="110" align="right">
+                                                <template scope="scope">
+                                                    <span>{{ _count(scope.$index)  }}</span>
+                                                </template>
+                                            </el-table-column>
+                                            <el-table-column prop="spec" label="规格" width="80">
+                                            </el-table-column>
+                                            <el-table-column label="操作" width="100">
+                                                <template scope="scope">
+                                                    <el-button :disabled="_disabled" @click.native.prevent="deleteRow(scope.$index)" type="text" size="small">移除</el-button>
+                                                </template>
+                                            </el-table-column>
+                                        </el-table>
+                                    </div>
+                                    <div style="text-align:center;margin:32px 0 0 0" class="myel" v-show="tableData.length"> 
+                                        <el-button :plain="true" type="danger" @click="dialog.deletedialogVisible = true"> 删除 </el-button>
+                                        <el-button type="info" v-if="!_disabled" @click="save"> 保存 </el-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="footer">
+                <div>
+                    <strong>Copyright</strong> 一禾美云
+                </div>
+            </div>
+        </div>
+        <el-dialog title="产品列表" :visible.sync="dialog.dialogVisible">
+            <div class="my-dialog-box">
+                <el-input v-model="dialog.input" placeholder="搜索" @change="dialogInputChange"></el-input>
+                <div class="data-list-content" style="margin:10px 0">
+                    <div class="list-group" v-show="dialog.list.length">
+                        <a href="#" @click="dialogSelectedItem(el,index)" class="list-group-item" v-for="(el,index) in dialog.list" :class=" { 'active':dialog.selected ===index} ">
+                            {{ el.name }}
+                        </a>
+                    </div>
+                </div>
+                <div class="data-pager">
+                    <el-pagination @current-change="dialogHandleCurrentChange" :current-page="dialog.current" layout="prev, pager, next" :total="dialog.total">
+                    </el-pagination>
+                </div>
+                <div style="text-align:right">
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="dialog.dialogVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="dialogSelectProductClose()">确 定</el-button>
+                    </span>
+                </div>
+            </div> 
+        </el-dialog>
+        <el-dialog title="提示" :visible.sync="dialog.deletedialogVisible" size="tiny">
+            <span>确定要删除该条入库单吗？</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialog.deletedialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="delete_confirm">确 定</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog title="Excle导入结果" @open="excleOpenCallback" :close-on-click-modal="false" :visible.sync="dialog.excle_result_visible">
+            <!--<div class="my-dialog-box">
+                <el-table :data="dialog.excle_result_tableData" style="width: 100%">
+                    <el-table-column prop="numberCode" label="产品编号" width="180">
+                    </el-table-column>
+                    <el-table-column prop="productName" label="产品名称">
+                    </el-table-column>
+                    <el-table-column prop="quantity" label="数量" width="120">
+                    </el-table-column>
+                    <el-table-column prop="price" label="单价" width="120">
+                    </el-table-column>
+                    <el-table-column prop="desc" label="描述" min-width="140">
+                        <template scope="scope">
+                            <el-tag type="danger" v-for="el in scope.row._checkMsg">
+                                {{el}}
+                            </el-tag>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>-->
+            <div class="my-dialog-box" id="mydialogExcle">
+            </div>
+            <div v-show="excle_origin.check_result.length">
+                <template v-for="(el,index) in excle_origin.check_result">
+                    <el-tag type="danger" v-if="el._checkMsg">{{ el.numberCode +'：'+ el._checkMsg }}</el-tag>
+                </template>
+            </div>
+            <div class="color-gray" style="margin-top:12px;color:#999; " v-show="excle_origin.check_result.length">
+                <my-excle-note></my-excle-note>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialog.excle_result_visible = false">取 消</el-button>
+                <el-button type="primary" @click="save_excle">确 定</el-button>
+            </span>
+        </el-dialog>
+    </div>
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/vue.min.js"></script>
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/element-ui.js"></script>
+
+    <!-- excel 导出-->
+    <!--<script src=./vendor/excel/shim.js></script>-->
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/shim.js"></script>
+    <!--<script src=./vendor/excel/Blob.js></script>-->
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/Blob.js"></script>
+    <!--<script src=./vendor/excel/FileSaver.js></script>-->
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/FileSaver.js"></script>
+    <!--<script src=./vendor/excel/swfobject.js></script>-->
+    <script src=http://apps.bdimg.com/libs/swfobject/2.2/swfobject.js></script>
+    <!--<script src=./vendor/excel/downloadify.min.js></script>-->
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/downloadify.min.js"></script>
+    <!--<script src=./vendor/excel/base64.min.js></script>-->
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/base64.min.js"></script>
+
+    <script src="./vendor/mock/yod-mock.min.js"></script>
+    <script src="./vendor/mock/mock_data.js"></script>
+    <!--<script src="./vendor/excel/xlsx.full.min.js"></script>-->
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/xlsx.full.min.js"></script>
+    <script src="./vendor/handson-table/handsontable.full.min.js"></script>
+    <script src="http://apps.bdimg.com/libs/moment/2.8.3/moment.js"></script>
+    <!--<script src="./vendor/moment/moment.min.js"></script>-->
+    <!--<script src="./vendor/underscore/underscore-min.js"></script>-->
+
+    <script src="./js/request.js"></script>
+    <script src="./js/util.js"></script>
+    <script src="./js/customer_module.js"></script>
+    <script src="./js/in.js"></script>
+</body>
+
+</html>

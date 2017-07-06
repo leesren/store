@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <h3>1212</h3>
+</body>
+<script>
+    var dd = {
+        "content": {
+            "name": "弥雅SPA美容",
+            "id": "8787426330209426723",
+            "parentId": null
+        },
+        "children": [
+            {
+                "content": {
+                    "name": "伟杰美容",
+                    "id": "8787426330218732024",
+                    "parentId": "8787426330209426723"
+                },
+                "children": [
+                    {
+                        "content": {
+                            "name": "钻石店",
+                            "id": "8787426330209426860",
+                            "parentId": "8787426330218732024"
+                        },
+                        "leaf": "true"
+                    },
+                    {
+                        "content": {
+                            "name": "旗舰店",
+                            "id": "8787426330209426825",
+                            "parentId": "8787426330218732024"
+                        },
+                        "leaf": "true"
+                    }
+                ]
+            },
+            {
+                "content": {
+                    "name": "弥雅Spa美容会所",
+                    "id": "8787426330209431701",
+                    "parentId": "8787426330209426723"
+                },
+                "leaf": "true"
+            }
+        ]
+    }
+
+    var l = [];
+    function storeinfo(store) {
+
+        if (store instanceof Array) {
+            for (var j = 0; j < store.length; j++) {
+                var s = store[j];
+                s.leaf ? l.push(s.content) : storeinfo(s);
+            }
+        } else {
+            l.push(store.content);
+            if(!store.leaf){
+                storeinfo(store.children);
+            } 
+        }
+    }
+    storeinfo(dd);
+    console.log(l);
+
+</script>
+
+</html>
