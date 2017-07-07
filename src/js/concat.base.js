@@ -1,3 +1,86 @@
+/**
+ * Created by lessren on 2017/6/9.
+ */
+function log(v, isFormat) {
+    console.log(!isFormat ? v : JSON.stringify(v, null, 2))
+}
+var _http = {
+    base_prams: {
+        "device": "11111",
+        "sessionId": "",
+        "account": "admin",
+        "version": "7.2.0",
+        "data": {}
+    },
+    serverPath: 'http://120.24.74.199:9001/eher/api'
+}
+function post(api, data) {
+    return new Promise(function (resolve, reject) {
+        var base_prams = _http.base_prams;
+        base_prams.data = data;
+        $.ajax({
+            contentType: 'application/json',
+            dataType: 'json',
+            type: 'POST',
+            url: _http.serverPath + api,
+            data: JSON.stringify(base_prams),
+            success: function (result) {
+                if (result.retCode === "000000") {
+                    resolve(result.data);
+                } else {
+                    reject(result.retCode);
+                }
+            },
+            error: function (error) {
+                if (error && error.statusText) {
+                    reject(error.statusText);
+                } else {
+                    reject(error);
+                }
+            }
+        });
+    })
+}
+function get(api) {
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            type: 'GET',
+            url: _http.serverPath + api,
+            success: function (result) {
+                if (result.retCode === "000000") {
+                    resolve(result.data);
+                } else {
+                    reject(result.retCode);
+                }
+            },
+            error: function (error) {
+                if (error && error.statusText) {
+                    reject(error.statusText);
+                } else {
+                    reject(error);
+                }
+            },
+            contentType: "application/json"
+        });
+    })
+}
+function uploadFile2Oss(file) {
+    return new Promise(function (resolve, reject) {
+        AliYun.UploadImg(file)
+            .then(function (result) {
+                resolve({ name: result.name, url: result.url })
+            }, function (error) {
+                reject(error)
+            });
+    })
+}
+
+if (window.Vue) {
+    Vue.prototype.$http = {
+        post: post
+    }
+    Vue.prototype.$log = log;
+}
 function handsontable_util(hottable) {
     this.table = hottable;
 }
@@ -680,3 +763,176 @@ validator_data.prototype.checkProductNo = function (orgId) {
 window.eher_util = new eher_util();
 window.validator_data = validator_data;
 window.dataRequest = dataRequest;
+
+Vue.component('my-upload', {
+    template: '<div class="my-upload">'
+    + '<button class="el-button--small  el-button" :disabled="disabled" :class="_class()" @click="handleClick"><slot>上传文件</slot> </button>'
+    + '<input class="el-upload__input" type="file" ref="input" @change="_onChange" :accept="accept"></input>'
+    + '</div>',
+    props: {
+        multiple: {
+            type: [String, Boolean]
+        },
+        accept: {
+            type: String,
+            default: ''
+        },
+        change: Function,
+        type: {
+            type: String,
+            default: 'primary'// type="success"
+        },
+        disabled: [String, Boolean]
+    },
+    methods: {
+        _onChange: function (e) {
+            this.change(e.target);
+            // this.$emit('change',e.target)
+        },
+        handleClick: function () {
+            var el = this.$refs.input;
+            if (el) el.click();
+        },
+        submit: function () {
+            console.log('submit');
+        },
+        _class: function () {
+            return { "el-button--primary": this.type === "primary", "el-button--success": this.type === "success", "is-disabled": this.disabled }
+        }
+    }
+})
+Vue.component('my-excle-note', {
+    template: '<div><div>注意：</div>' +
+    '<ul>' +
+    ' <li>从Excle导入的产品，必须是已经存在的产品，不然导入失败</li>' +
+    '<li>模板格式是不是正确，重复编号的产品只去第一条</li>' +
+    '<li>Excle里的数据格式是否在正确，请确认您输入的日期格式、数字格式、编号、中英文符号是否正确</li>' +
+    '</ul></div>'
+})
+
+ 
+var mixin = {
+    data: {
+        dialog: {
+            dialogVisible: false,
+            input: '',
+            list: [],
+            selected: -1,
+            total: 0,
+            size: 10,
+            current: 1,
+            dialog_excle: false, 
+            keyWord: '',
+            excle_result_visible: false,
+            deletedialogVisible: false,
+            excle_result_tableData: []
+        }, 
+        excle_origin: {
+            list: [],
+            check_result: [],
+            handson_data: {}
+        }
+    },
+    methods: {
+        save_excle: function () {
+            var self = this;
+            if (eher_util.check_table()) {
+                var _seriadata = function (_res, type) {
+                    if (type) {
+                        eher_util.remove_mutiple_2_list(_res, self.tableData)
+                        self.dialog.excle_result_visible = false;
+                    } else {
+                        self.excle_origin.check_result = _res;
+                        for (var i = 0, len = _res.length; i < len; i++) {
+                            if (_res[i]._checkMsg) {
+                                hottabel.selectCellByProp(i, 0);
+                                window.hot_util && window.hot_util.highlight_col(i, 0);
+                            }
+                        }
+                    }
+                }
+                self.validator_data.checkProductNo(self.orgId)
+                    .then(function (result) {
+                        _seriadata(result, true)
+                    }, function (result) {
+                        _seriadata(result)
+                    })
+            }
+        },
+        excleOpenCallback: function () {
+            var self = this;
+            setTimeout(function () {
+                eher_util.create_handsontable(self.excle_origin.list, 'mydialogExcle', self.excle_origin.handson_data)
+            }, 100)
+        },
+        _onChange: function (target) {
+            var self = this;
+            eher_util.getData_from_excle(target)
+                .then(function (data) {
+                    eher_util.destory_handsontable('mydialogExcle');// 清楚handsontable 数据
+                    self.excle_origin.list = data;
+                    self.excle_origin.handson_data = eher_util.excel_2_handsontable(data);
+                    self.dialog.excle_result_visible = true;
+                    self.excle_origin.check_result = [];
+                })
+
+        },
+        dialogInputChange: function (e) {
+            // console.log(e);
+            this.dialog.keyWord = e;
+            this.dialog.current = 1;
+            this.add();
+        },
+         handleCommand: function (v) {
+            this.goods_filter.selected = v;
+        },
+        dialogHandleCurrentChange(val) {
+            this.dialog.current = val;
+            this.dialog.selected = -1;
+            this.add();
+        },
+        
+        dialogSelectProductClose: function () {
+            if (this.dialog.selected === -1) return;
+            var obj = this.dialog.list[this.dialog.selected];
+            obj.quantity = 1;
+            this.addItem(obj);
+            this.dialog.dialogVisible = false
+        },
+        dialogSelectedItem: function (item, index) {
+            if (index === this.dialog.selected) {
+                this.dialog.selected = -1;
+            } else {
+                this.dialog.selected = index;
+            }
+        },
+        addItem: function (data, index) {
+            if (!data) return;
+            var contain = this.tableData.filter(function (el, index) {
+                return el.productId === data.id
+            })
+            if (contain && contain.length > 0) return;
+            data.productId = data.id;
+            data.productName = data.name;
+            delete data.id;
+            delete data.name;
+            this.tableData.push(data);
+        },
+        add: function () {
+            var self = this;
+            this.dataRequest.listGoods(this.dialog.keyWord, this.dialog.current).then(function (result) {
+                if (result) {
+                    self.dialog.list = result.list;
+                    self.dialog.total = result.total;
+                }
+                self.dialog.dialogVisible = true;
+            })
+        },
+        clear_table: function () {
+            eher_util.create_handsontable();
+        },
+        deleteRow: function (index) {
+            this.tableData.splice(index, 1);
+        },
+    }
+};

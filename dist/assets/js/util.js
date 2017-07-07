@@ -680,6 +680,3 @@ validator_data.prototype.checkProductNo = function (orgId) {
 window.eher_util = new eher_util();
 window.validator_data = validator_data;
 window.dataRequest = dataRequest;
-
-
-

@@ -1,6 +1,28 @@
-var mixin = { 
+var mixin = {
+    data: {
+        dialog: {
+            dialogVisible: false,
+            input: '',
+            list: [],
+            selected: -1,
+            total: 0,
+            size: 10,
+            current: 1,
+            dialog_excle: false, 
+            keyWord: '',
+            excle_result_visible: false,
+            deletedialogVisible: false,
+            excle_result_tableData: []
+        }, 
+        excle_origin: {
+            list: [],
+            check_result: [],
+            handson_data: {}
+        }
+    },
     methods: {
-        _save_excle: function (self) {
+        save_excle: function () {
+            var self = this;
             if (eher_util.check_table()) {
                 var _seriadata = function (_res, type) {
                     if (type) {
@@ -24,11 +46,80 @@ var mixin = {
                     })
             }
         },
-        _excleOpenCallback:function(){
+        excleOpenCallback: function () {
             var self = this;
             setTimeout(function () {
                 eher_util.create_handsontable(self.excle_origin.list, 'mydialogExcle', self.excle_origin.handson_data)
             }, 100)
-        }
+        },
+        _onChange: function (target) {
+            var self = this;
+            eher_util.getData_from_excle(target)
+                .then(function (data) {
+                    eher_util.destory_handsontable('mydialogExcle');// 清楚handsontable 数据
+                    self.excle_origin.list = data;
+                    self.excle_origin.handson_data = eher_util.excel_2_handsontable(data);
+                    self.dialog.excle_result_visible = true;
+                    self.excle_origin.check_result = [];
+                })
+
+        },
+        dialogInputChange: function (e) {
+            // console.log(e);
+            this.dialog.keyWord = e;
+            this.dialog.current = 1;
+            this.add();
+        },
+         handleCommand: function (v) {
+            this.goods_filter.selected = v;
+        },
+        dialogHandleCurrentChange(val) {
+            this.dialog.current = val;
+            this.dialog.selected = -1;
+            this.add();
+        },
+        
+        dialogSelectProductClose: function () {
+            if (this.dialog.selected === -1) return;
+            var obj = this.dialog.list[this.dialog.selected];
+            obj.quantity = 1;
+            this.addItem(obj);
+            this.dialog.dialogVisible = false
+        },
+        dialogSelectedItem: function (item, index) {
+            if (index === this.dialog.selected) {
+                this.dialog.selected = -1;
+            } else {
+                this.dialog.selected = index;
+            }
+        },
+        addItem: function (data, index) {
+            if (!data) return;
+            var contain = this.tableData.filter(function (el, index) {
+                return el.productId === data.id
+            })
+            if (contain && contain.length > 0) return;
+            data.productId = data.id;
+            data.productName = data.name;
+            delete data.id;
+            delete data.name;
+            this.tableData.push(data);
+        },
+        add: function () {
+            var self = this;
+            this.dataRequest.listGoods(this.dialog.keyWord, this.dialog.current).then(function (result) {
+                if (result) {
+                    self.dialog.list = result.list;
+                    self.dialog.total = result.total;
+                }
+                self.dialog.dialogVisible = true;
+            })
+        },
+        clear_table: function () {
+            eher_util.create_handsontable();
+        },
+        deleteRow: function (index) {
+            this.tableData.splice(index, 1);
+        },
     }
 };

@@ -1,7 +1,7 @@
 
 var app = window.$app = new Vue({
     el: '#wrapper',
-    mixins: [ mixin ],
+    mixins: [mixin],
     data: {
         orgId: '8787426330226801974',
         id: '8752752929078097473',// 详情的id
@@ -24,26 +24,7 @@ var app = window.$app = new Vue({
             store_selected: '',
             signerList: [],
             signer_selected: ''
-        },
-        excle_origin: {
-            list: [],
-            check_result: [],
-            handson_data: {}
-        },
-        dialog: {
-            dialogVisible: false,
-            input: '',
-            list: [],
-            selected: -1,
-            total: 0,
-            size: 10,
-            current: 1,
-            dialog_excle: false,
-            keyWord: '',
-            excle_result_visible: false,
-            deletedialogVisible: false,
-            excle_result_tableData: []
-        }
+        } 
     },
     computed: {
         _disabled: function () {
@@ -87,80 +68,10 @@ var app = window.$app = new Vue({
         handleCommand: function (v) {
             this.goods_filter.selected = v;
         },
-        dialogHandleCurrentChange(val) {
-            this.dialog.current = val;
-            this.dialog.selected = -1;
-            this.add();
-        },
-        dialogInputChange: function (e) {
-            // console.log(e);
-            this.dialog.keyWord = e;
-            this.dialog.current = 1;
-            this.add();
-        },
-        dialogSelectProductClose: function () {
-            if (this.dialog.selected === -1) return;
-            var obj = this.dialog.list[this.dialog.selected];
-            obj.quantity = 1;
-            this.addItem(obj);
-            this.dialog.dialogVisible = false
-        },
-        dialogSelectedItem: function (item, index) {
-            if (index === this.dialog.selected) {
-                this.dialog.selected = -1;
-            } else {
-                this.dialog.selected = index;
-            }
-        },
-        addItem: function (data, index) {
-            if (!data) return;
-            var contain = this.tableData.filter(function (el, index) {
-                return el.productId === data.id
-            })
-            if (contain && contain.length > 0) return;
-            data.productId = data.id;
-            data.productName = data.name;
-            delete data.id;
-            delete data.name;
-            this.tableData.push(data);
-        },
-        add: function () {
-            var self = this;
-            this.dataRequest.listGoods(this.dialog.keyWord, this.dialog.current).then(function (result) {
-                if (result) {
-                    self.dialog.list = result.list;
-                    self.dialog.total = result.total;
-                }
-                self.dialog.dialogVisible = true;
-            })
-        },
-
-
-        deleteRow: function (index) {
-            this.tableData.splice(index, 1);
-        },
-        _onChange: function (target) {
-            var self = this;
-            eher_util.getData_from_excle(target)
-                .then(function (data) {
-                    eher_util.destory_handsontable('mydialogExcle');// 清楚handsontable 数据
-                    self.excle_origin.list = data;
-                    self.excle_origin.handson_data = eher_util.excel_2_handsontable(data);
-                    self.dialog.excle_result_visible = true;
-                    self.excle_origin.check_result = [];
-                })
-
-        },
         submit: function (e) {
 
         },
-        clear_table: function () {
-            eher_util.create_handsontable();
-        },
-
-
         save_request: function (data) {
-
             var data = {
                 "storageId": this.formInline.store + '',
                 "entryDate": eher_util.date2String(this.formInline.in_time),
@@ -188,7 +99,6 @@ var app = window.$app = new Vue({
                     console.error(error);
                     self.$message({ message: '添加失败', type: 'warning' });
                 })
-
         },
         save: function () {
             var self = this;
@@ -223,15 +133,9 @@ var app = window.$app = new Vue({
         out_excel: function () {
             eher_util.element_table_2_table('eltableBox', 7, '产品入库');
         },
-        excleOpenCallback: function () {
-            this._excleOpenCallback();
-        },
         delete_confirm: function () {
             this.dialog.deletedialogVisible = false;
         },
-        save_excle: function () {
-             this._save_excle(this);
-        }
     }
 })
 window.$dataRequest.query_store($app.orgId);

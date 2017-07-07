@@ -4,13 +4,16 @@ let gulp = require('gulp')
 plugins = require('gulp-load-plugins')()
 connect = require('gulp-connect')
 
-plugins.uglify = require('gulp-uglify')
+var uglify = require('gulp-uglify');
 plugins.revAppend = require('gulp-rev-append');// 查找并给指定链接填加版本号（默认根据文件MD5生成，因此文件未发生改变，此版本号将不会变
 let runSequence = require('run-sequence');// 队列化任务
 let path = require('path');
 let postcss = require('gulp-postcss');
 let sass = require('gulp-sass');
 let autoprefixer = require('autoprefixer');
+let concat = require('gulp-concat');
+let rename = require('gulp-rename');
+ 
 let PROT = 4000;
 gulp.task('serve', () => {
     connect.server({
@@ -62,6 +65,13 @@ gulp.task('js', () => {
         //.pipe(plugins.uglify())
         .pipe(gulp.dest(config.js.dest))
 });
+gulp.task('concat', () => {
+    var dir = './src/js';
+    gulp.src([dir+'/request.js',dir+'/util.js',dir+'/customer_module.js',dir+'/mixins.js'])
+        .pipe(concat('concat.base.js'))
+        // .pipe(uglify())
+        .pipe(gulp.dest(dir))
+}); 
 
 gulp.task("revreplace", function () {
     return gulp.src('./src/*.html')
@@ -80,7 +90,7 @@ gulp.task('default', ['serve'], () => {
             .pipe(connect.reload());
     });
     gulp.watch([config.js.src], function (file) {// js处理
-        runSequence(['js'], ['revreplace']);
+        runSequence(['js','concat'], ['revreplace']);
     });
      
     gulp.watch([config.scss.src], function (file) {// js处理
