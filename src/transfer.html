@@ -23,18 +23,19 @@
         .my-dialog-box .data-list-content .list-group-item:hover {
             background-color: #fafafa;
         }
-
+        
         .my-dialog-box .data-list-content a.list-group-item.active {
             background-color: #b4d7f5;
             border: 1px solid #b4d7f5;
             color: #1f2d3d
         }
-
+        
         .handsontable td.htInvalid {
             background-color: #ff4c42!important
         }
+        
         .el-button--danger.is-plain {
-             color: #ff4949;
+            color: #ff4949;
         }
     </style>
 </head>
@@ -48,15 +49,15 @@
                     <li class="nav-header">
                         <div class="dropdown profile-element">
                             <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                            <span class="clear">
+                                <span class="clear">
                                 <span class="block m-t-xs">
                                     <strong class="font-bold">Welcome!</strong>
                                 </span>
                                 <span class="text-muted text-xs block">
                                     小* <b class="caret"></b>
                                 </span>
-                            </span>
-                        </a>
+                                </span>
+                            </a>
                             <ul class="dropdown-menu animated fadeInRight m-t-xs">
                                 <li><a href="/modifyPassword">修改密码</a></li>
                             </ul>
@@ -76,15 +77,15 @@
                     <ul class="nav navbar-top-links navbar-right">
                         <li>
                             <a class="logout" href="/logout">
-                            <i class="fa fa-sign-out"></i> 登 出
-                        </a>
+                                <i class="fa fa-sign-out"></i> 登 出
+                            </a>
                         </li>
                     </ul>
                     <ul class="nav navbar-top-links navbar-right" id="wxdiv" hidden="true">
                         <li>
                             <a class="towx" style="color:#33CCFF" id="wx_door" target="_blank">
-                    		<i class="fa fa-sign-out"></i> 微信公众号管理入口
-                        </a>
+                                <i class="fa fa-sign-out"></i> 微信公众号管理入口
+                            </a>
                         </li>
                     </ul>
                 </nav>
@@ -112,7 +113,7 @@
                                         </el-form-item>
                                         <el-form-item label="调出门店" prop="out_store">
                                             <el-select :disabled="_disabled" size="small" @change="selectStoreChange($event,'out')" v-model="formInline.out_store" placeholder="请选择">
-                                                <el-option v-for="item in dataList.stores" :disabled=" item.id == formInline.in_store" :value="item.id" :label="item.name"></el-option>
+                                                <el-option v-for="item in dataList.stores" :disabled=" item.id == formInline.in_storeId" :value="item.id" :label="item.name"></el-option>
                                             </el-select>
                                         </el-form-item>
                                         <el-form-item label="调出仓库" prop="out_warehouse">
@@ -122,7 +123,7 @@
                                         </el-form-item>
                                         <el-form-item label="调入门店" prop="in_store">
                                             <el-select :disabled="_disabled" @change="selectStoreChange($event,'in')" size="small" v-model="formInline.in_store" placeholder="请选择">
-                                                <el-option v-for="item in dataList.stores" :disabled=" item.id == formInline.out_store" :value="item.id" :label="item.name"></el-option>
+                                                <el-option v-for="item in dataList.stores" :disabled=" item.id == formInline.out_storeId" :value="item.id" :label="item.name"></el-option>
                                             </el-select>
                                         </el-form-item>
                                         <el-form-item label="调入仓库" prop="in_warehouse">
@@ -156,7 +157,7 @@
                                     <div id="tablebox"></div>
                                     <div>
                                         <el-table :data="tableData" style="width: 100%" id="eltableBox">
-                                            <el-table-column prop="productId" label="产品编号">
+                                            <el-table-column prop="productNumberCode" label="产品编号">
                                             </el-table-column>
                                             <el-table-column prop="productName" label="产品名称" min-width="160">
                                             </el-table-column>
@@ -189,8 +190,8 @@
                                         </el-table>
                                     </div>
                                     <div style="text-align:center;margin:32px 0 0 0" v-show="tableData.length">
-                                        <el-button  :plain="true" type="danger"  @click="dialog.deletedialogVisible = true"> 删除 </el-button>
-                                        <el-button type="info"  v-if="!_disabled" @click="save"> 保存 </el-button>
+                                        <el-button :plain="true" type="danger" @click="dialog.deletedialogVisible = true"> 删除 </el-button>
+                                        <el-button type="info" v-if="!_disabled" @click="save"> 保存 </el-button>
                                     </div>
                                 </div>
                             </div>
