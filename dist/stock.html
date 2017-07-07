@@ -87,7 +87,7 @@
                     <div class="ibox-content miboxcontent">
                         <div class="form-horizontal">
                             <div class="op-header">
-                                <el-button size="small" @click="data_list.stores.visible=true">选择门店</el-button>
+                                <el-button size="small" @click="open_store_tree">选择门店</el-button>
                                 <div style="display:inline-block;margin:0 10px;">
                                     <span>月份</span>
                                     <div style="display:inline-block">
@@ -99,11 +99,11 @@
                                     <el-input v-model="goods_filter.value" size="small" placeholder="按产品名称、产品编号搜索"></el-input>
                                 </div>
                                 <el-button type="primary" size="small" @click="query_products">查询</el-button>
-                                <el-button type="success" size="small" @click="handleExport">导出excel</el-button>
+                                <el-button type="success" size="small" :disabled="data_list.is_exporting" @click="handleExport">导出excel</el-button>
                             </div>
                             <div class="content-body myel" style="margin-top:15px">
 
-                                <el-tabs id="center" v-model="activeName" @tab-click="handleTabsClick">
+                                <el-tabs v-model="activeName" @tab-click="handleTabsClick">
                                     <el-tab-pane label="产品总库存" name="0" id="sumStock">
                                         <el-table :data="data_list.center_store.tableData" style="width: 100%" @row-click="rowClick">
                                             <el-table-column prop="organizationName" label="门店">
@@ -127,14 +127,40 @@
                                             <el-table-column prop="realRestNum" align="right" label="实际库存数量" width="120">
                                             </el-table-column>
                                         </el-table>
+                                        <!-- start 导出exlce 总仓库数据的模板-->
+                                        <div style="display:none">
+                                            <el-table id="center" :data="data_list.tableData_center_export" style="width: 100%">
+                                                <el-table-column prop="organizationName" label="门店">
+                                                </el-table-column>
+                                                <el-table-column prop="numberCode" label="产品编号" min-width="160">
+                                                </el-table-column>
+                                                <el-table-column prop="productName" label="产品名称" min-width="130">
+                                                </el-table-column>
+                                                <el-table-column prop="categoryName" label="品类">
+                                                </el-table-column>
+                                                <el-table-column prop="beginNum" align="right" label="期初数量" width="110">
+                                                </el-table-column>
+                                                <el-table-column prop="entryNum" align="right" label="本月入库数" width="110">
+                                                </el-table-column>
+                                                <el-table-column prop="deliveryNum" align="right" label="本月出库数" width="110">
+                                                </el-table-column>
+                                                <el-table-column prop="restNum" align="right" label="库存数量" width="110">
+                                                </el-table-column>
+                                                <el-table-column prop="surplusQuantity" align="right" label="欠货数量" width="110">
+                                                </el-table-column>
+                                                <el-table-column prop="realRestNum" align="right" label="实际库存数量" width="120">
+                                                </el-table-column>
+                                            </el-table><!-- end 导出exlce 总仓库数据的模板-->
+                                        </div>
                                         <div v-show="data_list.center_store.total" style="margin-top:18px;">
                                             <el-pagination layout="prev, pager, next" :total="data_list.center_store.total" @current-change="currentChange" :current-page.sync="data_list.center_store.page"
                                                 :page-size="data_list.size">
                                             </el-pagination>
                                         </div>
+
                                     </el-tab-pane>
                                     <el-tab-pane label="产品库分仓库查看" name="1">
-                                        <el-table id="child" :data="data_list.child_store.tableData" max-height="480" style="width: 100%" @row-click="rowClick">
+                                        <el-table :data="data_list.child_store.tableData" max-height="480" style="width: 100%" @row-click="rowClick">
                                             <el-table-column prop="organizationName" label="门店">
                                             </el-table-column>
                                             <el-table-column prop="productName" label="产品名称">
@@ -152,6 +178,28 @@
                                             <el-table-column prop="restNum" align="right" label="库存数" width="120">
                                             </el-table-column>
                                         </el-table>
+                                        <!-- start 导出exlce 分仓库数据的模板-->
+                                        <div style="display:none;">
+                                            <el-table id="child" :data="data_list.tableData_child_export" max-height="480" style="width: 100%">
+                                                <el-table-column prop="organizationName" label="门店">
+                                                </el-table-column>
+                                                <el-table-column prop="productName" label="产品名称">
+                                                </el-table-column>
+                                                <el-table-column prop="categoryName" label="产品品类">
+                                                </el-table-column>
+                                                <el-table-column prop="storageName" label="仓库">
+                                                </el-table-column>
+                                                <el-table-column prop="beginNum" align="right" label="期初数量" width="140">
+                                                </el-table-column>
+                                                <el-table-column prop="entryNum" align="right" label="本月入库数" width="140">
+                                                </el-table-column>
+                                                <el-table-column prop="deliveryNum" align="right" label="本月出库数" width="140">
+                                                </el-table-column>
+                                                <el-table-column prop="restNum" align="right" label="库存数" width="120">
+                                                </el-table-column>
+                                            </el-table>
+                                        </div><!-- end 导出exlce 分仓库数据的模板-->
+
                                         <div v-show="data_list.child_store.total" style="margin-top:18px;">
                                             <el-pagination layout="prev, pager, next" :total="data_list.child_store.total" @current-change="currentChange" :current-page.sync="data_list.child_store.page"
                                                 :page-size="data_list.size">
