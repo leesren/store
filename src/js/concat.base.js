@@ -339,6 +339,16 @@ eher_util.prototype.date2String = function (date) {// 导出到excle
     }
     return year + '-' + m + '-' + d;
 }
+eher_util.prototype.date_month = function(date){
+    if (!(date instanceof Date)) {
+        console.warn("您给的参数不是Date 实例");
+        return date;
+    }
+    str = this.date2String(date); 
+    var arr = str.split('-');
+    arr.pop();
+    return  arr.join('-');
+}
 eher_util.prototype.destory_handsontable = function (id) {
     if (!window.hottabel) return;
     hottabel.destroy();
@@ -500,6 +510,7 @@ eher_util.prototype.remove_mutiple_2_list = function (a, b) {// 两数组重复
         }
     }
 }
+
 eher_util.prototype.validate = function (v, type, options) {
     function IsNumeric(input) {
         return (+input) == input && ('' + input).trim().length > 0;
@@ -555,6 +566,32 @@ eher_util.prototype.validate = function (v, type, options) {
         isNumeric: IsNumeric
     }
 }
+eher_util.prototype.build_brand_stores_2_eltree = function (list) {
+  
+    function storeinfo(store) {
+        if (store instanceof Array) {
+            for (var j = 0; j < store.length; j++) {
+                var s = store[j];
+                if (s.leaf) {
+                    s.id = s.content.id;
+                    s.label = s.content.name;
+                    s.parentId = s.content.parentId;
+                } else {
+                    storeinfo(s)
+                }
+            }
+        } else { 
+            store.id = store.content.id;
+            store.label = store.content.name;
+            store.parentId = store.content.parentId;
+            if (!store.leaf) {
+                storeinfo(store.children);
+            }
+        }
+    }
+    storeinfo(list);
+    return list;
+}
 eher_util.prototype.get_brand_stores = function (brandTree) {
     var l = [];
     function storeinfo(store) {
@@ -564,6 +601,9 @@ eher_util.prototype.get_brand_stores = function (brandTree) {
                 s.leaf ? l.push(s.content) : storeinfo(s);
             }
         } else {
+            store['id'] = store.content.id;
+            store['name'] = store.content.name;
+            store['parentId'] = store.content.parentId;
             l.push(store.content);
             if (!store.leaf) {
                 storeinfo(store.children);
@@ -590,11 +630,11 @@ dataRequest.prototype.listGoods = function (keyWord, page, size) {
     }
     return Vue.prototype.$http.post('/doResourceCommon/listGoods', data)
 }
-dataRequest.prototype.query_stores = function (id) {
+dataRequest.prototype.query_stores = function (id,tolist) {
     return new Promise(function (resolve, reject) {
         Vue.prototype.$http.post('/doResourceCommon/listOrgTree', { "orgId": id })
             .then(function (result) {
-                resolve(eher_util.get_brand_stores(result));
+                resolve( tolist ? eher_util.get_brand_stores(result) : eher_util.build_brand_stores_2_eltree(result));
             }, function (e) {
                 reject(e);
             })
@@ -606,21 +646,29 @@ dataRequest.prototype.query_hourse = function (orgId) {// 查询仓库
 }
 dataRequest.prototype.query_store = function (orgId) {// 查询仓库
     var self = window.$app;
-    if(!self){ return}
-    self.$http.post('/doResourceCommon/listStorage', { "orgId": orgId })
-        .then(function (result) {
-            if (result && result.length > 0) {
-                self.dataList.storeList = result;
-            }
-        }, function (error) {
-            console.error(error);
-        }).catch(function (error) {
-            console.error(error);
-        })
+    if (!self) { return }
+    return new Promise(function (reslove, reject) {
+        self.$http.post('/doResourceCommon/listStorage', { "orgId": orgId })
+            .then(function (result) {
+                if (result && result.length > 0) {
+                    if (self.dataList && self.dataList.storeList) {
+                        self.dataList.storeList = result;
+                    }
+                    reslove(result);
+                }
+            }, function (error) {
+                console.error(error);
+                reject(error);
+            }).catch(function (error) {
+                console.error(error);
+                reject(error);
+            })
+    })
+
 }
 dataRequest.prototype.query_signer = function (orgId) {// 审核人
     var self = window.$app;
-    if(!self){ return}
+    if (!self) { return }
     self.$http.post('/doResourceCommon/listEmployee', { "orgId": orgId })
         .then(function (result) {
             if (result && result.length > 0) {

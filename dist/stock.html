@@ -21,7 +21,6 @@
         .select-date .el-input--small .el-input__inner {
             width: 125px;
         }
-        #sumStock .el-table__row{ cursor: pointer}
     </style>
 </head>
 
@@ -88,70 +87,79 @@
                     <div class="ibox-content miboxcontent">
                         <div class="form-horizontal">
                             <div class="op-header">
-                                <el-button size="small" @click="openSelectStore">选择门店</el-button>
+                                <el-button size="small" @click="data_list.stores.visible=true">选择门店</el-button>
                                 <div style="display:inline-block;margin:0 10px;">
                                     <span>月份</span>
-                                    <div style="display:inline-block" class="select-date">
-                                        <el-select v-model="goods_filter.selected" placeholder="请选择" size="small">
-                                            <el-option v-for="item in goods_filter.options" :key="item.value" :label="item.label" :value="item.value">
-                                            </el-option>
-                                        </el-select>
+                                    <div style="display:inline-block">
+                                        <el-date-picker size="small" v-model="goods_filter.month" type="month" placeholder="选择月">
+                                        </el-date-picker>
                                     </div>
                                 </div>
                                 <div style="display:inline-block">
                                     <el-input v-model="goods_filter.value" size="small" placeholder="按产品名称、产品编号搜索"></el-input>
                                 </div>
-                                <el-button type="primary" size="small">查询</el-button>
+                                <el-button type="primary" size="small" @click="query_products">查询</el-button>
                                 <el-button type="success" size="small" @click="handleExport">导出excel</el-button>
                             </div>
-                            <div class="content-body" style="margin-top:15px">
+                            <div class="content-body myel" style="margin-top:15px">
 
-                                <el-tabs v-model="activeName" @tab-click="handleClick">
+                                <el-tabs id="center" v-model="activeName" @tab-click="handleTabsClick">
                                     <el-tab-pane label="产品总库存" name="0" id="sumStock">
-                                        <el-table :data="tableData" style="width: 100%" @row-click="rowClick">
-                                            <el-table-column prop="name" label="门店">
+                                        <el-table :data="data_list.center_store.tableData" style="width: 100%" @row-click="rowClick">
+                                            <el-table-column prop="organizationName" label="门店">
                                             </el-table-column>
-                                            <el-table-column prop="no" label="产品编号" min-width="160">
+                                            <el-table-column prop="numberCode" label="产品编号" min-width="160">
                                             </el-table-column>
-                                            <el-table-column prop="stock" label="产品名称" min-width="130">
+                                            <el-table-column prop="productName" label="产品名称" min-width="130">
                                             </el-table-column>
-                                            <el-table-column prop="name" label="品类">
+                                            <el-table-column prop="categoryName" label="品类">
                                             </el-table-column>
-                                            <el-table-column prop="numbers" align="right" label="期初数量" width="110">
+                                            <el-table-column prop="beginNum" align="right" label="期初数量" width="110">
                                             </el-table-column>
-                                            <el-table-column prop="numbers" align="right" label="本月入库数" width="110">
+                                            <el-table-column prop="entryNum" align="right" label="本月入库数" width="110">
                                             </el-table-column>
-                                            <el-table-column prop="numbers" align="right" label="本月出库数" width="110">
+                                            <el-table-column prop="deliveryNum" align="right" label="本月出库数" width="110">
                                             </el-table-column>
-                                            <el-table-column prop="numbers" align="right" label="库存数量" width="110">
+                                            <el-table-column prop="restNum" align="right" label="库存数量" width="110">
                                             </el-table-column>
-                                            <el-table-column prop="numbers" align="right" label="欠货数量" width="110">
+                                            <el-table-column prop="surplusQuantity" align="right" label="欠货数量" width="110">
                                             </el-table-column>
-                                            <el-table-column prop="numbers" align="right" label="实际库存数量" width="120">
+                                            <el-table-column prop="realRestNum" align="right" label="实际库存数量" width="120">
                                             </el-table-column>
                                         </el-table>
+                                        <div v-show="data_list.center_store.total" style="margin-top:18px;">
+                                            <el-pagination layout="prev, pager, next" :total="data_list.center_store.total" @current-change="currentChange" :current-page.sync="data_list.center_store.page"
+                                                :page-size="data_list.size">
+                                            </el-pagination>
+                                        </div>
                                     </el-tab-pane>
                                     <el-tab-pane label="产品库分仓库查看" name="1">
-                                        <el-table :data="tableData" max-height="480" style="width: 100%" @row-click="rowClick">
-                                            <el-table-column prop="name" label="门店">
+                                        <el-table id="child" :data="data_list.child_store.tableData" max-height="480" style="width: 100%" @row-click="rowClick">
+                                            <el-table-column prop="organizationName" label="门店">
                                             </el-table-column>
-                                            <el-table-column prop="stock" label="产品名称">
+                                            <el-table-column prop="productName" label="产品名称">
                                             </el-table-column>
-                                            <el-table-column prop="name" label="产品品类">
+                                            <el-table-column prop="categoryName" label="产品品类">
                                             </el-table-column>
-                                            <el-table-column prop="status" label="仓库">
+                                            <el-table-column prop="storageName" label="仓库">
                                             </el-table-column>
-                                            <el-table-column prop="numbers" align="right" label="期初数量" width="140">
+                                            <el-table-column prop="beginNum" align="right" label="期初数量" width="140">
                                             </el-table-column>
-                                            <el-table-column prop="numbers" align="right" label="本月入库数" width="140">
+                                            <el-table-column prop="entryNum" align="right" label="本月入库数" width="140">
                                             </el-table-column>
-                                            <el-table-column prop="numbers" align="right" label="本月出库数" width="140">
+                                            <el-table-column prop="deliveryNum" align="right" label="本月出库数" width="140">
                                             </el-table-column>
-                                            <el-table-column prop="numbers" align="right" label="库存数" width="120">
+                                            <el-table-column prop="restNum" align="right" label="库存数" width="120">
                                             </el-table-column>
                                         </el-table>
+                                        <div v-show="data_list.child_store.total" style="margin-top:18px;">
+                                            <el-pagination layout="prev, pager, next" :total="data_list.child_store.total" @current-change="currentChange" :current-page.sync="data_list.child_store.page"
+                                                :page-size="data_list.size">
+                                            </el-pagination>
+                                        </div>
                                     </el-tab-pane>
                                 </el-tabs>
+
                             </div>
                         </div>
                     </div>
@@ -169,24 +177,29 @@
         </div>
 
         <el-dialog title="产品交易明细报表" :visible.sync="dialog.dialogTableVisible">
-            <el-table :data="dialog.gridData" max-height="400">
-                <el-table-column property="name" label="交易类别" width="100"></el-table-column>
-                <el-table-column property="stock" label="门店"></el-table-column>
-                <el-table-column property="no" label="单据编号"></el-table-column>
-                <el-table-column property="in_time" label="单据日期"></el-table-column>
-                <el-table-column property="name" label="产品单位"></el-table-column>
-                <el-table-column property="numbers" label="交易数量" width="120"></el-table-column>
+            <el-table :data="data_list.dialog.tableData" max-height="400">
+                <el-table-column property="orderType" label="交易类别" width="100"></el-table-column>
+                <el-table-column property="organizationName" label="门店"></el-table-column>
+                <el-table-column property="orderNo" label="单据编号"></el-table-column>
+                <el-table-column property="orderDate" label="单据日期"></el-table-column>
+                <el-table-column property="unitName" label="产品单位"></el-table-column>
+                <el-table-column property="quantity" label="交易数量" width="120"></el-table-column>
             </el-table>
+            <div v-show="data_list.dialog.total" style="margin-top:18px;">
+                <el-pagination layout="prev, pager, next" :total="data_list.dialog.total" @current-change="currentDialogChange" :current-page.sync="data_list.dialog.page"
+                    :page-size="data_list.size">
+                </el-pagination>
+            </div>
         </el-dialog>
- 
-        <el-dialog title="选择门店" :visible.sync="tree_node.visible">
-            <el-tree :data="tree_node.data.list" accordion="true" show-checkbox node-key="id" :default-expanded-keys="[2, 3]" :default-checked-keys="[5]" :props="tree_node.data.defaultProps">
+
+        <el-dialog title="选择门店" :visible.sync="data_list.stores.visible">
+            <el-tree default-expand-all="true" :data="data_list.stores.tree" accordion="true" show-checkbox node-key="id" ref="tree">
             </el-tree>
-            <!--<span slot="footer" class="dialog-footer">
-                <el-button @click="tree_node.visible = false">取 消</el-button>
-                <el-button type="primary" @click="tree_node.visible = false">确 定</el-button>
-            </span>-->
-        </el-dialog> 
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="data_list.stores.visible = false">取 消</el-button>
+                <el-button type="primary" @click="select_store()">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 
     <script src="./vendor/vue/vue.min.js"></script>
