@@ -48,6 +48,7 @@ var app = new Vue({
             var link = '';
             this.activeIndex == 0 ? link = './transfer.html#/' : this.activeIndex == 1 ?
                 link = './transfer-out.html#/' : link = './transfer-in.html#/';
+
             window.location.href = link + row.id;
         },
         handleChange: function() {
@@ -69,6 +70,7 @@ var app = new Vue({
             var url = '';
             this.activeIndex == 0 ? url = '/doWareHouse/listTransferOrder' : this.activeIndex == 1 ?
                 url = '/doWareHouse/listDelivertyOrderFromTransfer' : url = '/doWareHouse/listEntryOrderFromTransfer';
+                
             this.$http.post(url, data)
                 .then(function(result) {
                     if (result.list) {

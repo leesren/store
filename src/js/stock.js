@@ -68,7 +68,6 @@ window.$app = new Vue({
                     self.$refs.tree.setCheckedNodes( self.data_list.stores.tree );
                 }, 200)
             }
-           
         },
         select_store: function () {
             var self = this;
@@ -101,10 +100,8 @@ window.$app = new Vue({
         },
         handleExport: function () {
             this.export_2_excle();
-
         },
         rowClick: function (row, event, column) {
-
             this.query_item_detail(row.organizationId, row.id);
         },
         currentChange: function (v) {
@@ -189,8 +186,7 @@ window.$app = new Vue({
                 "page": page,
                 "size": self.data_list.size
             })
-                .then(function (result) {
-                    console.log(result);
+                .then(function (result) { 
                     if (self.activeName == '0') {
                         self.data_list.center_store.tableData = result.list;
                         self.data_list.center_store.total = result.totalSize;

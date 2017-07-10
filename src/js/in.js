@@ -77,7 +77,7 @@ var app = window.$app = new Vue({
                 "entryDate": eher_util.date2String(this.formInline.in_time),
                 "note": this.formInline.desc,
                 "purchaseEmpId": this.formInline.buyer + '',
-                "operatorId": '8787426330226802018',// 不填
+                "operatorId": this.approveEmpId,// 不填
                 "itemList": this.tableData
             }
             var api = '/doWareHouse/saveEntryOrder';

@@ -209,6 +209,8 @@ eher_util.prototype.s2ab = function s2ab(s) {
         return buf;
     }
 }
+
+
 eher_util.prototype.element_table_2_table = function (id, removeContents, filename) {// 把element-ui 对应的table，转化成标准table
     var $table = $('#' + id);
     if (!$table) { return }
@@ -256,15 +258,15 @@ eher_util.prototype.date2String = function (date) {// 导出到excle
     }
     return year + '-' + m + '-' + d;
 }
-eher_util.prototype.date_month = function(date){
+eher_util.prototype.date_month = function (date) {
     if (!(date instanceof Date)) {
         console.warn("您给的参数不是Date 实例");
         return date;
     }
-    str = this.date2String(date); 
+    str = this.date2String(date);
     var arr = str.split('-');
     arr.pop();
-    return  arr.join('-');
+    return arr.join('-');
 }
 eher_util.prototype.destory_handsontable = function (id) {
     if (!window.hottabel) return;
@@ -484,7 +486,7 @@ eher_util.prototype.validate = function (v, type, options) {
     }
 }
 eher_util.prototype.build_brand_stores_2_eltree = function (list) {
-  
+    if (!list) return;
     function storeinfo(store) {
         if (store instanceof Array) {
             for (var j = 0; j < store.length; j++) {
@@ -497,7 +499,7 @@ eher_util.prototype.build_brand_stores_2_eltree = function (list) {
                     storeinfo(s)
                 }
             }
-        } else { 
+        } else {
             store.id = store.content.id;
             store.label = store.content.name;
             store.parentId = store.content.parentId;
@@ -510,6 +512,7 @@ eher_util.prototype.build_brand_stores_2_eltree = function (list) {
     return list;
 }
 eher_util.prototype.get_brand_stores = function (brandTree) {
+    if(!brandTree) return;
     var l = [];
     function storeinfo(store) {
         if (store instanceof Array) {
@@ -547,11 +550,11 @@ dataRequest.prototype.listGoods = function (keyWord, page, size) {
     }
     return Vue.prototype.$http.post('/doResourceCommon/listGoods', data)
 }
-dataRequest.prototype.query_stores = function (id,tolist) {
+dataRequest.prototype.query_stores = function (id, tolist) {
     return new Promise(function (resolve, reject) {
         Vue.prototype.$http.post('/doResourceCommon/listOrgTree', { "orgId": id })
             .then(function (result) {
-                resolve( tolist ? eher_util.get_brand_stores(result) : eher_util.build_brand_stores_2_eltree(result));
+                resolve(tolist ? eher_util.get_brand_stores(result) : eher_util.build_brand_stores_2_eltree(result));
             }, function (e) {
                 reject(e);
             })

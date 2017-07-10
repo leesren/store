@@ -80,7 +80,7 @@ var app = window.$app = new Vue({
                 "deliveryDate": eher_util.date2String(this.formInline.in_time),
                 "note": this.formInline.desc,
                 "receiveEmpId": this.formInline.buyer + '',
-                "operatorId": '8787426330226802018',// 不填
+                "operatorId":  this.approveEmpId,// 不填
                 "itemList": this.tableData
             }
             var api = '/doWareHouse/saveDeliOrder';
