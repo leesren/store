@@ -15,7 +15,7 @@ let concat = require('gulp-concat');
 let rename = require('gulp-rename');
 let cssnano = require('gulp-cssnano');
 var del = require('del');
- 
+
 let PROT = 4000;
 gulp.task('serve', () => {
     connect.server({
@@ -53,21 +53,27 @@ gulp.task('css', function () {
     return gulp.src(config.css.src)
         .pipe(gulp.dest(config.css.dest));
 });
-gulp.task('clean',function(){
-    return del(['tmp'], {dot: true})
-}) 
-gulp.task('css2',['clean'], function () {
-    return gulp.src(['./src/css/index.css','./src/css/style.css','!./src/css/bootstrap.min.css'])
+gulp.task('clean', function () {
+    return del(['tmp'], { dot: true })
+})
+gulp.task('css2', ['clean'], function () {
+    var postcss_plugins = [
+        autoprefixer({ browsers: ['> 0.1%'], cascade: false })
+    ];
+    return gulp.src(['./src/css/index.css'])
         .pipe(concat('mymain.css'))
         .pipe(cssnano())
+        .pipe(postcss(postcss_plugins))
         .pipe(gulp.dest('./tmp'));
 });
 gulp.task('scss', function () {
     var postcss_plugins = [
         autoprefixer({ browsers: ['> 0.1%'], cascade: false })
     ];
-    return gulp.src(config.scss.src)
+    return gulp.src('./src/scss/*.scss')
         .pipe(sass().on('error', sass.logError))
+        .pipe(concat('sass-all.min.css'))
+        .pipe(cssnano())
         .pipe(postcss(postcss_plugins))
         .pipe(gulp.dest(config.css.srcDir))
 });
@@ -78,10 +84,10 @@ gulp.task('js', () => {
 });
 gulp.task('concat', () => {
     var dir = './src/js';
-    gulp.src([dir+'/request.js',dir+'/util.js',dir+'/customer_module.js',dir+'/mixins.js'])
+    gulp.src([dir + '/request.js', dir + '/util.js', dir + '/customer_module.js', dir + '/mixins.js'])
         .pipe(concat('concat.base.js'))
         .pipe(gulp.dest(dir))
-}); 
+});
 
 gulp.task("revreplace", function () {
     return gulp.src('./src/*.html')
@@ -95,21 +101,21 @@ gulp.task('default', ['serve'], () => {
         gulp.src(config.reload.reloadFile)
             .pipe(connect.reload());
     });
-	gulp.watch('./src/*.html').on('change', function (file) {
+    gulp.watch('./src/*.html').on('change', function (file) {
         gulp.src('./src/*.html')
             .pipe(connect.reload());
     });
     gulp.watch([config.js.src], function (file) {// js处理
-        runSequence(['js','concat'], ['revreplace']);
+        runSequence(['js', 'concat'], ['revreplace']);
     });
-     
+
     gulp.watch([config.scss.src], function (file) {// js处理
         // let extname = path.extname(file.path);
-       runSequence(['scss'],function(){
-           runSequence('css','revreplace');
-       });
+        runSequence(['scss'], function () {
+            runSequence('css', 'revreplace');
+        });
     });
- 
+
 
     gulp.watch(config.html.src, function () {// html处理
         runSequence(['revreplace']);
