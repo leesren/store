@@ -102,9 +102,9 @@
                             <div class="content-body" style="margin-top:15px;min-height:420px;" class="tablebox">
 
                                 <el-tabs v-model="activeIndex" @tab-click="handleClick">
-                                    <el-tab-pane label="调拨单" name="0">调拨单</el-tab-pane>
-                                    <el-tab-pane label="调拨出库" name="1">调拨出库</el-tab-pane>
-                                    <el-tab-pane label="调拨入库" name="2">调拨入库</el-tab-pane>
+                                    <el-tab-pane label="调拨单" name="0"></el-tab-pane>
+                                    <el-tab-pane label="调拨出库" name="1"></el-tab-pane>
+                                    <el-tab-pane label="调拨入库" name="2"></el-tab-pane>
                                 </el-tabs>
 
 
@@ -112,7 +112,7 @@
                                     <el-table-column prop="orderNo" label="调拨单号">
                                     </el-table-column>
                                     <el-table-column prop="status" label="单据状态" width="100">
-                                        <template scope="scope">{{ goods_filter.outstore_status[+scope.row.statusCode + 1].text }}</template>
+                                        <!--<template scope="scope">{{ goods_filter.outstore_status[+scope.row.statusCode + 1].text }}</template>-->
                                     </el-table-column>
                                     <el-table-column prop="orderDate" label="调拨日期">
                                     </el-table-column>

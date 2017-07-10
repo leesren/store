@@ -3,17 +3,29 @@ var app = window.$app = new Vue({
     mixins: [mixin],
     data: {
         orgId: '8787426330209426723',
-        id: location.hash.slice(2) || '', // 详情的id
+        id: location.hash ? location.hash.slice(2) : '', // 详情的id
         approveEmpId: '8787426330226802018', // 审核人id
         status: 0,
-        formInline: {},
+        formInline: {
+            in_time: '',
+            desc: '',
+            check_warehouse: '', // 仓库
+            check_person: '', // 盘点人
+        },
+        formInlineRules: {
+            in_time: { required: true, message: '请选择盘点时间' },
+            check_warehouse: { required: true, message: '请选择仓库' },
+            check_person: { required: true, message: '请选择盘点人' },
+        },
         tableData: [],
         dataList: {
             stores: [],
             in_houses: [],
             out_houses: [],
-            cache_house: {}
-        },
+            cache_house: {},
+            storeList: [],
+            signerList: []
+        }
     },
     computed: {
         _disabled: function() {
@@ -27,6 +39,9 @@ var app = window.$app = new Vue({
     },
     mounted: function() {
         var self = this;
+        this.dataRequest.query_stores(this.orgId).then(function(e) {
+            self.dataList.stores = e;
+        })
         if (this.id) {
             this.initDataInfo();
         }
@@ -34,12 +49,20 @@ var app = window.$app = new Vue({
     methods: {
         initDataInfo: function() { // 初始化单的详情
             var self = this;
-            this.$http.post('/doWareHouse/listEntryOrderItemFromTransfer', { "id": this.id })
+            this.$http.post('/doWareHouse/queryTransferDetail', { "id": this.id })
                 .then(function(result) {
-                    self.formInline = result;
+                    self.formInline.out_storeId = result.fromOrgId;
+                    self.formInline.out_store = result.fromOrgName;
+                    self.formInline.out_warehouse = result.fromStorageId;
+                    self.formInline.in_storeId = result.toOrgId;
+                    self.formInline.in_store = result.toOrgName;
+                    self.formInline.in_warehouse = result.toStorageId;
+                    self.formInline.in_time = result.orderDate;
+                    self.formInline.desc = result.note;
+
                     self.tableData = result.itemList;
                     self.status = +result.statusCode;
-                    self.selectStoreChange(self.formInline.fromOrgId, 'in');
+                    self.selectStoreChange(self.formInline.out_storeId);
                 }, function(error) {
                     console.error(error);
                 })
@@ -48,50 +71,54 @@ var app = window.$app = new Vue({
             var self = this,
                 _cache = this.dataList.cache_house[v];
             if (_cache) {
-                self.dataList.in_houses = _cache;
+                self.dataList.out_houses = _cache;
                 return
             }
-            self.dataRequest.query_hourse(this.formInline.fromOrgId)
+            var orgId = this.formInline.out_storeId;
+            self.dataRequest.query_hourse(orgId)
                 .then(function(res) {
-                    self.dataList.in_houses = self.dataList.cache_house[v] = res;
+                    self.dataList.out_houses = self.dataList.cache_house[v] = res;
                 }, function(error) {
                     self.$message({ message: '仓库查询失败,code：' + error, type: 'warning' });
                 })
         },
-        _change: function(v) {
-            var newObj = Object.assign({}, this.tableData[v])
-            Vue.set(this.tableData, v, newObj);
+        handleCommand: function(v) {
+            this.goods_filter.selected = v;
         },
-        _count: function(i) {
-            var el = this.tableData[i];
-            return (el.price * el.quantity).toFixed(2);
+        submit: function(e) {
+
         },
         save_request: function(callback) {
+            if (!this.tableData.length) { this.$message({ message: '保存失败,您未添加产品', type: 'warning' }); return; }
             var data = {
-                id: this.id,
-                "storageId": this.formInline.toStorageId + '',
-                "entryDate": eher_util.date2String(this.formInline.orderDate),
-                "note": this.formInline.note,
-                "operatorId": this.approveEmpId + '',
-                "itemList": this.tableData
+                "storageId": this.formInline.check_warehouse + '',
+                "inventorychecker": this.formInline.check_person + '',
+                "acceptTime": eher_util.date2String(this.formInline.in_time),
+                "description": this.formInline.desc,
+                "ciidList": this.tableData
+            }
+            var api = '/checkInvertory/new';
+            if (this.id) {
+                data.id = this.id;
+                api = '/doWareHouse/modifyTransferOrder';
             }
             var self = this;
             return new Promise(function(resolve, reject) {
-                self.$http.post('/doWareHouse/modifyEntryOrder', data)
+                self.$http.post(api, data)
                     .then(function(result) {
                         if (callback) {
                             return resolve(result)
                         }
-                        self.$message({ message: '保存成功', type: 'success' });
+                        self.$message({ message: '添加成功', type: 'success' });
                         setTimeout(function() {
                             window.location.reload();
                         }, 400)
                     }, function(error) {
                         console.error(error);
-                        self.$message({ message: '保存失败,code：' + error, type: 'warning' });
+                        self.$message({ message: '添加失败,code：' + error, type: 'warning' });
                     }).catch(function(error) {
                         console.error(error);
-                        self.$message({ message: '保存失败', type: 'warning' });
+                        self.$message({ message: '添加失败', type: 'warning' });
                     })
             })
 
@@ -108,12 +135,10 @@ var app = window.$app = new Vue({
             var self = this;
             if (this.id && this.approveEmpId)
                 this.save('sign').then(function(e) {
-                    self.$http.post('/doWareHouse/approveEntryOrder', { id: self.id, approveEmpId: self.approveEmpId })
+                    self.$http.post('/doWareHouse/approveTransferOrder', { id: self.id, approveEmpId: self.approveEmpId })
                         .then(function(result) {
                             self.$message({ message: '审批成功', type: 'success' });
-                            setTimeout(function() {
-                                window.location.reload();
-                            }, 400)
+                            window.location.reload()
                         }, function(error) {
                             self.$log(error);
                             self.$message({ message: '审批失败,code：' + error, type: 'warning' });
@@ -123,21 +148,22 @@ var app = window.$app = new Vue({
         },
         unsign: function() {
             var self = this;
-            this.$http.post('/doWareHouse/antiApproveEntryOrder', { id: this.id, empId: this.approveEmpId })
+            this.$http.post('/doWareHouse/antiApproveTransferOrder', { id: this.id, empId: this.approveEmpId })
                 .then(function(result) {
                     self.$message({ message: '取消审批成功', type: 'success' });
-                    setTimeout(function() {
-                        window.location.reload();
-                    }, 400)
+                    window.location.reload()
                 }, function(error) {
                     self.$log(error);
                     self.$message({ message: '取消审批失败,code：' + error, type: 'warning' });
                 })
         },
         out_excel: function() {
-            eher_util.element_table_2_table('eltableBox', 8, '调拨入库单');
-        }
+            eher_util.element_table_2_table('eltableBox', 7, '调拨单');
+        },
 
+        delete_confirm: function() {
+            this.dialog.deletedialogVisible = false;
+        }
     }
 })
 window.$dataRequest.query_store($app.orgId);

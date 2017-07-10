@@ -3,7 +3,7 @@ var app = window.$app = new Vue({
     mixins: [mixin],
     data: {
         orgId: '8787426330209426723',
-        id: location.hash.slice(2) || '', // 详情的id
+        id: location.hash ? location.hash.slice(2) : '', // 详情的id
         approveEmpId: '8787426330226802018', // 审核人id
         status: 0,
         formInline: {
@@ -28,7 +28,8 @@ var app = window.$app = new Vue({
             stores: [],
             in_houses: [],
             out_houses: [],
-            cache_house: {}
+            cache_house: {},
+            storeList: []
         }
     },
     computed: {

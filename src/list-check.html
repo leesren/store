@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>一禾美云门店管理 | 批量入库</title>
+    <title>一禾美云门店管理 | 库存盘点</title>
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
     <link href="./css/bootstrap.min.css" rel="stylesheet">
     <link href="./css/font-awesome.min.css" rel="stylesheet">
@@ -75,10 +75,10 @@
                 <input type="hidden" id="menu_active" value="ResourceManagement-BatchImportManagement" />
                 <div class="ibox float-e-margins">
                     <div class="ibox-title" flexbox flex-center>
-                        <h4 flex>产品调拨</h4>
+                        <h4 flex>库存盘点</h4>
                         <div class="ibox-tools">
-                            <a href="./transfer.html">
-                                <el-button type="primary" size="small">新建调拨</el-button>
+                            <a href="./check.html">
+                                <el-button type="primary" size="small">新建盘点</el-button>
                             </a>
                         </div>
                     </div>
@@ -102,27 +102,37 @@
                             <div class="content-body" style="margin-top:15px;min-height:420px;" class="tablebox">
 
                                 <el-tabs v-model="activeIndex" @tab-click="handleClick">
-                                    <el-tab-pane label="调拨单" name="0"></el-tab-pane>
-                                    <el-tab-pane label="调拨出库" name="1"></el-tab-pane>
-                                    <el-tab-pane label="调拨入库" name="2"></el-tab-pane>
+                                    <el-tab-pane label="盘点单" name="0"></el-tab-pane>
+                                    <el-tab-pane label="盘盈入库" name="1"></el-tab-pane>
+                                    <el-tab-pane label="盘亏出库" name="2"></el-tab-pane>
                                 </el-tabs>
 
 
                                 <el-table :data="tableData.list" stripe style="width: 100%" @row-click="rowClick">
-                                    <el-table-column prop="orderNo" label="调拨单号">
+                                    <el-table-column prop="orderNo" label="盘点单号" v-if="activeIndex==0">
+                                    </el-table-column>
+                                    <el-table-column prop="orderNo" label="入库单号" v-if="activeIndex==1">
+                                    </el-table-column>
+                                    <el-table-column prop="orderNo" label="出库单号" v-if="activeIndex==2">
                                     </el-table-column>
                                     <el-table-column prop="status" label="单据状态" width="100">
-                                        <!--<template scope="scope">{{ goods_filter.outstore_status[+scope.row.statusCode + 1].text }}</template>-->
+                                        <template scope="scope">{{ goods_filter.outstore_status[+scope.row.statusCode + 1].text }}</template>
                                     </el-table-column>
-                                    <el-table-column prop="orderDate" label="调拨日期">
+                                    <el-table-column prop="orderDate" label="盘点日期" v-if="activeIndex==0">
                                     </el-table-column>
-                                    <el-table-column prop="fromOrgName" label="调出门店" v-if="activeIndex!=1">
+                                    <el-table-column prop="orderDate" label="入库日期" v-if="activeIndex==1">
                                     </el-table-column>
-                                    <el-table-column prop="fromStorageName" label="调出仓库" v-if="activeIndex==0">
+                                    <el-table-column prop="orderDate" label="出库日期" v-if="activeIndex==2">
                                     </el-table-column>
-                                    <el-table-column prop="toOrgName" label="调入门店" v-if="activeIndex!=2">
+                                    <el-table-column prop="fromOrgName" label="仓库">
                                     </el-table-column>
-                                    <el-table-column prop="toStorageName" label="调入仓库" v-if="activeIndex==0">
+                                    <el-table-column prop="fromStorageName" label="盘点人" v-if="activeIndex==0">
+                                    </el-table-column>
+                                    <el-table-column prop="fromStorageName" label="采购人" v-if="activeIndex==1">
+                                    </el-table-column>
+                                    <el-table-column prop="fromStorageName" label="领取人" v-if="activeIndex==2">
+                                    </el-table-column>
+                                    <el-table-column prop="toOrgName" label="创建时间">
                                     </el-table-column>
                                     <el-table-column prop="approveEmpName" label="审批人" width="100">
                                     </el-table-column>
@@ -156,7 +166,7 @@
 
     <script src="./js/request.js"></script>
     <script src="./js/util.js"></script>
-    <script src="./js/list-transfer.js"></script>
+    <script src="./js/list-check.js"></script>
 </body>
 
 </html>

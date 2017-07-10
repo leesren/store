@@ -4,7 +4,7 @@ var app = new Vue({
         goods_filter: {
             selected: null,
             options: eher_util.status_data().sign_status,
-            outstore_status: eher_util.status_data().transfer_status
+            outstore_status: eher_util.status_data().outstore_status
         },
         orgId: '8787426330226801974',
         activeIndex: 0,
@@ -19,12 +19,16 @@ var app = new Vue({
         },
         filters: {
             status: null,
-            startDate: eher_util.date2String(new Date),
+            startDate: '',
             endDate: eher_util.date2String(new Date),
         },
         tabIndexArray: [],
     },
     created: function() {
+        var date = new Date();
+        var monthAgo = date.getFullYear() + "-" + date.getMonth() + "-" + (date.getDate() + 1);
+        this.filters.startDate = eher_util.date2String(monthAgo);
+        console.log(monthAgo);
         this.tabIndexArray[0] = '0';
         this.questListEntryOrder();
 
@@ -63,15 +67,14 @@ var app = new Vue({
             this.status.status = true;
             var data = {
                 "orgId": this.orgId,
-                "startDate": eher_util.date2String(this.filters.startDate),
-                "endDate": eher_util.date2String(this.filters.endDate),
+                "startTime": eher_util.date2String(this.filters.startDate),
+                "endTime": eher_util.date2String(this.filters.endDate),
                 "status": this.goods_filter.selected,
-                "type": 3,
-                "page": this.status.current,
-                "size": this.status.size
+                "startNum": this.status.current,
+                "limit": this.status.size
             }
             var self = this;
-            var url = this.activeIndex == 0 ? '/doWareHouse/listTransferOrder' : this.activeIndex == 1 ?
+            var url = this.activeIndex == 0 ? '/checkInvertory/queryCheckInventories' : this.activeIndex == 1 ?
                 '/doWareHouse/listDelivertyOrderFromTransfer' : '/doWareHouse/listEntryOrderFromTransfer';
             this.$http.post(url, data)
                 .then(function(result) {
