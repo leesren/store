@@ -51,9 +51,9 @@ var app = new Vue({
             this.questListEntryOrder();
         },
         rowClick: function(row, event, column) {
-            console.log(row); 
+            console.log(row);
             var link = this.activeIndex == 0 ? './transfer.html#/' : this.activeIndex == 1 ? './transfer-out.html#/' : './transfer-in.html#/';
-            window.open(link + row.id); 
+            window.open(link + row.id);
         },
         handleChange: function() {
             this.questListEntryOrder();
@@ -70,9 +70,9 @@ var app = new Vue({
                 "page": this.status.current,
                 "size": this.status.size
             }
-            var self = this; 
+            var self = this;
             var url = this.activeIndex == 0 ? '/doWareHouse/listTransferOrder' : this.activeIndex == 1 ?
-                '/doWareHouse/listDelivertyOrderFromTransfer' : '/doWareHouse/listEntryOrderFromTransfer'; 
+                '/doWareHouse/listDelivertyOrderFromTransfer' : '/doWareHouse/listEntryOrderFromTransfer';
             this.$http.post(url, data)
                 .then(function(result) {
                     if (result.list) {

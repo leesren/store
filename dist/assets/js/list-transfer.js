@@ -21,16 +21,22 @@ var app = new Vue({
             status: null,
             startDate: eher_util.date2String(new Date),
             endDate: eher_util.date2String(new Date),
-        }
+        },
+        tabIndexArray: [],
     },
     created: function() {
+        this.tabIndexArray[0] = '0';
         this.questListEntryOrder();
 
     },
     methods: {
         handleClick: function(tab, event) {
             console.log(this.activeIndex);
-            this.questListEntryOrder();
+            if (this.tabIndexArray[this.activeIndex] != this.activeIndex) {
+                this.tabIndexArray[this.activeIndex] = this.activeIndex;
+                this.questListEntryOrder();
+            }
+
         },
         handleCommand: function(v) {
             this.goods_filter.selected = v;
@@ -41,15 +47,13 @@ var app = new Vue({
             this.questListEntryOrder();
         },
         query: function() {
+            this.tabIndexArray = [];
             this.questListEntryOrder();
         },
         rowClick: function(row, event, column) {
-            console.log(row);
-            var link = '';
-            this.activeIndex == 0 ? link = './transfer.html#/' : this.activeIndex == 1 ?
-                link = './transfer-out.html#/' : link = './transfer-in.html#/';
-
-            window.location.href = link + row.id;
+            console.log(row); 
+            var link = this.activeIndex == 0 ? './transfer.html#/' : this.activeIndex == 1 ? './transfer-out.html#/' : './transfer-in.html#/';
+            window.open(link + row.id); 
         },
         handleChange: function() {
             this.questListEntryOrder();
@@ -66,11 +70,9 @@ var app = new Vue({
                 "page": this.status.current,
                 "size": this.status.size
             }
-            var self = this;
-            var url = '';
-            this.activeIndex == 0 ? url = '/doWareHouse/listTransferOrder' : this.activeIndex == 1 ?
-                url = '/doWareHouse/listDelivertyOrderFromTransfer' : url = '/doWareHouse/listEntryOrderFromTransfer';
-                
+            var self = this; 
+            var url = this.activeIndex == 0 ? '/doWareHouse/listTransferOrder' : this.activeIndex == 1 ?
+                '/doWareHouse/listDelivertyOrderFromTransfer' : '/doWareHouse/listEntryOrderFromTransfer'; 
             this.$http.post(url, data)
                 .then(function(result) {
                     if (result.list) {

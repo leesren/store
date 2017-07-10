@@ -111,7 +111,9 @@ var app = window.$app = new Vue({
                     self.$http.post('/doWareHouse/approveEntryOrder', { id: self.id, approveEmpId: self.approveEmpId })
                         .then(function(result) {
                             self.$message({ message: '审批成功', type: 'success' });
-                            window.location.reload();
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 400) 
                         }, function(error) {
                             self.$message({ message: '审批失败,code：' + error, type: 'warning' });
                         })
@@ -122,8 +124,10 @@ var app = window.$app = new Vue({
             var self = this;
             this.$http.post('/doWareHouse/antiApproveEntryOrder', { id: this.id, empId: this.approveEmpId })
                 .then(function(result) {
-                    self.$message({ message: '取消审批成功', type: 'success' });
-                    window.location.reload();
+                    self.$message({ message: '取消审批成功', type: 'success' }); 
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 400) 
                 }, function(error) {
                     self.$log(error);
                     self.$message({ message: '取消审批失败,code：' + error, type: 'warning' });
