@@ -13,6 +13,8 @@ let sass = require('gulp-sass');
 let autoprefixer = require('autoprefixer');
 let concat = require('gulp-concat');
 let rename = require('gulp-rename');
+let cssnano = require('gulp-cssnano');
+var del = require('del');
  
 let PROT = 4000;
 gulp.task('serve', () => {
@@ -20,7 +22,7 @@ gulp.task('serve', () => {
         root: [__dirname],
         port: PROT,
         livereload: true
-    });
+    })
 });
 
 let config = {
@@ -51,6 +53,15 @@ gulp.task('css', function () {
     return gulp.src(config.css.src)
         .pipe(gulp.dest(config.css.dest));
 });
+gulp.task('clean',function(){
+    return del(['tmp'], {dot: true})
+}) 
+gulp.task('css2',['clean'], function () {
+    return gulp.src(['./src/css/index.css','./src/css/style.css','!./src/css/bootstrap.min.css'])
+        .pipe(concat('mymain.css'))
+        .pipe(cssnano())
+        .pipe(gulp.dest('./tmp'));
+});
 gulp.task('scss', function () {
     var postcss_plugins = [
         autoprefixer({ browsers: ['> 0.1%'], cascade: false })
@@ -58,7 +69,7 @@ gulp.task('scss', function () {
     return gulp.src(config.scss.src)
         .pipe(sass().on('error', sass.logError))
         .pipe(postcss(postcss_plugins))
-        .pipe(gulp.dest(config.css.srcDir));
+        .pipe(gulp.dest(config.css.srcDir))
 });
 gulp.task('js', () => {
     gulp.src(config.js.src)
@@ -69,7 +80,6 @@ gulp.task('concat', () => {
     var dir = './src/js';
     gulp.src([dir+'/request.js',dir+'/util.js',dir+'/customer_module.js',dir+'/mixins.js'])
         .pipe(concat('concat.base.js'))
-        // .pipe(uglify())
         .pipe(gulp.dest(dir))
 }); 
 

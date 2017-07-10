@@ -22,16 +22,17 @@ var app = new Vue({
                 value: 4,
                 label: '201702'
             }],
-            value: ''
+            value: '',
+            value2: '',
         },
         activeName: '0',
         dialog: {
             gridData: instock_mockdata,
             dialogTableVisible: false,
         },
-        tree_node:{
-            data:tree_node,
-            visible:false
+        tree_node: {
+            data: tree_node,
+            visible: false
         },
         start: "2017-04-15",
         end: "2017-06-15",
@@ -47,9 +48,16 @@ var app = new Vue({
         },
         handleExport: function () {
             eher_util.element_table_2_table()
-        }, 
-        openSelectStore:function(){
+        },
+        openSelectStore: function () {
             this.tree_node.visible = true;
-        }
+        },
+        change: eher_util.throttle(function (e) {
+            console.log('1111', e);
+        }, 800),
+ 
+        change2: eher_util.debounce(function (e) {
+            console.log('do 2222',e);
+        }, 200)
     }
 })

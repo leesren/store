@@ -101,7 +101,8 @@
                                     </el-date-picker>
                                 </div>
                                 <div style="display:inline-block">
-                                    <el-input v-model="goods_filter.value" size="small" placeholder="按产品名称、产品编号搜索"></el-input>
+                                    <el-input v-model="goods_filter.value" size="small" @change="change" placeholder="按产品名称、产品编号搜索"></el-input>
+                                    <el-input v-model="goods_filter.value2" size="small" @change="change2" placeholder="按产品名称、产品编号搜索"></el-input>
                                 </div>
                                 <el-button type="primary" size="small">查询</el-button>
                                 <el-button type="success" size="small" @click="handleExport">导出excel</el-button>
@@ -147,8 +148,7 @@
     <script src="./vendor/vue/element-ui.js"></script>
 
     <script src="./vendor/mock/yod-mock.min.js"></script>
-    <script src="./vendor/mock/mock_data.js"></script>
-
+    <script src="./vendor/mock/mock_data.js"></script> 
 
     <script src="./js/util.js"></script>
     <script src="./js/request.js"></script>
@@ -168,6 +168,7 @@
     <!--<script src=./vendor/excel/base64.min.js></script>-->
     <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/base64.min.js"></script>
     <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/xlsx.full.min.js"></script>
+    
 </body>
 
 </html>
