@@ -86,7 +86,7 @@
                     </ul>
                 </nav>
             </div>
-            <div class="wrapper wrapper-content animated fadeInRight" id="pager_main">
+            <div class="wrapper wrapper-content animated fadeInRight my-invisi" :style="{'visibility':visibility}" id="pager_main">
 
                 <input type="hidden" id="menu_active" value="ResourceManagement-BatchImportManagement" />
                 <div class="ibox float-e-margins">
@@ -176,9 +176,9 @@
                                             </el-table-column>
                                         </el-table>
                                     </div>
-                                    <div style="text-align:center;margin:32px 0 0 0" class="myel" v-show="tableData.length">  
-                                        <el-button type="danger" :plain="true" @click="dialog.deletedialogVisible = true">删除</el-button>    
-                                        <el-button type="info"  v-if="!_disabled" @click="save">保存</el-button>
+                                    <div style="text-align:center;margin:32px 0 0 0" class="myel" v-show="tableData.length">
+                                        <el-button type="danger" :plain="true" @click="dialog.deletedialogVisible = true">删除</el-button>
+                                        <el-button type="info" v-if="!_disabled" @click="save">保存</el-button>
                                     </div>
                                 </div>
                             </div>
@@ -262,27 +262,16 @@
     <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/element-ui.js"></script>
 
     <!-- excel 导出-->
-    <!--<script src=./vendor/excel/shim.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/shim.js"></script>
-    <!--<script src=./vendor/excel/Blob.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/Blob.js"></script>
-    <!--<script src=./vendor/excel/FileSaver.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/FileSaver.js"></script>
-    <!--<script src=./vendor/excel/swfobject.js></script>-->
-    <script src=http://apps.bdimg.com/libs/swfobject/2.2/swfobject.js></script>
-    <!--<script src=./vendor/excel/downloadify.min.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/downloadify.min.js"></script>
-    <!--<script src=./vendor/excel/base64.min.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/base64.min.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/shim.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/Blob.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/FileSaver.js"></script>
+    <script defer async src=http://apps.bdimg.com/libs/swfobject/2.2/swfobject.js></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/downloadify.min.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/base64.min.js"></script>
 
-    <script src="./vendor/mock/yod-mock.min.js"></script>
-    <script src="./vendor/mock/mock_data.js"></script>
-    <!--<script src="./vendor/excel/xlsx.full.min.js"></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/xlsx.full.min.js"></script>
-    <script src="./vendor/handson-table/handsontable.full.min.js"></script>
-    <script src="http://apps.bdimg.com/libs/moment/2.8.3/moment.js"></script>
-    <!--<script src="./vendor/moment/moment.min.js"></script>-->
-    <!--<script src="./vendor/underscore/underscore-min.js"></script>-->
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/xlsx.full.min.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/handsontable.full.min.js"></script>
+    <script defer async src="http://apps.bdimg.com/libs/moment/2.8.3/moment.js"></script>
 
     <!--<script src="./js/request.js"></script>
     <script src="./js/util.js"></script>

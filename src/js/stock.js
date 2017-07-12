@@ -1,6 +1,7 @@
 
 window.$app = new Vue({
     el: '#wrapper',
+    mixins: [ mixin ],
     data: {
         orgId: '8787426330226801974',
         goods_filter: {
@@ -57,6 +58,7 @@ window.$app = new Vue({
                 self.query_products();
 
             })
+        this.visibility_view();
     },
     methods: {
         open_store_tree: function () {

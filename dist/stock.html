@@ -74,7 +74,7 @@
                     </ul>
                 </nav>
             </div>
-            <div class="wrapper wrapper-content animated fadeInRight" id="pager_main">
+            <div class="wrapper wrapper-content animated fadeInRight my-invisi" :style="{'visibility':visibility}" id="pager_main">
 
                 <input type="hidden" id="menu_active" value="ResourceManagement-BatchImportManagement" />
                 <div class="ibox float-e-margins">
@@ -150,7 +150,8 @@
                                                 </el-table-column>
                                                 <el-table-column prop="realRestNum" align="right" label="实际库存数量" width="120">
                                                 </el-table-column>
-                                            </el-table><!-- end 导出exlce 总仓库数据的模板-->
+                                            </el-table>
+                                            <!-- end 导出exlce 总仓库数据的模板-->
                                         </div>
                                         <div v-show="data_list.center_store.total" style="margin-top:18px;">
                                             <el-pagination layout="prev, pager, next" :total="data_list.center_store.total" @current-change="currentChange" :current-page.sync="data_list.center_store.page"
@@ -198,7 +199,8 @@
                                                 <el-table-column prop="restNum" align="right" label="库存数" width="120">
                                                 </el-table-column>
                                             </el-table>
-                                        </div><!-- end 导出exlce 分仓库数据的模板-->
+                                        </div>
+                                        <!-- end 导出exlce 分仓库数据的模板-->
 
                                         <div v-show="data_list.child_store.total" style="margin-top:18px;">
                                             <el-pagination layout="prev, pager, next" :total="data_list.child_store.total" @current-change="currentChange" :current-page.sync="data_list.child_store.page"
@@ -259,22 +261,18 @@
 
     <script src="./js/util.js"></script>
     <script src="./js/request.js"></script>
+    <script src="./js/mixins.js"></script>
     <script src="./js/stock.js"></script>
 
     <!-- excel 导出-->
-    <!--<script src=./vendor/excel/shim.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/shim.js"></script>
-    <!--<script src=./vendor/excel/Blob.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/Blob.js"></script>
-    <!--<script src=./vendor/excel/FileSaver.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/FileSaver.js"></script>
-    <!--<script src=./vendor/excel/swfobject.js></script>-->
-    <script src=http://apps.bdimg.com/libs/swfobject/2.2/swfobject.js></script>
-    <!--<script src=./vendor/excel/downloadify.min.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/downloadify.min.js"></script>
-    <!--<script src=./vendor/excel/base64.min.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/base64.min.js"></script>
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/xlsx.full.min.js"></script>
+
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/shim.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/Blob.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/FileSaver.js"></script>
+    <script defer async src=http://apps.bdimg.com/libs/swfobject/2.2/swfobject.js></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/downloadify.min.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/base64.min.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/xlsx.full.min.js"></script>
 </body>
 
 </html>

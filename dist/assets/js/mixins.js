@@ -18,7 +18,8 @@ var mixin = {
             list: [],
             check_result: [],
             handson_data: {}
-        }
+        },
+        visibility:''//visible
     },
     methods: {
         save_excle: function (callback) {// v 用于回调
@@ -130,5 +131,8 @@ var mixin = {
         deleteRow: function (index) {
             this.tableData.splice(index, 1);
         },
+        visibility_view:function(){
+            this.visibility = 'visible'
+        }
     }
 };

@@ -42,6 +42,7 @@ var app = window.$app = new Vue({
         if (this.id) {
             this.initDataInfo();
         }
+        this.visibility_view();
     },
     methods: {
         initDataInfo: function () {// 初始化单的详情
