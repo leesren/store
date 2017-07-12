@@ -23,13 +23,13 @@
         .my-dialog-box .data-list-content .list-group-item:hover {
             background-color: #fafafa;
         }
-
+        
         .my-dialog-box .data-list-content a.list-group-item.active {
             background-color: #b4d7f5;
             border: 1px solid #b4d7f5;
             color: #1f2d3d
         }
-
+        
         .handsontable td.htInvalid {
             background-color: #ff4c42!important
         }
@@ -45,15 +45,15 @@
                     <li class="nav-header">
                         <div class="dropdown profile-element">
                             <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                            <span class="clear">
+                                <span class="clear">
                                 <span class="block m-t-xs">
                                     <strong class="font-bold">Welcome!</strong>
                                 </span>
                                 <span class="text-muted text-xs block">
                                     小* <b class="caret"></b>
                                 </span>
-                            </span>
-                        </a>
+                                </span>
+                            </a>
                             <ul class="dropdown-menu animated fadeInRight m-t-xs">
                                 <li><a href="/modifyPassword">修改密码</a></li>
                             </ul>
@@ -73,15 +73,15 @@
                     <ul class="nav navbar-top-links navbar-right">
                         <li>
                             <a class="logout" href="/logout">
-                            <i class="fa fa-sign-out"></i> 登 出
-                        </a>
+                                <i class="fa fa-sign-out"></i> 登 出
+                            </a>
                         </li>
                     </ul>
                     <ul class="nav navbar-top-links navbar-right" id="wxdiv" hidden="true">
                         <li>
                             <a class="towx" style="color:#33CCFF" id="wx_door" target="_blank">
-                    		<i class="fa fa-sign-out"></i> 微信公众号管理入口
-                        </a>
+                                <i class="fa fa-sign-out"></i> 微信公众号管理入口
+                            </a>
                         </li>
                     </ul>
                 </nav>
@@ -94,8 +94,8 @@
                         <h4 flex>产品出库</h4>
                         <div class="ibox-tools">
 
-                            <el-button type="primary" size="small" @click="sign" v-if="id && status === 0">审批</el-button>
-                            <el-button type="warning" size="small" @click="unsign" v-if="id && status === 1">取消审批</el-button>
+                            <el-button type="primary" size="small" @click="sign" v-if="id && status === 0 && hasPower">审批</el-button>
+                            <el-button type="warning" size="small" @click="unsign" v-if="id && status === 1 && hasPower">取消审批</el-button>
                             <el-button type="success" size="small" @click="out_excel">导出</el-button>
                             <el-button type="primary" size="small">返回</el-button>
                         </div>
@@ -176,9 +176,9 @@
                                             </el-table-column>
                                         </el-table>
                                     </div>
-                                    <div style="text-align:center;margin:32px 0 0 0" class="myel" v-show="tableData.length">  
-                                        <el-button type="danger" :plain="true" @click="dialog.deletedialogVisible = true">删除</el-button>    
-                                        <el-button type="info"  v-if="!_disabled" @click="save">保存</el-button>
+                                    <div style="text-align:center;margin:32px 0 0 0" class="myel" v-show="tableData.length">
+                                        <el-button type="danger" :plain="true" @click="dialog.deletedialogVisible = true">删除</el-button>
+                                        <el-button type="info" v-if="!_disabled" @click="save">保存</el-button>
                                     </div>
                                 </div>
                             </div>

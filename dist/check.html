@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <title>一禾美云门店管理 | 新建盘点</title>
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
-    <link href="./css/bootstrap.min.css" rel="stylesheet"> 
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
     <link href="./css/animate.css" rel="stylesheet">
     <link href="./css/style.css" rel="stylesheet">
     <link href="./css/custom.css" rel="stylesheet">
@@ -22,22 +22,29 @@
         .my-dialog-box .data-list-content .list-group-item:hover {
             background-color: #fafafa;
         }
-
+        
         .my-dialog-box .data-list-content a.list-group-item.active {
             background-color: #b4d7f5;
             border: 1px solid #b4d7f5;
             color: #1f2d3d
         }
-
+        
         .handsontable td.htInvalid {
             background-color: #ff4c42!important
         }
-
+        
         .el-button--danger.is-plain {
             color: #ff4949;
         }
-        .store_select-box .el-input--small .el-input__inner{ height: 30px !important;}
-        .store_select-box .el-select__tags{height: 30px; overflow: hidden}
+        
+        .store_select-box .el-input--small .el-input__inner {
+            height: 30px !important;
+        }
+        
+        .store_select-box .el-select__tags {
+            height: 30px;
+            overflow: hidden
+        }
     </style>
 </head>
 
@@ -98,9 +105,10 @@
                     <div class="ibox-title" flexbox flex-center>
                         <h4 flex>新建盘点</h4>
                         <div class="ibox-tools">
-                            <el-button type="primary" size="small" @click="sign" v-if="id && status === 0">审批</el-button>
-                            <el-button type="warning" size="small" @click="unsign" v-if="id && status === 1">取消审批</el-button>
+                            <el-button type="primary" size="small" @click="sign" v-if="id && status === 0 && hasPower">审批</el-button>
+                            <el-button type="warning" size="small" @click="unsign" v-if="id && status === 1 && hasPower">取消审批</el-button>
                             <el-button type="success" size="small" @click="out_excel">导出</el-button>
+                            <el-button type="danger" size="small" @click="dialog.deletedialogVisible = true">删除</el-button>
                             <el-button type="primary" size="small">返回</el-button>
                         </div>
                     </div>
@@ -113,7 +121,7 @@
                                             <el-date-picker :disabled="_disabled" size="small" type="date" placeholder="选择日期" v-model="formInline.in_time" style="width: 100%;"></el-date-picker>
                                         </el-form-item>
                                         <el-form-item class="store_select-box" label="仓库" prop="check_warehouse">
-                                            <el-select :disabled="_disabled" size="small" multiple  v-model="formInline.check_warehouse" placeholder="请选择">
+                                            <el-select :disabled="_disabled" size="small" multiple v-model="formInline.check_warehouse" placeholder="请选择">
                                                 <el-option v-for="item in dataList.storeList" :value="item.id" :label="item.name"></el-option>
                                             </el-select>
                                         </el-form-item>
@@ -219,7 +227,7 @@
             </div>
         </el-dialog>
         <el-dialog title="提示" :visible.sync="dialog.deletedialogVisible" size="tiny">
-            <span>确定要删除该条调拨单吗？</span>
+            <span>确定要删除该条盘点单吗？</span>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialog.deletedialogVisible = false">取 消</el-button>
                 <el-button type="primary" @click="delete_confirm">确 定</el-button>
