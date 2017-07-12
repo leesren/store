@@ -485,9 +485,9 @@ eher_util.prototype.getData_from_excle = function (target) {
 
 }
 eher_util.prototype.status_data = function (name) {// 返回通用的数据
-    var store_status = [{ value: null, text: '全部' }, { value: '0', text: '待入库' }, { value: '1', text: '已入库' }];
+    var store_status = ['未审批', '已审批'];
     var sign_status = [{ value: 0, text: '未审批' }, { value: 1, text: '已审批' }, { value: 2, text: '已删除' }];
-    var outstore_status = [{ value: null, text: '全部' }, { value: '0', text: '未审批' }, { value: '1', text: '已审批' }];
+    var outstore_status = [{ value: null, text: '全部' }, { value: 0, text: '未审批' }, { value: 1, text: '已审批' }];
     var transfer_status = [{ value: null, text: '全部' }, { value: '0', text: '待调拨' }, { value: '1', text: '已调拨' }];
     return {
         sign_status: sign_status,
@@ -887,7 +887,8 @@ var mixin = {
             list: [],
             check_result: [],
             handson_data: {}
-        }
+        },
+        visibility:''//visible
     },
     methods: {
         save_excle: function (callback) {// v 用于回调
@@ -999,5 +1000,8 @@ var mixin = {
         deleteRow: function (index) {
             this.tableData.splice(index, 1);
         },
+        visibility_view:function(){
+            this.visibility = 'visible'
+        }
     }
 };

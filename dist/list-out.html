@@ -104,7 +104,7 @@
                                     <el-table-column prop="orderNo" label="出库单号">
                                     </el-table-column>
                                     <el-table-column prop="status" label="单据状态" width="100">
-                                        <template scope="scope">{{ goods_filter.options [scope.row.status].text }}</template>
+                                        <template scope="scope">{{ goods_filter.bill_status [scope.row.status]  }}</template>
                                     </el-table-column>
                                     <el-table-column prop="deliveryDate" label="出库日期">
                                     </el-table-column>
@@ -138,11 +138,9 @@
             </div>
         </div>
     </div>
-    <script src="./vendor/vue/vue.min.js"></script>
-    <script src="./vendor/vue/element-ui.js"></script>
-
-    <script src="./vendor/mock/yod-mock.min.js"></script>
-    <script src="./vendor/mock/mock_data.js"></script>
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/vue.min.js"></script>
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/element-ui.js"></script>
+ 
 
     <script src="./js/request.js"></script>
     <script src="./js/util.js"></script>

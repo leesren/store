@@ -86,7 +86,7 @@
                     </ul>
                 </nav>
             </div>
-            <div class="wrapper wrapper-content animated fadeInRight" id="pager_main">
+            <div class="wrapper wrapper-content animated fadeInRight my-invisi" :style="{'visibility':visibility}" id="pager_main">
 
                 <input type="hidden" id="menu_active" value="ResourceManagement-BatchImportManagement" />
                 <div class="ibox float-e-margins">
@@ -223,25 +223,6 @@
             </span>
         </el-dialog>
         <el-dialog title="Excle导入结果" @open="excleOpenCallback" :close-on-click-modal="false" :visible.sync="dialog.excle_result_visible">
-            <!--<div class="my-dialog-box">
-                <el-table :data="dialog.excle_result_tableData" style="width: 100%">
-                    <el-table-column prop="numberCode" label="产品编号" width="180">
-                    </el-table-column>
-                    <el-table-column prop="productName" label="产品名称">
-                    </el-table-column>
-                    <el-table-column prop="quantity" label="数量" width="120">
-                    </el-table-column>
-                    <el-table-column prop="price" label="单价" width="120">
-                    </el-table-column>
-                    <el-table-column prop="desc" label="描述" min-width="140">
-                        <template scope="scope">
-                            <el-tag type="danger" v-for="el in scope.row._checkMsg">
-                                {{el}}
-                            </el-tag>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </div>-->
             <div class="my-dialog-box" id="mydialogExcle">
             </div>
             <div v-show="excle_origin.check_result.length">
@@ -262,27 +243,16 @@
     <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/element-ui.js"></script>
 
     <!-- excel 导出-->
-    <!--<script src=./vendor/excel/shim.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/shim.js"></script>
-    <!--<script src=./vendor/excel/Blob.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/Blob.js"></script>
-    <!--<script src=./vendor/excel/FileSaver.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/FileSaver.js"></script>
-    <!--<script src=./vendor/excel/swfobject.js></script>-->
-    <script src=http://apps.bdimg.com/libs/swfobject/2.2/swfobject.js></script>
-    <!--<script src=./vendor/excel/downloadify.min.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/downloadify.min.js"></script>
-    <!--<script src=./vendor/excel/base64.min.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/base64.min.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/shim.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/Blob.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/FileSaver.js"></script>
+    <script defer async src=http://apps.bdimg.com/libs/swfobject/2.2/swfobject.js></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/downloadify.min.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/base64.min.js"></script>
 
-    <script src="./vendor/mock/yod-mock.min.js"></script>
-    <script src="./vendor/mock/mock_data.js"></script>
-    <!--<script src="./vendor/excel/xlsx.full.min.js"></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/xlsx.full.min.js"></script>
-    <script src="./vendor/handson-table/handsontable.full.min.js"></script>
-    <script src="http://apps.bdimg.com/libs/moment/2.8.3/moment.js"></script>
-    <!--<script src="./vendor/moment/moment.min.js"></script>-->
-    <!--<script src="./vendor/underscore/underscore-min.js"></script>-->
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/xlsx.full.min.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/handsontable.full.min.js"></script>
+    <script defer async src="http://apps.bdimg.com/libs/moment/2.8.3/moment.js"></script>
 
     <!--<script src="./js/request.js"></script>
     <script src="./js/util.js"></script>

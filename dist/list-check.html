@@ -6,18 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>一禾美云门店管理 | 库存盘点</title>
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
-    <link href="./css/bootstrap.min.css" rel="stylesheet">
-    <link href="./css/font-awesome.min.css" rel="stylesheet">
+    <link href="./css/bootstrap.min.css" rel="stylesheet"> 
     <link href="./css/animate.css" rel="stylesheet">
     <link href="./css/style.css" rel="stylesheet">
     <link href="./css/custom.css" rel="stylesheet">
     <!-- Mainly scripts -->
     <script src="./vendor/jquery-2.1.1.js"></script>
     <script src="./vendor/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="http://at.alicdn.com/t/font_1473762766_7074292.css">
-    <link rel="stylesheet" href="./vendor/vue/element-ui.css">
+    <link rel="stylesheet" href="http://indevtest.oss-cn-shenzhen.aliyuncs.com/element-ui.css">
     <link rel="stylesheet" href="./css/index.css">
-
+    
 </head>
 
 <body>
@@ -99,100 +97,34 @@
                                 </div>
                                 <el-button type="primary" size="small" @click="query">查询</el-button>
                             </div>
-                            <div class="content-body" style="margin-top:15px;min-height:420px;" class="tablebox">
-                                <el-tabs v-model="activeIndex" @tab-click="handleClick">
-                                    <el-tab-pane label="盘点单" name="0">
-                                        <el-table :data="tableData['0'].list" stripe style="width: 100%" @row-click="rowClick">
-                                            <el-table-column prop="code" label="盘点单号">
-                                            </el-table-column>
-                                            </el-table-column>
-                                            <el-table-column prop="status" label="单据状态" width="100">
-                                            </el-table-column>
-                                            <el-table-column prop="checkTime" label="盘点日期">
-                                            </el-table-column>
-                                            <el-table-column prop="storageName" label="仓库">
-                                            </el-table-column>
-                                            <el-table-column prop="operator" label="盘点人">
-                                            </el-table-column>
-                                            <el-table-column prop="createTime" label="创建时间">
-                                            </el-table-column>
-                                            <el-table-column prop="auditor" label="审批人" width="100">
-                                            </el-table-column>
-                                            <el-table-column prop="auditTime" label="审批时间">
-                                            </el-table-column>
-                                            <el-table-column prop="description" label="备注" width="80">
-                                            </el-table-column>
-                                        </el-table>
-                                        <div v-show="tableData['0'].total" style="margin-top:10px">
-                                            <el-pagination layout="prev, pager, next" :total="tableData['0'].total" @current-change="handleCurrentChange($event,'0')"
-                                                :current-page="tableData['0'].page" :page-size="tableData.size">
-                                            </el-pagination>
-                                        </div>
-                                    </el-tab-pane>
-                                    <el-tab-pane label="盘盈入库" name="1">
-                                        <el-table :data="tableData['1'].list" stripe style="width: 100%" @row-click="rowClick">
-                                            <el-table-column prop="orderNo" label="入库单号">
-                                            </el-table-column>
-                                            <el-table-column prop="status" label="单据状态" width="100">
-                                                <template scope="scope">{{ '' }}</template>
-                                            </el-table-column>
-                                            <el-table-column prop="orderDate" label="入库日期">
-                                            </el-table-column>
-
-                                            <el-table-column prop="fromOrgName" label="仓库">
-                                            </el-table-column>
-                                            <el-table-column prop="fromStorageName" label="采购人">
-                                            </el-table-column>
-                                            <el-table-column prop="toOrgName" label="创建时间">
-                                            </el-table-column>
-                                            <el-table-column prop="approveEmpName" label="审批人" width="100">
-                                            </el-table-column>
-                                            <el-table-column prop="approveTime" label="审批时间">
-                                            </el-table-column>
-                                            <el-table-column prop="note" label="备注" width="80">
-                                            </el-table-column>
-                                        </el-table>
-                                        <div v-show="tableData['1'].total" style="margin-top:10px">
-                                            <el-pagination layout="prev, pager, next" :total="tableData['1'].total" @current-change="handleCurrentChange($event,'1')"
-                                                :current-page="tableData['1'].page" :page-size="tableData.size">
-                                            </el-pagination>
-                                        </div>
-                                    </el-tab-pane>
-                                    <el-tab-pane label="盘亏出库" name="2">
-                                        <el-table :data="tableData['2'].list" stripe style="width: 100%" @row-click="rowClick">
-                                            <el-table-column prop="orderNo" label="出库单号">
-                                            </el-table-column>
-                                            <el-table-column prop="status" label="单据状态" width="100">
-                                                <template scope="scope">{{ '' }}</template>
-                                            </el-table-column>
-                                            <el-table-column prop="orderDate" label="出库日期">
-                                            </el-table-column>
-
-                                            <el-table-column prop="fromOrgName" label="仓库">
-                                            </el-table-column>
-                                            <el-table-column prop="fromStorageName" label="领取人">
-                                            </el-table-column>
-                                            <el-table-column prop="toOrgName" label="创建时间">
-                                            </el-table-column>
-                                            <el-table-column prop="approveEmpName" label="审批人" width="100">
-                                            </el-table-column>
-                                            <el-table-column prop="approveTime" label="审批时间">
-                                            </el-table-column>
-                                            <el-table-column prop="note" label="备注" width="80">
-                                            </el-table-column>
-                                        </el-table>
-                                    </el-tab-pane>
-                                </el-tabs>
-                                <div v-show="tableData['2'].total" style="margin-top:10px">
-                                    <el-pagination layout="prev, pager, next" :total="tableData['2'].total" @current-change="handleCurrentChange($event,'2')"
-                                        :current-page="tableData['2'].page" :page-size="tableData.size">
+                            <div class="content-body tablebox myel" style="margin-top:15px;min-height:420px;">
+                                <el-table :data="tableData['0'].list" stripe style="width: 100%" @row-click="rowClick">
+                                    <el-table-column prop="code" label="盘点单号">
+                                    </el-table-column>
+                                    </el-table-column>
+                                    <el-table-column prop="status" label="单据状态" width="100">
+                                    </el-table-column>
+                                    <el-table-column prop="checkTime" label="盘点日期">
+                                    </el-table-column>
+                                    <el-table-column prop="storageName" label="仓库">
+                                    </el-table-column>
+                                    <el-table-column prop="operator" label="盘点人">
+                                    </el-table-column>
+                                    <el-table-column prop="createTime" label="创建时间">
+                                    </el-table-column>
+                                    <el-table-column prop="auditor" label="审批人" width="100">
+                                    </el-table-column>
+                                    <el-table-column prop="auditTime" label="审批时间">
+                                    </el-table-column>
+                                    <el-table-column prop="description" label="备注" width="80">
+                                    </el-table-column>
+                                </el-table>
+                                <div v-show="tableData['0'].total" style="margin-top:10px">
+                                    <el-pagination layout="prev, pager, next" :total="tableData['0'].total" @current-change="handleCurrentChange($event,'0')"
+                                        :current-page="tableData['0'].page" :page-size="tableData.size">
                                     </el-pagination>
                                 </div>
                             </div>
-                            <!--<div v-show="tableData.total" style="margin-top:10px">
-                                <el-pagination layout="prev, pager, next" :total="tableData.total" @current-change="handleCurrentChange" :current-page="status.current">
-                                </el-pagination>
-                            </div>-->
                         </div>
                     </div>
                 </div>
@@ -205,8 +137,8 @@
             </div>
         </div>
     </div>
-    <script src="./vendor/vue/vue.min.js"></script>
-    <script src="./vendor/vue/element-ui.js"></script>
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/vue.min.js"></script>
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/element-ui.js"></script>
 
     <script src="./vendor/mock/yod-mock.min.js"></script>
     <script src="./vendor/mock/mock_data.js"></script>

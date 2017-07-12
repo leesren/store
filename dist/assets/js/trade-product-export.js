@@ -1,63 +1,145 @@
 
-
-var app = new Vue({
+window.$app = new Vue({
     el: '#wrapper',
+    mixins: [mixin],
     data: {
-        tableData: instock_mockdata,
-        goods_filter: {
-            selected: 1,
-            options: [{
-                value: 0,
-                label: '201706'
-            }, {
-                value: 1,
-                label: '201705'
-            }, {
-                value: 2,
-                label: '201704'
-            }, {
-                value: 3,
-                label: '201703'
-            }, {
-                value: 4,
-                label: '201702'
-            }],
-            value: '',
-            value2: '',
+        orgId: '8787426330226801974',
+        goods_filter: { 
+            startDate: eher_util.date2String(new Date),
+            endDate: eher_util.date2String(new Date),
         },
-        activeName: '0',
-        dialog: {
-            gridData: instock_mockdata,
-            dialogTableVisible: false,
-        },
-        tree_node: {
-            data: tree_node,
-            visible: false
-        },
-        start: "2017-04-15",
-        end: "2017-06-15",
+        data_list: {
+            stores: {
+                list: [],
+                tree: null,
+                visible: false
+            },
+            center_store: {
+                tableData: [],
+                total: 0,
+                page: 1,
+            },
+            tableData_center_export: [],
+            tableData_child_export: [],
+            is_exporting: false,
+            size: 10,
+            first_time:0
+        }
+    },
+    computed: {
+
     },
     created: function () {
+        window.$dataRequest = this.$dataRequest = new dataRequest();
+        window.$validator_data = this.$validator_data = new validator_data();
+    },
+    mounted: function () {
+        var self = this;
+        this.query_stores()
+            .then(function (res) {
+                self.query_products();
+            })
+        this.visibility_view();
     },
     methods: {
-        handleCommand: function (v) {
-            this.goods_filter.selected = v;
+        open_store_tree: function () {
+            this.data_list.first_time++;
+            var self = this;
+            this.data_list.stores.visible = true
+            if (this.data_list.first_time === 1) {
+                setTimeout(function () {
+                    self.$refs.tree.setCheckedNodes(self.data_list.stores.tree);
+                }, 200)
+            }
         },
-        handleClick: function (tab, event) {
-            console.log(tab, event);
+        select_store: function () {
+            var self = this;
+            self.data_list.center_store.tableData = [];
+            self.data_list.center_store.total = 0;
+            self.data_list.center_store.page = 1;
+            var nodes = this.$refs.tree.getCheckedNodes();
+            if (nodes.length) {
+                this.query_products(nodes);
+            }
+            this.data_list.stores.visible = false;
         },
         handleExport: function () {
-            eher_util.element_table_2_table()
+            this.export_2_excle();
         },
-        openSelectStore: function () {
-            this.tree_node.visible = true;
+        currentChange: function (v) {
+            this.data_list.center_store.page = v;
+            this.query_products();
         },
-        change: eher_util.throttle(function (e) {
-            console.log('1111', e);
-        }, 800),
- 
-        change2: eher_util.debounce(function (e) {
-            console.log('do 2222',e);
-        }, 200)
+        query_stores: function () {
+            var self = this;
+            return new Promise(function (resolve) {
+                this.$dataRequest.query_stores(self.orgId)
+                    .then(function (res) {
+                        self.data_list.stores.tree = [res];
+                        resolve(res);
+                    }, function (e) {
+                        self.$message({ message: '查询组织失败,code：' + e, type: 'warning' });
+                        console.error(e);
+                    })
+            })
+
+        },
+        getproductIds: function (organizationLists) {
+            if (!this.data_list.stores.list.length) {
+                this.data_list.stores.list = eher_util.get_brand_stores(this.data_list.stores.tree);
+            }
+            var orgList = this.data_list.stores.list;
+            if (organizationLists && organizationLists instanceof Array) {
+                orgList = organizationLists;
+            }
+
+            var organizationList = orgList.map(function (e) {
+                return { organizationId: e.id }
+            })
+            return organizationList;
+        },
+        query_products: function (organizationLists) {
+            var organizationList = this.getproductIds(organizationLists);
+            var self = this, page = this.data_list.center_store.page;
+            this.$http.post('/doWareHouse/allTradeDetail', {
+                "organizationList": organizationList,
+                "startTime": eher_util.date2String(self.goods_filter.startDate),
+                "endTime": eher_util.date2String(self.goods_filter.endDate), 
+                "page": page,
+                "size": self.data_list.size
+            })
+                .then(function (result) {
+                    self.data_list.center_store.tableData = result.list;
+                    self.data_list.center_store.total = result.totalSize;
+                }, function (error) {
+                    console.log(error);
+                    self.$message({ message: '查询失败,code：' + error, type: 'warning' });
+                })
+        },
+        export_2_excle: function () {
+            if (this.data_list.is_exporting) return;
+            this.data_list.is_exporting = true;
+            var self = this, api = '/doWareHouse/allTradeDetail';;
+
+            var build_table = function (list) {
+                var id = 'export_tpl', filename = '产品交易报表';
+                self.data_list.tableData_child_export = list;
+                setTimeout(function () {
+                    eher_util.element_table_2_table(id, '', filename);
+                    self.data_list.is_exporting = false;
+                }, 300)
+            }
+            this.$http.post(api, {
+                "organizationList": self.getproductIds(),
+                "startTime": eher_util.date2String(self.goods_filter.startDate),
+                "endTime": eher_util.date2String(self.goods_filter.endDate),
+                "exportFlag": true
+            })
+                .then(function (result) {
+                    build_table(result);
+                }, function (error) {
+                    self.data_list.is_exporting = false;
+                })
+        }
     }
 })

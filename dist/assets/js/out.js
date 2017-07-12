@@ -43,6 +43,7 @@ var app = window.$app = new Vue({
             this.controlPower();
             this.initDataInfo();
         }
+        this.visibility_view();
     },
     methods: {
         initDataInfo: function() { // 初始化单的详情

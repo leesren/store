@@ -31,6 +31,7 @@ var app = window.$app = new Vue({
         _disabled: function() {
             return this.status === 1;
         }
+        
     },
     watch: {},
     created: function() {
@@ -42,6 +43,7 @@ var app = window.$app = new Vue({
             this.controlPower();
             this.initDataInfo();
         }
+        this.visibility_view();
     },
     methods: {
         initDataInfo: function() { // 初始化单的详情
