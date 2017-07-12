@@ -64,12 +64,12 @@ var app = window.$app = new Vue({
         })
         if (this.id) {
             this.initDataInfo();
-        } 
+        }
         this.visibility_view();
     },
     methods: {
         tabClick: function () {
-            if(!+this.activeIndex)return;
+            if (!+this.activeIndex) return;
             if (this.dataList.tableData[this.activeIndex].loaded) { return; }
             this.activeIndex != 0 && this.query_in_out();
         },
@@ -84,7 +84,7 @@ var app = window.$app = new Vue({
         filters_name: function () {
             var self = this;
             var l = this.tableData.filter(function (e) {
-                return self.filter_name ? (e.productName).indexOf(self.filter_name) != -1 : true
+                return self.filter_name ? (e.name).indexOf(self.filter_name) != -1 : true
             })
             // console.log(JSON.stringify(l, null, 4));
             return l;
@@ -94,18 +94,15 @@ var app = window.$app = new Vue({
             this.$http.post('/checkInvertory/queryCheckInventoryDetail', {
                 "checkInvertoryId": self.id, "start": -1, "limit": -1
             }).then(function (result) {
-                self.formInline.out_storeId = result.fromOrgId;
-                self.formInline.out_store = result.fromOrgName;
-                self.formInline.out_warehouse = result.fromStorageId;
-                self.formInline.in_storeId = result.toOrgId;
-                self.formInline.in_store = result.toOrgName;
-                self.formInline.in_warehouse = result.toStorageId;
-                self.formInline.in_time = result.orderDate;
-                self.formInline.desc = result.note;
+                self.formInline.in_time = result.checkTime;
+                self.formInline.check_warehouse = result.storages.map(function(e){ return e.storageId});
 
-                self.tableData = result.itemList;
-                self.status = +result.statusCode;
-                self.selectStoreChange(self.formInline.out_storeId);
+                self.formInline.check_person = result.inventorycheckerId;
+
+                self.tableData   = result.list; 
+                self.formInline.desc = result.note; 
+                self.status = +1;
+                self.selectStoreChange(self.formInline.check_warehouse);
             }, function (error) {
                 console.error(error);
             })
@@ -139,9 +136,9 @@ var app = window.$app = new Vue({
                     return {
                         "storageId": e.storageId, //仓库
                         "productId": e.productId, //产品
-                        "beforeQuantity": e.quantity+'',  //库存数量
+                        "beforeQuantity": e.quantity + '',  //库存数量
                         "unitId": e.unitId, //单位
-                        "quantity": e.inventory_quantity+''  //盘点数量
+                        "quantity": e.inventory_quantity + ''  //盘点数量
                     }
                 })
             }
@@ -181,7 +178,7 @@ var app = window.$app = new Vue({
             var self = this;
             if (this.id && this.approveEmpId)
                 this.save('sign').then(function (e) {
-                    self.$http.post('/doWareHouse/approveTransferOrder', { id: self.id, approveEmpId: self.approveEmpId })
+                    self.$http.post('/checkInvertory/audit', { checkInvertoryId: self.id })
                         .then(function (result) {
                             self.$message({ message: '审批成功', type: 'success' });
                             window.location.reload()
@@ -194,7 +191,7 @@ var app = window.$app = new Vue({
         },
         unsign: function () {
             var self = this;
-            this.$http.post('/doWareHouse/antiApproveTransferOrder', { id: this.id, empId: this.approveEmpId })
+            this.$http.post('/checkInvertory/cancelAudit', { checkInvertoryId: this.id })
                 .then(function (result) {
                     self.$message({ message: '取消审批成功', type: 'success' });
                     window.location.reload()
@@ -214,8 +211,7 @@ var app = window.$app = new Vue({
             var self = this;
             if (res && res instanceof Array && res.length) {
                 res.map(function (e) {
-                    e.inventory_quantity = e.quantity;
-                    e.productName = e.name;
+                    e.beforeQuantity = e.quantity; 
                     self.addItem(e);
                 })
 
@@ -237,7 +233,7 @@ var app = window.$app = new Vue({
         queryStorageByProduct: function (options) {
             var self = this;
             var obj = {
-                "storageIds": this.formInline.check_warehouse ,  //仓库
+                "storageIds": this.formInline.check_warehouse,  //仓库
                 "productId": null, //产品(添加产品)
                 "barcode": null, //条形码
                 "productCodes": null, //产品编号列表（excel导入）
@@ -334,6 +330,6 @@ var app = window.$app = new Vue({
                 })
         }
     }
-}) 
+})
 window.$dataRequest.query_store($app.orgId);
 window.$dataRequest.query_signer($app.orgId);

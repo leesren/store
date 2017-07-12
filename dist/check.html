@@ -137,9 +137,9 @@
                                         </div>
                                         <div flexbox>
                                             <div>
-                                                <el-button type="info" size="small" @click="generateCheckInventories" :disabled="!formInline.check_warehouse.length">自动生成盘点单</el-button>
-                                                <el-button type="primary" size="small" @click="before_add" :disabled="!formInline.check_warehouse.length">选择产品</el-button>
-                                                <my-upload :disabled="!formInline.check_warehouse.length" :change="_onChange" type="success" multiple accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                                                <el-button type="info" size="small" @click="generateCheckInventories" :disabled="_disabled || !formInline.check_warehouse.length">自动生成盘点单</el-button>
+                                                <el-button type="primary" size="small" @click="before_add" :disabled="_disabled || !formInline.check_warehouse.length">选择产品</el-button>
+                                                <my-upload :disabled="_disabled || !formInline.check_warehouse.length" :change="_onChange" type="success" multiple accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                                                     从Excel中导入
                                                 </my-upload>
                                             </div>
@@ -159,7 +159,7 @@
                                                 <el-table :data="gettableData()" style="width: 100%" id="eltableBox">
                                                     <el-table-column prop="code" label="产品编号">
                                                     </el-table-column>
-                                                    <el-table-column prop="productName" label="产品名称">
+                                                    <el-table-column prop="name" label="产品名称">
                                                     </el-table-column>
                                                     <el-table-column prop="categoryName" label="品类">
                                                     </el-table-column>
@@ -167,14 +167,14 @@
                                                     </el-table-column>
                                                     <el-table-column label="盘点数量" width="100">
                                                         <template scope="scope">
-                                                            <el-input :disabled="_disabled" v-model="scope.row.inventory_quantity"></el-input>
+                                                            <el-input :disabled="_disabled"  v-model="scope.row.quantity"></el-input>
                                                         </template>
                                                     </el-table-column>
                                                     <el-table-column prop="quantity" label="库存数量" width="100">
                                                     </el-table-column>
                                                     <el-table-column label="盈亏数量" width="100">
                                                         <template scope="scope">
-                                                            <span :style="_check_num(scope.row.inventory_quantity-scope.row.quantity)">{{scope.row.inventory_quantity-scope.row.quantity}}</span>
+                                                            <span :style="_check_num(scope.row.beforeQuantity-scope.row.quantity)">{{scope.row.beforeQuantity-scope.row.quantity}}</span>
                                                         </template>
                                                     </el-table-column>
                                                     <el-table-column prop="unit" label="单位" width="80">
