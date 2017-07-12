@@ -1,5 +1,5 @@
 Vue.component('my-upload', {
-    template: '<div class="my-upload">'
+    template: '<div class="my-upload" style="width:auto" :class="__disabled()">'
     + '<button class="el-button--small  el-button" :disabled="disabled" :class="_class()" @click="handleClick"><slot>上传文件</slot> </button>'
     + '<input class="el-upload__input" type="file" ref="input" @change="_onChange" :accept="accept"></input>'
     + '</div>',
@@ -32,6 +32,9 @@ Vue.component('my-upload', {
         },
         _class: function () {
             return { "el-button--primary": this.type === "primary", "el-button--success": this.type === "success", "is-disabled": this.disabled }
+        },
+        __disabled: function () {
+            return { 'el-input is-disabled': this.disabled }
         }
     }
 })
@@ -44,4 +47,3 @@ Vue.component('my-excle-note', {
     '</ul></div>'
 })
 
- 

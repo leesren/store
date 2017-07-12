@@ -1,20 +1,24 @@
 [flexbox] {
   display: -webkit-box;
+  display: -webkit-flex;
   display: -ms-flexbox;
   display: flex; }
 
 [flex] {
   -webkit-box-flex: 1;
+  -webkit-flex: 1;
   -ms-flex: 1;
   flex: 1; }
 
 [flex-center] {
   -webkit-box-align: center;
+  -webkit-align-items: center;
   -ms-flex-align: center;
   align-items: center; }
 
 [flex-end] {
   -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
   -ms-flex-pack: end;
   justify-content: flex-end; }
 
@@ -32,3 +36,21 @@
   padding: 6px 12px; }
   .page-wrapper-instock .my-upload input {
     display: none; }
+.myel .el-table tr{cursor: pointer;}
+.myel .el-select .el-input__inner {width: 86px;}
+ .my-dialog-box .data-list-content .list-group-item:hover {
+      background-color: #fafafa;
+  }
+
+  .my-dialog-box .data-list-content a.list-group-item.active {
+      background-color: #b4d7f5;
+      border: 1px solid #b4d7f5;
+      color: #1f2d3d
+  }
+
+  .myel  .handsontable td.htInvalid {
+      background-color: #ff4c42!important
+  }
+  .myel .el-button--danger.is-plain {
+        color: #ff4949;
+  }

@@ -1,1 +1,2 @@
-var a =   32323 ;                           
+!function(){"use strict";var n=function(n,e){if(!(n instanceof e))throw new TypeError("Cannot call a class as a function")},e=function(){function n(n,e){for(var o=0;o<e.length;o++){var t=e[o];t.enumerable=t.enumerable||!1,t.configurable=!0,"value"in t&&(t.writable=!0),Object.defineProperty(n,t.key,t)}}return function(e,o,t){return o&&n(e.prototype,o),t&&n(e,t),e}}(),o=function(){function o(e){n(this,o),this.name=e}return e(o,[{key:"showme",value:function(n){console.log("show me fn",n)}}]),o}(),t=new o("good day");window.$person=t}();
+//# sourceMappingURL=index.js.map

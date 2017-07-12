@@ -4,7 +4,7 @@ var app = window.$app = new Vue({
     mixins: [mixin],
     data: {
         orgId: '8787426330226801974',
-        id: '8752752929078097473',// 详情的id
+        id: location.hash ? location.hash.slice(2) : '',// 详情的id
         approveEmpId: '8787426330226802018',// 审核人id
         status: 0,
         formInline: {

@@ -12,7 +12,9 @@ var _http = {
         "version": "7.2.0",
         "data": {}
     },
-    serverPath: 'http://120.24.74.199:9001/eher/api'
+    // serverPath: 'http://120.24.74.199:9001/eher/api' 
+    // serverPath: 'http://120.24.74.199:9001/eher/api' 
+    serverPath: 'http://120.24.74.199:9001/managermentstore'
 }
 function post(api, data) {
     return new Promise(function (resolve, reject) {

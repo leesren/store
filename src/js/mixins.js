@@ -8,12 +8,12 @@ var mixin = {
             total: 0,
             size: 10,
             current: 1,
-            dialog_excle: false, 
+            dialog_excle: false,
             keyWord: '',
             excle_result_visible: false,
             deletedialogVisible: false,
             excle_result_tableData: []
-        }, 
+        },
         excle_origin: {
             list: [],
             check_result: [],
@@ -21,30 +21,35 @@ var mixin = {
         }
     },
     methods: {
-        save_excle: function () {
+        save_excle: function (callback) {// v 用于回调
             var self = this;
-            if (eher_util.check_table()) {
-                var _seriadata = function (_res, type) {
-                    if (type) {
-                        eher_util.remove_mutiple_2_list(_res, self.tableData)
-                        self.dialog.excle_result_visible = false;
-                    } else {
-                        self.excle_origin.check_result = _res;
-                        for (var i = 0, len = _res.length; i < len; i++) {
-                            if (_res[i]._checkMsg) {
-                                hottabel.selectCellByProp(i, 0);
-                                window.hot_util && window.hot_util.highlight_col(i, 0);
+            return new Promise(function (resolve, reject) {
+                if (eher_util.check_table()) {
+                    var _seriadata = function (_res, type) {
+                        if (type) {
+                            self.dialog.excle_result_visible = false; 
+                            if(callback){
+                                return resolve(_res);
+                            }
+                            eher_util.remove_mutiple_2_list(_res, self.tableData)
+                        } else {
+                            self.excle_origin.check_result = _res;
+                            for (var i = 0, len = _res.length; i < len; i++) {
+                                if (_res[i]._checkMsg) {
+                                    hottabel.selectCellByProp(i, 0);
+                                    window.hot_util && window.hot_util.highlight_col(i, 0);
+                                }
                             }
                         }
                     }
+                    self.validator_data.checkProductNo(self.orgId)
+                        .then(function (result) {
+                            _seriadata(result, true);
+                        }, function (result) {
+                            _seriadata(result);
+                        })
                 }
-                self.validator_data.checkProductNo(self.orgId)
-                    .then(function (result) {
-                        _seriadata(result, true)
-                    }, function (result) {
-                        _seriadata(result)
-                    })
-            }
+            });
         },
         excleOpenCallback: function () {
             var self = this;
@@ -64,13 +69,13 @@ var mixin = {
                 })
 
         },
-        dialogInputChange: function (e) {
-            // console.log(e);
+        dialogInputChange: eher_util.throttle(function (e) {
+            console.log(e);
             this.dialog.keyWord = e;
             this.dialog.current = 1;
             this.add();
-        },
-         handleCommand: function (v) {
+        }, 800),
+        handleCommand: function (v) {
             this.goods_filter.selected = v;
         },
         dialogHandleCurrentChange(val) {
@@ -78,13 +83,17 @@ var mixin = {
             this.dialog.selected = -1;
             this.add();
         },
-        
-        dialogSelectProductClose: function () {
+
+        dialogSelectProductClose: function (v) {// v 决定是否回调
             if (this.dialog.selected === -1) return;
             var obj = this.dialog.list[this.dialog.selected];
-            obj.quantity = 1;
-            this.addItem(obj);
             this.dialog.dialogVisible = false
+            if (!v) {
+                obj.quantity = 1;
+                this.addItem(obj);
+            } else {
+                return Promise.resolve(obj)
+            }
         },
         dialogSelectedItem: function (item, index) {
             if (index === this.dialog.selected) {

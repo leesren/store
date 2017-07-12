@@ -2,13 +2,8 @@ var app = window.$app = new Vue({
     el: '#wrapper',
     mixins: [mixin],
     data: {
-<<<<<<< HEAD
         orgId: '8752752929078179148',
         id: location.hash.slice(2) || '', // 详情的id
-=======
-        orgId: '8787426330209426723',
-        id: location.hash ? location.hash.slice(2) : '', // 详情的id
->>>>>>> 3664334ecdd7420fc4e8bac5afe49e01b4db392c
         approveEmpId: '8787426330226802018', // 审核人id
         status: 0,
         formInline: {

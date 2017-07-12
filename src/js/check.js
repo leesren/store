@@ -1,15 +1,16 @@
+
 var app = window.$app = new Vue({
     el: '#wrapper',
     mixins: [mixin],
     data: {
-        orgId: '8787426330209426723',
+        orgId: '8787426330226801974',
         id: location.hash ? location.hash.slice(2) : '', // 详情的id
         approveEmpId: '8787426330226802018', // 审核人id
         status: 0,
         formInline: {
             in_time: '',
             desc: '',
-            check_warehouse: '', // 仓库
+            check_warehouse: [], // 仓库
             check_person: '', // 盘点人
         },
         formInlineRules: {
@@ -17,7 +18,9 @@ var app = window.$app = new Vue({
             check_warehouse: { required: true, message: '请选择仓库' },
             check_person: { required: true, message: '请选择盘点人' },
         },
+        filter_name: '',
         tableData: [],
+        tableData2: [],
         dataList: {
             stores: [],
             in_houses: [],
@@ -28,18 +31,19 @@ var app = window.$app = new Vue({
         }
     },
     computed: {
-        _disabled: function() {
+        _disabled: function () {
             return this.status === 1;
-        }
+        },
+
     },
     watch: {},
-    created: function() {
+    created: function () {
         this.dataRequest = window.$dataRequest = new dataRequest(this.orgId);
         this.validator_data = window.$validator_data = new validator_data();
     },
-    mounted: function() {
+    mounted: function () {
         var self = this;
-        this.dataRequest.query_stores(this.orgId).then(function(e) {
+        this.dataRequest.query_stores(this.orgId).then(function (e) {
             self.dataList.stores = e;
         })
         if (this.id) {
@@ -47,27 +51,45 @@ var app = window.$app = new Vue({
         }
     },
     methods: {
-        initDataInfo: function() { // 初始化单的详情
-            var self = this;
-            this.$http.post('/doWareHouse/queryTransferDetail', { "id": this.id })
-                .then(function(result) {
-                    self.formInline.out_storeId = result.fromOrgId;
-                    self.formInline.out_store = result.fromOrgName;
-                    self.formInline.out_warehouse = result.fromStorageId;
-                    self.formInline.in_storeId = result.toOrgId;
-                    self.formInline.in_store = result.toOrgName;
-                    self.formInline.in_warehouse = result.toStorageId;
-                    self.formInline.in_time = result.orderDate;
-                    self.formInline.desc = result.note;
-
-                    self.tableData = result.itemList;
-                    self.status = +result.statusCode;
-                    self.selectStoreChange(self.formInline.out_storeId);
-                }, function(error) {
-                    console.error(error);
-                })
+        _check_num: function (a) {
+            var c = a > 0 ? 'red' : 'green';
+            c = !a ? '' : c;
+            return { 'color': c }
         },
-        selectStoreChange: function(v, type) {
+        gettableData() {
+            return this.tableData2.length ? this.tableData2 : this.tableData
+        },
+        filters_name: function () {
+            var self = this;
+            var l = this.tableData.filter(function (e) {
+                return self.filter_name ? (e.productName).indexOf(self.filter_name) != -1 : true
+            })
+            console.log(JSON.stringify(l, null, 4));
+
+            return l;
+        },
+        initDataInfo: function () { // 初始化单的详情
+            var self = this;
+            this.$http.post('/checkInvertory/queryCheckInventoryDetail', {
+                "checkInvertoryId": self.id, "start": "1", "limit": "10"
+            }).then(function (result) {
+                self.formInline.out_storeId = result.fromOrgId;
+                self.formInline.out_store = result.fromOrgName;
+                self.formInline.out_warehouse = result.fromStorageId;
+                self.formInline.in_storeId = result.toOrgId;
+                self.formInline.in_store = result.toOrgName;
+                self.formInline.in_warehouse = result.toStorageId;
+                self.formInline.in_time = result.orderDate;
+                self.formInline.desc = result.note;
+
+                self.tableData = result.itemList;
+                self.status = +result.statusCode;
+                self.selectStoreChange(self.formInline.out_storeId);
+            }, function (error) {
+                console.error(error);
+            })
+        },
+        selectStoreChange: function (v, type) {
             var self = this,
                 _cache = this.dataList.cache_house[v];
             if (_cache) {
@@ -76,26 +98,30 @@ var app = window.$app = new Vue({
             }
             var orgId = this.formInline.out_storeId;
             self.dataRequest.query_hourse(orgId)
-                .then(function(res) {
+                .then(function (res) {
                     self.dataList.out_houses = self.dataList.cache_house[v] = res;
-                }, function(error) {
+                }, function (error) {
                     self.$message({ message: '仓库查询失败,code：' + error, type: 'warning' });
                 })
         },
-        handleCommand: function(v) {
-            this.goods_filter.selected = v;
-        },
-        submit: function(e) {
+        submit: function (e) {
 
         },
-        save_request: function(callback) {
+        save_request: function (callback) {
             if (!this.tableData.length) { this.$message({ message: '保存失败,您未添加产品', type: 'warning' }); return; }
             var data = {
-                "storageId": this.formInline.check_warehouse + '',
-                "inventorychecker": this.formInline.check_person + '',
-                "acceptTime": eher_util.date2String(this.formInline.in_time),
-                "description": this.formInline.desc,
-                "ciidList": this.tableData
+                "inventorychecker": self.formInline.check_person + '', //盘点人
+                "acceptTime": eher_util.date2String(self.formInline.in_time), //盘点日期
+                "description": self.formInline.desc, //备注
+                "items": this.tableData.map(function (e) {
+                    return {
+                        "storageId": '', //仓库
+                        "productId": e.productId, //产品
+                        "beforeQuantity": e.quantity,  //库存数量
+                        "unitId": e.unitId, //单位
+                        "quantity": e.inventory_quantity  //盘点数量
+                    }
+                })
             }
             var api = '/checkInvertory/new';
             if (this.id) {
@@ -103,66 +129,154 @@ var app = window.$app = new Vue({
                 api = '/doWareHouse/modifyTransferOrder';
             }
             var self = this;
-            return new Promise(function(resolve, reject) {
+            return new Promise(function (resolve, reject) {
                 self.$http.post(api, data)
-                    .then(function(result) {
+                    .then(function (result) {
                         if (callback) {
                             return resolve(result)
                         }
                         self.$message({ message: '添加成功', type: 'success' });
-                        setTimeout(function() {
+                        setTimeout(function () {
                             window.location.reload();
                         }, 400)
-                    }, function(error) {
+                    }, function (error) {
                         console.error(error);
                         self.$message({ message: '添加失败,code：' + error, type: 'warning' });
-                    }).catch(function(error) {
+                    }).catch(function (error) {
                         console.error(error);
                         self.$message({ message: '添加失败', type: 'warning' });
                     })
             })
-
-
         },
-        save: function(type) {
+        save: function (type) {
             var self = this;
             return this.validator_data.isValid_form(this)
-                .then(function() {
+                .then(function () {
                     return self.save_request(typeof type === 'string');
                 })
         },
-        sign: function() {
+        sign: function () {
             var self = this;
             if (this.id && this.approveEmpId)
-                this.save('sign').then(function(e) {
+                this.save('sign').then(function (e) {
                     self.$http.post('/doWareHouse/approveTransferOrder', { id: self.id, approveEmpId: self.approveEmpId })
-                        .then(function(result) {
+                        .then(function (result) {
                             self.$message({ message: '审批成功', type: 'success' });
                             window.location.reload()
-                        }, function(error) {
+                        }, function (error) {
                             self.$log(error);
                             self.$message({ message: '审批失败,code：' + error, type: 'warning' });
                         })
                 })
 
         },
-        unsign: function() {
+        unsign: function () {
             var self = this;
             this.$http.post('/doWareHouse/antiApproveTransferOrder', { id: this.id, empId: this.approveEmpId })
-                .then(function(result) {
+                .then(function (result) {
                     self.$message({ message: '取消审批成功', type: 'success' });
                     window.location.reload()
-                }, function(error) {
+                }, function (error) {
                     self.$log(error);
                     self.$message({ message: '取消审批失败,code：' + error, type: 'warning' });
                 })
         },
-        out_excel: function() {
-            eher_util.element_table_2_table('eltableBox', 7, '调拨单');
+        out_excel: function () {
+            eher_util.element_table_2_table('eltableBox', 9, '盘点');
         },
 
-        delete_confirm: function() {
+        delete_confirm: function () {
             this.dialog.deletedialogVisible = false;
+        },
+        add_inventory: function (res) {// 添加盘点v
+            var self = this;
+            if (res && res instanceof Array && res.length) {
+                res.map(function (e) {
+                    e.inventory_quantity = e.quantity;
+                    e.productName = e.name;
+                    self.addItem(e);
+                })
+
+            } else {
+                self.$message({ message: '无产品信息', type: 'warning' });
+            }
+        },
+        before_dialogSelectProductClose: function (e) {// 选择产品 --》 确定按钮
+            var self = this;
+            this.dialogSelectProductClose('callback').then(function (obj) {
+                return self.queryStorageByProduct({ 'productId': obj.id })
+            }).then(function (res) {
+                self.add_inventory(res);
+            }, function (e) {
+                self.$message({ message: '查询失败,code：' + e, type: 'warning' });
+            })
+        },
+
+        queryStorageByProduct: function (options) {
+            var self = this;
+            var obj = {
+                "storageId": this.formInline.check_warehouse + '',  //仓库
+                "productId": null, //产品(添加产品)
+                "barcode": null, //条形码
+                "productCodes": null, //产品编号列表（excel导入）
+            };
+            obj = Object.assign(obj, options);
+            return this.$http.post('/checkInvertory/queryStorageByProduct', obj)
+        },
+        before_add: function () {
+            if (!this.formInline.check_warehouse) {
+                this.$message({ message: '请先选择仓库', type: 'warning' });
+                return;
+            }
+            this.add();
+        },
+        keyup_enter: function () {
+            console.log('dsdsd');
+        },
+        query_keyword: eher_util.throttle(function (e) {
+            this.filter_name = e.target.value.trim();
+            this.tableData2 = this.filters_name();
+        }, 800),
+        before_save_excle: function () {
+            var self = this;
+            this.save_excle('callback')
+                .then(function (res) {
+                    var listNo = res.map(function (e) {
+                        return e.numberCode
+                    })
+                    if (!listNo.length) return;
+                    self.queryStorageByProduct({ productCodes: listNo }).then(function (res) {
+                        self.add_inventory(res);
+                    }, function (e) {
+                        self.$message({ message: '查询失败,code：' + e, type: 'warning' });
+                    })
+                }, function (e) {
+                    console.error(e);
+                    self.$message({ message: '操作失败', type: 'warning' });
+                })
+        },
+        generateCheckInventories: function () {
+            var self = this;
+            var _post = function () {
+                return self.$http.post('/checkInvertory/queryStorageByProduct', {
+                    "storageId": self.formInline.check_warehouse + '',  //仓库
+                    "inventorychecker": self.formInline.check_person + '', //盘点人
+                    "acceptTime": eher_util.date2String(self.formInline.in_time), //盘点日期
+                    "description": self.formInline.desc, //备注
+                })
+            }
+            this.validator_data.isValid_form(this)
+                .then(function () {
+                    return _post();
+                })
+                .then(function (res) {
+                    self.add_inventory(res);
+                }, function (e) {
+                    self.$message({ message: '自动生成盘点失败', type: 'warning' });
+                    console.error(e);
+                })
+
+
         }
     }
 })
