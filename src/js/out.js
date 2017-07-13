@@ -30,6 +30,7 @@ var app = window.$app = new Vue({
             return this.status === 1;
         }
     },
+
     watch: {},
     created: function() {
         this.dataRequest = window.$dataRequest = new dataRequest(this.orgId);
@@ -112,6 +113,7 @@ var app = window.$app = new Vue({
         },
         sign: function() {
             var self = this;
+
             if (this.id && this.approveEmpId)
                 this.$http.post('/doWareHouse/approveDeliOrder', { id: this.id, approveEmpId: this.approveEmpId })
                 .then(function(result) {
@@ -121,6 +123,7 @@ var app = window.$app = new Vue({
                     self.$log(error);
                     self.$message({ message: '审批失败,code：' + error, type: 'warning' });
                 })
+
         },
         unsign: function() {
             var self = this;

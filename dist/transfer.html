@@ -230,25 +230,6 @@
             </span>
         </el-dialog>
         <el-dialog title="Excle导入结果" @open="excleOpenCallback" :close-on-click-modal="false" :visible.sync="dialog.excle_result_visible">
-            <!--<div class="my-dialog-box">
-                <el-table :data="dialog.excle_result_tableData" style="width: 100%">
-                    <el-table-column prop="numberCode" label="产品编号" width="180">
-                    </el-table-column>
-                    <el-table-column prop="productName" label="产品名称">
-                    </el-table-column>
-                    <el-table-column prop="quantity" label="数量" width="120">
-                    </el-table-column>
-                    <el-table-column prop="price" label="单价" width="120">
-                    </el-table-column>
-                    <el-table-column prop="desc" label="描述" min-width="140">
-                        <template scope="scope">
-                            <el-tag type="danger" v-for="el in scope.row._checkMsg">
-                                {{el}}
-                            </el-tag>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </div>-->
             <div class="my-dialog-box" id="mydialogExcle">
             </div>
             <div v-show="excle_origin.check_result.length">

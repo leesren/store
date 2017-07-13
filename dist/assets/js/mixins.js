@@ -24,6 +24,11 @@ var mixin = {
         visibility: '', //visible
         hasPower: false
     },
+     computed: {
+        _disabled: function() {
+            return this.status === 1;
+        }
+    },
     methods: {
         save_excle: function(callback) { // v 用于回调
             var self = this;
@@ -32,7 +37,7 @@ var mixin = {
                     var _seriadata = function(_res, type) {
                         if (type) {
                             self.dialog.excle_result_visible = false;
-                            if (callback) {
+                            if ( ! (callback instanceof MouseEvent)) {
                                 return resolve(_res);
                             }
                             eher_util.remove_mutiple_2_list(_res, self.tableData)

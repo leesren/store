@@ -22,6 +22,7 @@ var app = window.$app = new Vue({
             store_selected: '',
             signerList: [],
             signer_selected: ''
+<<<<<<< HEAD
         }
 
     },
@@ -30,6 +31,13 @@ var app = window.$app = new Vue({
             return this.status === 1;
         }
     },
+=======
+        },
+        empId: '8787426330226802018',
+        hasPower: false
+ 
+    }, 
+>>>>>>> cdf15f1a25c5a7625304840b902aeeb590ea4024
     watch: {},
     created: function() {
         this.dataRequest = window.$dataRequest = new dataRequest(this.orgId);

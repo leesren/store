@@ -55,7 +55,7 @@ var $app = new Vue({
         },
         rowClick: function (row, event, column) {
             var link = './check.html#/'
-            window.open(link + row.id);
+            location.href = (link + row.id);
         },
         handleChange: function () {
             this.questListEntryOrder();

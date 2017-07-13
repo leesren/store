@@ -47,7 +47,7 @@ var app = new Vue({
         rowClick: function (row, event, column) {
             console.log(row);
             window.location.href = './out.html#/'+row.id;
-        },
+        }, 
         handleChange:function(){
             this.questListEntryOrder();
         },

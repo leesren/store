@@ -93,11 +93,9 @@
                     <div class="ibox-title" flexbox flex-center>
                         <h4 flex>产品出库</h4>
                         <div class="ibox-tools">
-
                             <el-button type="primary" size="small" @click="sign" v-if="status === 0 && hasPower">审批</el-button>
                             <el-button type="warning" size="small" @click="unsign" v-if="status === 1 && hasPower">取消审批</el-button>
                             <el-button type="success" size="small" @click="out_excel">导出</el-button>
-                            <el-button type="danger" size="small" @click="dialog.deletedialogVisible = true" v-if="id">删除</el-button>
                             <el-button type="primary" size="small">返回</el-button>
                         </div>
                     </div>
@@ -172,7 +170,7 @@
                                         </el-table>
                                     </div>
                                     <div style="text-align:center;margin:32px 0 0 0" class="myel" v-show="tableData.length">
-                                        <el-button type="danger" :plain="true" @click="dialog.deletedialogVisible = true">删除</el-button>
+                                        <el-button type="danger" :disabled="_disabled" :plain="true" @click="dialog.deletedialogVisible = true">删除</el-button>
                                         <el-button type="info" v-if="!_disabled" @click="save">保存</el-button>
                                     </div>
                                 </div>

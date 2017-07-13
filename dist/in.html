@@ -97,7 +97,7 @@
                             <el-button type="primary" size="small" @click="sign" v-if="status === 0 && hasPower">审批</el-button>
                             <el-button type="warning" size="small" @click="unsign" v-if="status === 1 && hasPower">取消审批</el-button>
                             <el-button type="success" size="small" @click="out_excel">导出</el-button>
-                            <el-button type="danger" size="small" @click="dialog.deletedialogVisible = true" v-if="id">删除</el-button>
+                            
                             <el-button type="primary" size="small">返回</el-button>
                         </div>
                     </div>
@@ -130,6 +130,7 @@
                                         <my-upload :disabled="_disabled" :change="_onChange" type="success" multiple accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                                             从Excel中导入
                                         </my-upload>
+<<<<<<< HEAD
                                     </div>
                                     <!--<div flex flexbox flex-center>
                                         <label for="" style="margin:0 10px 0 40px">输入产品条形码</label>
@@ -138,6 +139,10 @@
                                         </section>
                                     </div>-->
                                     <my-query-filter :disabled="_disabled" @keydown-enter="keyupEnter" v-model="barcode"></my-query-filter>
+=======
+                                    </div> 
+                                    <my-query-filter  :disabled="_disabled" @keydown-enter="keyupEnter" v-model="barcode"></my-query-filter>
+>>>>>>> cdf15f1a25c5a7625304840b902aeeb590ea4024
                                 </div>
                             </div>
                             <div class="content-body" style="margin-top:15px">
@@ -178,7 +183,7 @@
                                         </el-table>
                                     </div>
                                     <div style="text-align:center;margin:32px 0 0 0" class="myel" v-show="tableData.length">
-                                        <el-button :plain="true" type="danger" @click="dialog.deletedialogVisible = true"> 删除 </el-button>
+                                        <el-button :plain="true" :disabled="_disabled" type="danger" @click="dialog.deletedialogVisible = true"> 删除 </el-button>
                                         <el-button type="info" v-if="!_disabled" @click="save"> 保存 </el-button>
                                     </div>
                                 </div>

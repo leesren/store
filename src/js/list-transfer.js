@@ -48,12 +48,10 @@ var app = new Vue({
     },
     methods: {
         handleClick: function(tab, event) {
-            console.log(this.activeIndex);
             if (this.tabIndexArray[this.activeIndex] != this.activeIndex) {
                 this.tabIndexArray[this.activeIndex] = this.activeIndex;
                 this.questListEntryOrder();
             }
-
         },
         handleCommand: function(v) {
             this.goods_filter.selected = v;

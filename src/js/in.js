@@ -30,6 +30,7 @@ var app = window.$app = new Vue({
             return this.status === 1;
         }
     },
+
     watch: {},
     created: function() {
         this.dataRequest = window.$dataRequest = new dataRequest(this.orgId);

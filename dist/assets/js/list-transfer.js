@@ -48,12 +48,10 @@ var app = new Vue({
     },
     methods: {
         handleClick: function(tab, event) {
-            console.log(this.activeIndex);
             if (this.tabIndexArray[this.activeIndex] != this.activeIndex) {
                 this.tabIndexArray[this.activeIndex] = this.activeIndex;
                 this.questListEntryOrder();
             }
-
         },
         handleCommand: function(v) {
             this.goods_filter.selected = v;
@@ -68,6 +66,7 @@ var app = new Vue({
             this.questListEntryOrder();
         },
         rowClick: function(row, event, column) {
+<<<<<<< HEAD
             console.log(row);
             var link = {
                 '0': './transfer.html#/',
@@ -75,6 +74,11 @@ var app = new Vue({
                 '2': './transfer-in.html#/'
             }
             window.open(link[this.activeIndex] + row.id);
+=======
+            console.log(row); 
+            var link = this.activeIndex == 0 ? './transfer.html#/' : this.activeIndex == 1 ? './transfer-out.html#/' : './transfer-in.html#/';
+            window.location.href = (link + row.id); 
+>>>>>>> cdf15f1a25c5a7625304840b902aeeb590ea4024
         },
         handleChange: function() {
             this.questListEntryOrder();
