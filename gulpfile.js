@@ -74,10 +74,10 @@ gulp.task('css2', ['clean'], function () {
         autoprefixer({ browsers: ['> 0.1%'], cascade: false })
     ];
     return gulp.src(['./src/css/index.css'])
-        .pipe(concat('mymain.css'))
+        .pipe(concat('index.min.css'))
         .pipe(cssnano())
         .pipe(postcss(postcss_plugins))
-        .pipe(gulp.dest('./tmp'));
+        .pipe(gulp.dest('./src/css'));
 });
 gulp.task('scss', function () {
     var postcss_plugins = [
@@ -159,6 +159,9 @@ gulp.task('default', ['serve'], () => {
     });
     gulp.watch([config.js.src], function (file) {// js处理
         runSequence(['js', 'concat'], ['revreplace']);
+    });
+    gulp.watch(['./src/css/index-origin.css'], function (file) {// js处理
+        runSequence(['css2'], ['revreplace']);
     });
 
     gulp.watch([config.scss.src], function (file) {// js处理
