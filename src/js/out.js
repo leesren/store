@@ -4,7 +4,12 @@ var app = window.$app = new Vue({
     data: {
         orgId: '8787426330226801974',
 <<<<<<< HEAD
+<<<<<<< HEAD
         id: location.hash.slice(2) || '',// 详情的id
+=======
+        id: location.hash.slice(2) || '', // 详情的id
+        approveEmpId: '8787426330226802018', // 审核人id
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
 =======
         id: location.hash.slice(2) || '', // 详情的id
         approveEmpId: '8787426330226802018', // 审核人id
@@ -28,7 +33,13 @@ var app = window.$app = new Vue({
             signerList: [],
             signer_selected: ''
 <<<<<<< HEAD
+<<<<<<< HEAD
         }
+=======
+        },
+        empId: '8787426330226802018',
+        hasPower: false
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
 =======
         },
         empId: '8787426330226802018',
@@ -69,7 +80,11 @@ var app = window.$app = new Vue({
                 })
         },
 <<<<<<< HEAD
+<<<<<<< HEAD
         _change: function (v) {
+=======
+        _change: function(v) {
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
 =======
         _change: function(v) {
 >>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
@@ -81,7 +96,11 @@ var app = window.$app = new Vue({
             return (el.price * el.quantity).toFixed(2);
         },
 <<<<<<< HEAD
+<<<<<<< HEAD
         submit: function (e) {
+=======
+        submit: function(e) {
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
 =======
         submit: function(e) {
 >>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
@@ -92,7 +111,11 @@ var app = window.$app = new Vue({
         },
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         save_request: function (callback) {
+=======
+        save_request: function(data) {
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
 =======
         save_request: function(data) {
 >>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
@@ -103,7 +126,11 @@ var app = window.$app = new Vue({
                 "note": this.formInline.desc,
                 "receiveEmpId": this.formInline.buyer + '',
 <<<<<<< HEAD
+<<<<<<< HEAD
                 "operatorId": this.approveEmpId,// 不填
+=======
+                "operatorId": this.approveEmpId, // 不填
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
 =======
                 "operatorId": this.approveEmpId, // 不填
 >>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
@@ -195,6 +222,9 @@ var app = window.$app = new Vue({
                     self.$log(error);
                     self.$message({ message: '审批失败,code：' + error, type: 'warning' });
                 })
+<<<<<<< HEAD
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
+=======
 >>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
         },
         unsign: function() {
@@ -212,9 +242,12 @@ var app = window.$app = new Vue({
             eher_util.element_table_2_table('eltableBox', 7, '产品出库');
         },
 <<<<<<< HEAD
+<<<<<<< HEAD
         delete_confirm: function () {
             this.dialog.deletedialogVisible = false;
 =======
+=======
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
         delete_confirm: function() {
             var self = this;
             this.$http.post('/doWareHouse/cancelDeliOrder', { id: this.id })
@@ -235,6 +268,9 @@ var app = window.$app = new Vue({
             }, function(error) {
                 self.$log(error);
             })
+<<<<<<< HEAD
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
+=======
 >>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
         }
     }

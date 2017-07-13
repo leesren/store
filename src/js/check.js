@@ -69,12 +69,8 @@ var app = window.$app = new Vue({
         }
         this.visibility_view();
     },
-    methods: {
-<<<<<<< HEAD
-        tabClick: function () {
-=======
-        tabClick: function() {
->>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
+    methods: { 
+        tabClick: function() { 
             if (!+this.activeIndex) return;
             if (this.dataList.tableData[this.activeIndex].loaded) { return; }
             this.activeIndex != 0 && this.query_in_out();
@@ -88,24 +84,14 @@ var app = window.$app = new Vue({
             return this.tableData2.length ? this.tableData2 : this.tableData
         },
         filters_name: function() {
-            var self = this;
-<<<<<<< HEAD
+            var self = this; 
             return this.tableData.filter(function (e) {
                 return self.filter_name ? (e.name).indexOf(self.filter_name) != -1 : true
-            })
-
-=======
-            var l = this.tableData.filter(function(e) {
-                    return self.filter_name ? (e.productName).indexOf(self.filter_name) != -1 : true
-                })
-                // console.log(JSON.stringify(l, null, 4));
-            return l;
->>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
+            }) 
         },
         initDataInfo: function() { // 初始化单的详情
             var self = this;
             this.$http.post('/checkInvertory/queryCheckInventoryDetail', {
-<<<<<<< HEAD
                 "checkInvertoryId": self.id, "start": -1, "limit": -1
             }).then(function (result) {
                 self.formInline.in_time = result.checkTime;
@@ -117,26 +103,7 @@ var app = window.$app = new Vue({
                 self.formInline.desc = result.note;
                 self.status = +result.status;
                 self.selectStoreChange(self.formInline.check_warehouse);
-            }, function (error) {
-=======
-                "checkInvertoryId": self.id,
-                "start": -1,
-                "limit": -1
-            }).then(function(result) {
-                self.formInline.out_storeId = result.fromOrgId;
-                self.formInline.out_store = result.fromOrgName;
-                self.formInline.out_warehouse = result.fromStorageId;
-                self.formInline.in_storeId = result.toOrgId;
-                self.formInline.in_store = result.toOrgName;
-                self.formInline.in_warehouse = result.toStorageId;
-                self.formInline.in_time = result.orderDate;
-                self.formInline.desc = result.note;
-
-                self.tableData = result.itemList;
-                self.status = +result.statusCode;
-                self.selectStoreChange(self.formInline.out_storeId);
-            }, function(error) {
->>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
+            }, function (error) { 
                 console.error(error);
             })
         },
@@ -169,15 +136,9 @@ var app = window.$app = new Vue({
                     return {
                         "storageId": e.storageId, //仓库
                         "productId": e.productId, //产品
-<<<<<<< HEAD
                         "beforeQuantity": e.beforeQuantity + '',  //库存数量
                         "unitId": e.unitId, //单位
                         "quantity": e.quantity + ''  //盘点数量
-=======
-                        "beforeQuantity": e.quantity + '', //库存数量
-                        "unitId": e.unitId, //单位
-                        "quantity": e.inventory_quantity + '' //盘点数量
->>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
                     }
                 })
             }
@@ -214,17 +175,10 @@ var app = window.$app = new Vue({
         },
         sign: function() {
             var self = this;
-<<<<<<< HEAD
             if (this.id)
                 this.save('sign').then(function (e) {
                     self.$http.post('/checkInvertory/audit', { checkInvertoryId: self.id })
                         .then(function (result) {
-=======
-            if (this.id && this.approveEmpId)
-                this.save('sign').then(function(e) {
-                    self.$http.post('/doWareHouse/approveTransferOrder', { id: self.id, approveEmpId: self.approveEmpId })
-                        .then(function(result) {
->>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
                             self.$message({ message: '审批成功', type: 'success' });
                             window.location.reload()
                         }, function(error) {
@@ -236,13 +190,9 @@ var app = window.$app = new Vue({
         },
         unsign: function() {
             var self = this;
-<<<<<<< HEAD
             this.$http.post('/checkInvertory/cancelAudit', { checkInvertoryId: this.id })
                 .then(function (result) {
-=======
-            this.$http.post('/doWareHouse/antiApproveTransferOrder', { id: this.id, empId: this.approveEmpId })
-                .then(function(result) {
->>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
+
                     self.$message({ message: '取消审批成功', type: 'success' });
                     window.location.reload()
                 }, function(error) {
@@ -270,14 +220,8 @@ var app = window.$app = new Vue({
         add_inventory: function(res) { // 添加盘点v
             var self = this;
             if (res && res instanceof Array && res.length) {
-<<<<<<< HEAD
                 res.map(function (e) {
                     e.beforeQuantity = e.quantity;
-=======
-                res.map(function(e) {
-                    e.inventory_quantity = e.quantity;
-                    e.productName = e.name;
->>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
                     self.addItem(e);
                 })
 
@@ -295,15 +239,10 @@ var app = window.$app = new Vue({
                 self.$message({ message: '查询失败,code：' + e, type: 'warning' });
             })
         },
-
         queryStorageByProduct: function(options) {
             var self = this;
-            var obj = {
-<<<<<<< HEAD
-                "storageIds": this.formInline.check_warehouse,  //仓库
-=======
+            var obj = { 
                 "storageIds": this.formInline.check_warehouse, //仓库
->>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
                 "productId": null, //产品(添加产品)
                 "barcode": null, //条形码
                 "productCodes": null, //产品编号列表（excel导入）
@@ -317,8 +256,7 @@ var app = window.$app = new Vue({
                 return;
             }
             this.add();
-        },
-<<<<<<< HEAD
+        }, 
         keyup_enter: function () {
             if (!this.filter_name) return;
             var self = this;
@@ -330,12 +268,7 @@ var app = window.$app = new Vue({
                     self.add_inventory(res);
                 }, function (e) {
                     e && self.$message({ message: '查询失败', type: 'warning' });
-                })
-
-=======
-        keyup_enter: function() {
-            console.log('dsdsd');
->>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
+                }) 
         },
         query_keyword: eher_util.throttle(function(e) {
             this.filter_name = e.target.value.trim();

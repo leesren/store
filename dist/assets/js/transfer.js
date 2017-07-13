@@ -162,13 +162,8 @@ var app = window.$app = new Vue({
         },
         sign: function() {
             var self = this;
-<<<<<<< HEAD
             if (this.id)
                 this.save('sign').then(function (e) {
-=======
-            if (this.id && this.approveEmpId)
-                this.save('sign').then(function(e) {
->>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
                     self.$http.post('/doWareHouse/approveTransferOrder', { id: self.id, approveEmpId: self.approveEmpId })
                         .then(function(result) {
                             self.$message({ message: '审批成功', type: 'success' });
