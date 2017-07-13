@@ -4,7 +4,6 @@ var app = window.$app = new Vue({
     data: {
         orgId: '8787426330226801974',
         id: location.hash.slice(2) || '', // 详情的id
-        approveEmpId: '8787426330226802018', // 审核人id
         status: 0,
         formInline: {},
         tableData: [],
@@ -30,6 +29,7 @@ var app = window.$app = new Vue({
         if (this.id) {
             this.initDataInfo();
         }
+        this.visibility_view();
     },
     methods: {
         initDataInfo: function() { // 初始化单的详情

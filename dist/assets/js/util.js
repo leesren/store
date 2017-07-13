@@ -227,7 +227,6 @@ eher_util.prototype.element_table_2_table = function (id, removeContents, filena
         })
     }
     table.appendChild(_t);
-    console.log(table);
     this.export_2_excle(table, filename || '仓库');
 }
 eher_util.prototype.export_2_excle = function (table_dom, filename) {// 导出到excle
@@ -563,6 +562,9 @@ dataRequest.prototype.query_stores = function (id, tolist) {
 
 dataRequest.prototype.query_hourse = function (orgId) {// 查询仓库
     return Vue.prototype.$http.post('/doResourceCommon/listStorage', { "orgId": orgId })
+}
+dataRequest.prototype.query_product_by_barcode = function (barCode) {// 查询仓库
+    return Vue.prototype.$http.post('/doResourceCommon/checkBarCode', { "barCode": barCode })
 }
 dataRequest.prototype.query_store = function (orgId) {// 查询仓库
     var self = window.$app;

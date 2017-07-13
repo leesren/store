@@ -30,7 +30,7 @@ function post(api, data) {
                 if (result.retCode === "000000") {
                     resolve(result.data);
                 } else {
-                    reject(result.retCode);
+                    reject(result.retMsg);
                 }
             },
             error: function (error) {

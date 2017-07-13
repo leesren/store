@@ -1,5 +1,6 @@
 var app = new Vue({
     el: '#pager_main',
+    mixins: [ mixin ],
     data: {
         goods_filter: {
             selected: null,
@@ -27,7 +28,9 @@ var app = new Vue({
     created: function() {
         this.tabIndexArray[0] = '0';
         this.questListEntryOrder();
-
+    },
+    mounted: function() { 
+        this.visibility_view();
     },
     methods: {
         handleClick: function(tab, event) {

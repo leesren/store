@@ -30,7 +30,7 @@ function post(api, data) {
                 if (result.retCode === "000000") {
                     resolve(result.data);
                 } else {
-                    reject(result.retCode);
+                    reject(result.retMsg);
                 }
             },
             error: function (error) {
@@ -312,7 +312,6 @@ eher_util.prototype.element_table_2_table = function (id, removeContents, filena
         })
     }
     table.appendChild(_t);
-    console.log(table);
     this.export_2_excle(table, filename || '仓库');
 }
 eher_util.prototype.export_2_excle = function (table_dom, filename) {// 导出到excle
@@ -485,7 +484,7 @@ eher_util.prototype.getData_from_excle = function (target) {
 
 }
 eher_util.prototype.status_data = function (name) {// 返回通用的数据
-    var store_status = [{ value: null, text: '全部' }, { value: '0', text: '待入库' }, { value: '1', text: '已入库' }];
+    var store_status = ['未审批', '已审批'];
     var sign_status = [{ value: 0, text: '未审批' }, { value: 1, text: '已审批' }, { value: 2, text: '已删除' }];
     var outstore_status = [{ value: null, text: '全部' }, { value: 0, text: '未审批' }, { value: 1, text: '已审批' }];
     var transfer_status = [{ value: null, text: '全部' }, { value: '0', text: '待调拨' }, { value: '1', text: '已调拨' }];
@@ -648,6 +647,9 @@ dataRequest.prototype.query_stores = function (id, tolist) {
 
 dataRequest.prototype.query_hourse = function (orgId) {// 查询仓库
     return Vue.prototype.$http.post('/doResourceCommon/listStorage', { "orgId": orgId })
+}
+dataRequest.prototype.query_product_by_barcode = function (barCode) {// 查询仓库
+    return Vue.prototype.$http.post('/doResourceCommon/checkBarCode', { "barCode": barCode })
 }
 dataRequest.prototype.query_store = function (orgId) {// 查询仓库
     var self = window.$app;
@@ -865,10 +867,54 @@ Vue.component('my-excle-note', {
     '<li>Excle里的数据格式是否在正确，请确认您输入的日期格式、数字格式、编号、中英文符号是否正确</li>' +
     '</ul></div>'
 })
+Vue.component('my-query-filter', {
+    template: '<div flex flexbox flex-center>' +
+    '<label for="" style="margin:0 10px 0 40px">输入产品条形码</label>' +
+    '<section flex="" class="el-input el-input--small">' +
+    '<input autocomplete="off" placeholder="筛选/查询" @blur="handleBlur" @focus="handleFocus" @input="handleInput" :value="currentValue" v-bind="$props" size="small" type="text" @keyup.enter="handleKeyEnter" class="el-input__inner query--input">' +
+    '</section>' +
+    '</div>',
+    props: {
+        value: [String, Number],
+        disabled: Boolean,
+    },
+    watch: {
+        'value'(val, oldValue) {
+            this.setCurrentValue(val);
+        }
+    },
+    data: function () {
+        return {
+            currentValue: this.value
+        }
+    },
+    methods: {
+        handleKeyEnter: function (e) {
+            this.$emit('keydown-enter', e);
+        },
+        handleInput(event) {
+            var value = event.target.value;
+            this.$emit('input', value);
+            this.setCurrentValue(value);
+        },
+        setCurrentValue(value) {
+            if (value === this.currentValue) return;
+            this.currentValue = value;
+        },
+        handleBlur(event) {
+            this.$emit('blur', event);
+        },
+        handleFocus(event) {
+            this.$emit('focus', event);
+        },
+    }
+})
 
 
 var mixin = {
     data: {
+        approveEmpId: null,// 审核人id
+        barcode:'',
         dialog: {
             dialogVisible: false,
             input: '',
@@ -888,7 +934,7 @@ var mixin = {
             check_result: [],
             handson_data: {}
         },
-        visibility:''//visible
+        visibility: ''//visible
     },
     methods: {
         save_excle: function (callback) {// v 用于回调
@@ -897,8 +943,8 @@ var mixin = {
                 if (eher_util.check_table()) {
                     var _seriadata = function (_res, type) {
                         if (type) {
-                            self.dialog.excle_result_visible = false; 
-                            if(callback){
+                            self.dialog.excle_result_visible = false;
+                            if (callback) {
                                 return resolve(_res);
                             }
                             eher_util.remove_mutiple_2_list(_res, self.tableData)
@@ -1000,8 +1046,28 @@ var mixin = {
         deleteRow: function (index) {
             this.tableData.splice(index, 1);
         },
-        visibility_view:function(){
+        visibility_view: function () {
             this.visibility = 'visible'
+        },
+        keyupEnter: function (callback) {
+            var self = this , callback = ! (callback instanceof KeyboardEvent) ;
+            return new Promise(function (resolve, reject) {
+                self.dataRequest.query_product_by_barcode(self.barcode)
+                    .then(function (e) {
+                        if (!e) {
+                            self.$message({ message: '无此产品条形码相关的产品', type: 'warning' });
+                            return;
+                        }
+                        self.$message({ message: '找到相关产品', type: 'success' });
+                        if (callback) return resolve(e);
+                        e.quantity = e.quantity || 1;
+                        self.addItem(e);
+                    }, function (e) {
+                        self.$message({ message: '取消审批失败,code：' + e, type: 'warning' });
+                        reject(e);
+                    })
+            })
+
         }
     }
 };

@@ -1,5 +1,7 @@
 var mixin = {
     data: {
+        approveEmpId: null,// 审核人id
+        barcode:'',
         dialog: {
             dialogVisible: false,
             input: '',
@@ -19,7 +21,7 @@ var mixin = {
             check_result: [],
             handson_data: {}
         },
-        visibility:''//visible
+        visibility: ''//visible
     },
     methods: {
         save_excle: function (callback) {// v 用于回调
@@ -28,8 +30,8 @@ var mixin = {
                 if (eher_util.check_table()) {
                     var _seriadata = function (_res, type) {
                         if (type) {
-                            self.dialog.excle_result_visible = false; 
-                            if(callback){
+                            self.dialog.excle_result_visible = false;
+                            if (callback) {
                                 return resolve(_res);
                             }
                             eher_util.remove_mutiple_2_list(_res, self.tableData)
@@ -131,8 +133,28 @@ var mixin = {
         deleteRow: function (index) {
             this.tableData.splice(index, 1);
         },
-        visibility_view:function(){
+        visibility_view: function () {
             this.visibility = 'visible'
+        },
+        keyupEnter: function (callback) {
+            var self = this , callback = ! (callback instanceof KeyboardEvent) ;
+            return new Promise(function (resolve, reject) {
+                self.dataRequest.query_product_by_barcode(self.barcode)
+                    .then(function (e) {
+                        if (!e) {
+                            self.$message({ message: '无此产品条形码相关的产品', type: 'warning' });
+                            return;
+                        }
+                        self.$message({ message: '找到相关产品', type: 'success' });
+                        if (callback) return resolve(e);
+                        e.quantity = e.quantity || 1;
+                        self.addItem(e);
+                    }, function (e) {
+                        self.$message({ message: '取消审批失败,code：' + e, type: 'warning' });
+                        reject(e);
+                    })
+            })
+
         }
     }
 };

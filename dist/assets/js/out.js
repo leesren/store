@@ -1,11 +1,10 @@
 
 var app = window.$app = new Vue({
     el: '#wrapper',
-    mixins: [ mixin ],
+    mixins: [mixin],
     data: {
         orgId: '8787426330226801974',
         id: location.hash.slice(2) || '',// 详情的id
-        approveEmpId: '8787426330226802018',// 审核人id
         status: 0,
         formInline: {
             buyer: '',
@@ -24,7 +23,7 @@ var app = window.$app = new Vue({
             store_selected: '',
             signerList: [],
             signer_selected: ''
-        } 
+        }
     },
     computed: {
         _disabled: function () {
@@ -59,14 +58,14 @@ var app = window.$app = new Vue({
                     console.error(error);
                 })
         },
-        _change: function (v) { 
+        _change: function (v) {
             var newObj = Object.assign({}, this.tableData[v])
             Vue.set(this.tableData, v, newObj);
         },
         _count: function (i) {
             var el = this.tableData[i];
             return (el.price * el.quantity).toFixed(2);
-        }, 
+        },
         submit: function (e) {
 
         },
@@ -74,14 +73,14 @@ var app = window.$app = new Vue({
             eher_util.create_handsontable();
         },
 
-        save_request: function (data) {
+        save_request: function (callback) {
             if (!this.tableData.length) { this.$message({ message: '保存失败,您未添加产品', type: 'warning' }); return; }
             var data = {
                 "storageId": this.formInline.store + '',
                 "deliveryDate": eher_util.date2String(this.formInline.in_time),
                 "note": this.formInline.desc,
                 "receiveEmpId": this.formInline.buyer + '',
-                "operatorId":  this.approveEmpId,// 不填
+                "operatorId": this.approveEmpId,// 不填
                 "itemList": this.tableData
             }
             var api = '/doWareHouse/saveDeliOrder';
@@ -90,39 +89,52 @@ var app = window.$app = new Vue({
                 api = '/doWareHouse/modifyDeliOrder';
             }
             var self = this;
-            this.$http.post(api, data)
-                .then(function (result) {
-                    self.$message({ message: '添加成功', type: 'success' });
-                    setTimeout(function () {
-                        window.location.reload();
-                    }, 400)
-                }, function (error) {
-                    console.error(error);
-                    self.$message({ message: '添加失败,code：' + error, type: 'warning' });
-                }).catch(function (error) {
-                    console.error(error);
-                    self.$message({ message: '添加失败', type: 'warning' });
-                })
+            return new Promise(function (resolve) {
+                self.$http.post(api, data)
+                    .then(function (result) {
+                        
+                        if (callback) return resolve(result)
+                        self.$message({ message: '添加成功', type: 'success' });
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 400)
+                    }, function (error) {
+                        console.error(error);
+                        self.$message({ message: '添加失败,code：' + error, type: 'warning' });
+                    }).catch(function (error) {
+                        console.error(error);
+                        self.$message({ message: '添加失败', type: 'warning' });
+                    })
+            })
+
 
         },
-        save: function () {
+        save: function (callback) {
             var self = this;
-            this.validator_data.isValid_form(this)
+            return this.validator_data.isValid_form(this)
                 .then(function () {
-                    self.save_request();
+                    return self.save_request();
                 })
         },
         sign: function () {
             var self = this;
-            if (this.id && this.approveEmpId)
-                this.$http.post('/doWareHouse/approveDeliOrder', { id: this.id, approveEmpId: this.approveEmpId })
-                    .then(function (result) {
-                        self.$message({ message: '审批成功', type: 'success' });
-                        window.location.reload()
-                    }, function (error) {
-                        self.$log(error);
-                        self.$message({ message: '审批失败,code：' + error, type: 'warning' });
+            if (this.id) {
+                var _pp = function () {
+                    self.$http.post('/doWareHouse/approveDeliOrder', { id: this.id, approveEmpId: this.approveEmpId })
+                        .then(function (result) {
+                            self.$message({ message: '审批成功', type: 'success' });
+                            window.location.reload()
+                        }, function (error) {
+                            self.$log(error);
+                            self.$message({ message: '审批失败,code：' + error, type: 'warning' });
+                        })
+                }
+                this.save()
+                    .then(function () {
+                        _pp();
                     })
+            }
+
         },
         unsign: function () {
             var self = this;
@@ -137,10 +149,10 @@ var app = window.$app = new Vue({
         },
         out_excel: function () {
             eher_util.element_table_2_table('eltableBox', 7, '产品出库');
-        }, 
+        },
         delete_confirm: function () {
             this.dialog.deletedialogVisible = false;
-        } 
+        }
     }
 })
 window.$dataRequest.query_store($app.orgId);

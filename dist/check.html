@@ -146,8 +146,8 @@
                                             <div flex flexbox flex-center>
                                                 <label for="" style="margin:0 10px 0 40px">输入产品条形码</label>
                                                 <section flex="" class="el-input el-input--small">
-                                                    <input autocomplete="off" v-on:keyup.enter="keyup_enter" placeholder="筛选/查询" @input="query_keyword" size="small" type="text" @keyup.enter="submit"
-                                                        class="el-input__inner">
+                                                    <input :disabled="_disabled" autocomplete="off" v-on:keyup.enter="keyup_enter" placeholder="筛选/查询" @input="query_keyword"
+                                                        size="small" type="text" @keyup.enter="submit" class="el-input__inner query--input">
                                                 </section>
                                             </div>
                                         </div>
@@ -167,7 +167,7 @@
                                                     </el-table-column>
                                                     <el-table-column label="盘点数量" width="100">
                                                         <template scope="scope">
-                                                            <el-input :disabled="_disabled"  v-model="scope.row.quantity"></el-input>
+                                                            <el-input :disabled="_disabled" v-model="scope.row.beforeQuantity"></el-input>
                                                         </template>
                                                     </el-table-column>
                                                     <el-table-column prop="quantity" label="库存数量" width="100">
@@ -189,7 +189,7 @@
                                                 </el-table>
                                             </div>
                                             <div style="text-align:center;margin:32px 0 0 0" v-show="tableData.length">
-                                                <el-button :plain="true" type="danger" @click="dialog.deletedialogVisible = true"> 删除 </el-button>
+                                                <el-button :plain="true" type="danger" :disabled="_disabled" @click="dialog.deletedialogVisible = true"> 删除 </el-button>
                                                 <el-button type="info" v-if="!_disabled" @click="save"> 保存 </el-button>
                                             </div>
                                         </div>
@@ -200,7 +200,7 @@
                                         <el-table-column prop="orderNo" label="入库单号">
                                         </el-table-column>
                                         <el-table-column prop="status" label="单据状态" width="100">
-                                            <template scope="scope" v-text="scope.row.status"></template>
+                                            <template scope="scope"> {{dataList.bill_status[+scope.row.status] }}</template>
                                         </el-table-column>
                                         <el-table-column prop="entryDate" label="入库日期">
                                         </el-table-column>
@@ -228,7 +228,7 @@
                                         <el-table-column prop="orderNo" label="出库单号">
                                         </el-table-column>
                                         <el-table-column prop="status" label="单据状态" width="100">
-                                            <template scope="scope">{{ scope.row.status}}</template>
+                                            <template scope="scope">{{dataList.bill_status[+scope.row.status] }}</template>
                                         </el-table-column>
                                         <el-table-column prop="deliveryDate" label="出库日期">
                                         </el-table-column>

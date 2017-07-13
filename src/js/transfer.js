@@ -4,7 +4,6 @@ var app = window.$app = new Vue({
     data: {
         orgId: '8752752929078179148',
         id: location.hash.slice(2) || '', // 详情的id
-        approveEmpId: '8787426330226802018', // 审核人id
         status: 0,
         formInline: {
             in_time: '',
@@ -50,6 +49,7 @@ var app = window.$app = new Vue({
         if (this.id) {
             this.initDataInfo();
         }
+        this.visibility_view();
     },
     methods: {
         initDataInfo: function () { // 初始化单的详情
@@ -119,8 +119,8 @@ var app = window.$app = new Vue({
                 "fromStorageId": this.formInline.in_warehouse + '',
                 "orderDate": eher_util.date2String(this.formInline.in_time),
                 "note": this.formInline.desc,
-                "createEmpId": this.approveEmpId + '',
-                "operatorId": this.approveEmpId + '', // 不填
+                "createEmpId": this.approveEmpId,
+                "operatorId": this.approveEmpId, // 不填
                 "itemList": this.tableData
             }
             var api = '/doWareHouse/saveTransferOrder';
@@ -159,7 +159,7 @@ var app = window.$app = new Vue({
         },
         sign: function () {
             var self = this;
-            if (this.id && this.approveEmpId)
+            if (this.id)
                 this.save('sign').then(function (e) {
                     self.$http.post('/doWareHouse/approveTransferOrder', { id: self.id, approveEmpId: self.approveEmpId })
                         .then(function (result) {

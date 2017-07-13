@@ -4,8 +4,8 @@ var app = window.$app = new Vue({
     mixins: [mixin],
     data: {
         orgId: '8787426330226801974',
+        
         id: location.hash ? location.hash.slice(2) : '',// 详情的id
-        approveEmpId: '8787426330226802018',// 审核人id
         status: 0,
         formInline: {
             buyer: '',
@@ -24,13 +24,13 @@ var app = window.$app = new Vue({
             store_selected: '',
             signerList: [],
             signer_selected: ''
-        } 
+        }
     },
     computed: {
         _disabled: function () {
             return this.status === 1;
         }
-        
+
     },
     watch: {
     },
@@ -73,7 +73,7 @@ var app = window.$app = new Vue({
         submit: function (e) {
 
         },
-        save_request: function (data) {
+        save_request: function (callback) {
             var data = {
                 "storageId": this.formInline.store + '',
                 "entryDate": eher_util.date2String(this.formInline.in_time),
@@ -88,38 +88,53 @@ var app = window.$app = new Vue({
                 api = '/doWareHouse/modifyEntryOrder';
             }
             var self = this;
-            this.$http.post(api, data)
-                .then(function (result) {
-                    self.$message({ message: '添加成功', type: 'success' });
-                    setTimeout(function () {
-                        window.location.reload();
-                    }, 400)
-                }, function (error) {
-                    console.error(error);
-                    self.$message({ message: '添加失败,code：' + error, type: 'warning' });
-                }).catch(function (error) {
-                    console.error(error);
-                    self.$message({ message: '添加失败', type: 'warning' });
-                })
+            return new Promise(function (resolve, reject) {
+                self.$http.post(api, data)
+                    .then(function (result) {
+                        
+                        if (callback) {
+                            return resolve(result);
+                        }
+                        self.$message({ message: '添加成功', type: 'success' });
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 400)
+                    }, function (error) {
+                        console.error(error);
+                        self.$message({ message: '添加失败,code：' + error, type: 'warning' });
+                    }).catch(function (error) {
+                        console.error(error);
+                        self.$message({ message: '添加失败', type: 'warning' });
+                    })
+            })
+
         },
-        save: function () {
+        save: function (callback) {
             var self = this;
-            this.validator_data.isValid_form(this)
+            return this.validator_data.isValid_form(this)
                 .then(function () {
-                    self.save_request();
+                    return self.save_request(callback);
                 })
         },
         sign: function () {
             var self = this;
-            if (this.id && this.approveEmpId)
-                this.$http.post('/doWareHouse/approveEntryOrder', { id: this.id, approveEmpId: this.approveEmpId })
+            if (this.id) {
+                var _pp = function () {
+                    self.$http.post('/doWareHouse/approveEntryOrder', { id: this.id, approveEmpId: this.approveEmpId })
+                        .then(function (result) {
+                            self.$message({ message: '审批成功', type: 'success' });
+                            window.location.reload()
+                        }, function (error) {
+                            self.$log(error);
+                            self.$message({ message: '审批失败,code：' + error, type: 'warning' });
+                        })
+                }
+                this.save(true)
                     .then(function (result) {
-                        self.$message({ message: '审批成功', type: 'success' });
-                        window.location.reload()
-                    }, function (error) {
-                        self.$log(error);
-                        self.$message({ message: '审批失败,code：' + error, type: 'warning' });
+                        _pp();
                     })
+            }
+
         },
         unsign: function () {
             var self = this;
@@ -137,7 +152,7 @@ var app = window.$app = new Vue({
         },
         delete_confirm: function () {
             this.dialog.deletedialogVisible = false;
-        },
+        }, 
     }
 })
 window.$dataRequest.query_store($app.orgId);

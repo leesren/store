@@ -18,12 +18,8 @@
     <link rel="stylesheet" href="./vendor/vue/element-ui.css">
     <link rel="stylesheet" href="./css/index.css">
     <style>
-        .select-date .el-date-editor.el-input {
+        .select-date .el-input--small .el-input__inner {
             width: 125px;
-        }
-
-        #sumStock .el-table__row {
-            cursor: pointer
         }
     </style>
 </head>
@@ -78,12 +74,12 @@
                     </ul>
                 </nav>
             </div>
-            <div class="wrapper wrapper-content animated fadeInRight" id="pager_main">
+            <div class="wrapper wrapper-content animated fadeInRight my-invisi" :style="{'visibility':visibility}" id="pager_main">
 
                 <input type="hidden" id="menu_active" value="ResourceManagement-BatchImportManagement" />
                 <div class="ibox float-e-margins">
                     <div class="ibox-title" flexbox flex-center>
-                        <h4 flex>产品交易明细报表</h4>
+                        <h4 flex>产品交易报表</h4>
                         <div class="ibox-tools">
 
                         </div>
@@ -91,37 +87,74 @@
                     <div class="ibox-content miboxcontent">
                         <div class="form-horizontal">
                             <div class="op-header">
-                                <el-button size="small" @click="openSelectStore">选择门店</el-button>
-                                <div style="display:inline-block;margin:0 10px;" class="select-date">
+                                <el-button size="small" @click="open_store_tree">选择门店</el-button>
+                                <div style="display:inline-block;margin:0 10px;" class="myel">
                                     <span>从</span>
-                                    <el-date-picker size="small" v-model="start" type="date" placeholder="选择日期">
+                                    <el-date-picker size="small" format="yyyy-MM-dd" v-model="goods_filter.startDate" type="date" placeholder="选择日期">
                                     </el-date-picker>
                                     <span>到</span>
-                                    <el-date-picker size="small" v-model="end" type="date" placeholder="选择日期">
+                                    <el-date-picker size="small" format="yyyy-MM-dd" v-model="goods_filter.endDate" type="date" placeholder="选择日期">
                                     </el-date-picker>
-                                </div>
-                                <div style="display:inline-block">
-                                    <el-input v-model="goods_filter.value" size="small" @change="change" placeholder="按产品名称、产品编号搜索"></el-input>
-                                    <el-input v-model="goods_filter.value2" size="small" @change="change2" placeholder="按产品名称、产品编号搜索"></el-input>
-                                </div>
-                                <el-button type="primary" size="small">查询</el-button>
-                                <el-button type="success" size="small" @click="handleExport">导出excel</el-button>
+                                </div> 
+                                <el-button type="primary" size="small" @click="query_products">查询</el-button>
+                                <el-button type="success" size="small" :disabled="data_list.is_exporting" @click="handleExport">导出excel</el-button>
                             </div>
-                            <div class="content-body" style="margin-top:15px">
-                                <el-table :data="dialog.gridData">
-                                    <el-table-column property="stock" label="门店"></el-table-column>
-                                    <el-table-column property="no" label="单据编号"></el-table-column>
-                                    <el-table-column property="in_time" label="单据日期"></el-table-column>
-                                    <el-table-column property="name" label="交易类别" width="100"></el-table-column>
-                                    <el-table-column property="no" label="产品编号"></el-table-column>
-                                    <el-table-column property="name" label="产品名称"></el-table-column>
-                                    <el-table-column property="numbers" label="品类" width="100"></el-table-column>
-                                    <el-table-column property="numbers" label="交易单位" width="100"></el-table-column>
-                                    <el-table-column property="numbers" label="交易数量" width="100"></el-table-column>
+                            <div class="content-body myel" style="margin-top:15px">
+                                <el-table :data="data_list.center_store.tableData" style="width: 100%">
+                                    <el-table-column prop="organizationName" label="门店">
+                                    </el-table-column>
+                                    <el-table-column prop="orderNo" label="单据编号">
+                                    </el-table-column>
+                                    <el-table-column prop="orderDate" label="单据日期">
+                                    </el-table-column>
+                                    <el-table-column prop="orderType" label="交易类别">
+                                    </el-table-column>
+                                    <el-table-column prop="numberCode" label="产品编号">
+                                    </el-table-column>
+                                    <el-table-column prop="productName" label="产品名称" min-width="130">
+                                    </el-table-column>
+                                    <el-table-column prop="categoryName" label="产品品类" width="120">
+                                    </el-table-column>
+                                    <el-table-column prop="unitName" label="产品单位" width="100">
+                                    </el-table-column>
+                                    <el-table-column prop="quantity" align="right" label="交易数量" width="110">
+                                    </el-table-column>
                                 </el-table>
+                                <!-- start 导出exlce 总仓库数据的模板-->
+                                <div style="display:none">
+                                    <el-table id="export_tpl" :data="data_list.tableData_child_export" style="width: 100%">
+                                        <el-table-column prop="organizationName" label="门店">
+                                        </el-table-column>
+                                        <el-table-column prop="orderNo" label="单据编号" min-width="160">
+                                        </el-table-column>
+                                        <el-table-column prop="orderDate" label="单据日期" min-width="130">
+                                        </el-table-column>
+                                        <el-table-column prop="orderType" label="交易类别">
+                                        </el-table-column>
+                                        <el-table-column prop="numberCode" label="产品编号" width="110">
+                                        </el-table-column>
+                                        <el-table-column prop="productName" label="产品名称" width="110">
+                                        </el-table-column>
+                                        <el-table-column prop="categoryName" label="产品品类" width="110">
+                                        </el-table-column>
+                                        <el-table-column prop="unitName" label="产品单位" width="110">
+                                        </el-table-column>
+                                        <el-table-column prop="quantity" align="right" label="交易数量" width="110">
+                                        </el-table-column>
+                                    </el-table>
+                                    <!-- end 导出exlce 总仓库数据的模板-->
+                                </div>
+                                <div v-show="data_list.center_store.total" style="margin-top:18px;">
+                                    <el-pagination layout="prev, pager, next" :total="data_list.center_store.total" @current-change="currentChange" :current-page.sync="data_list.center_store.page"
+                                        :page-size="data_list.size">
+                                    </el-pagination>
+                                </div>
+
                             </div>
                         </div>
                     </div>
+
+
                 </div>
 
             </div>
@@ -133,43 +166,37 @@
             </div>
         </div>
 
-        <el-dialog title="选择门店" :visible.sync="tree_node.visible">
-            <el-tree :data="tree_node.data.list" accordion="true" show-checkbox node-key="id" :default-expanded-keys="[2, 3]" :default-checked-keys="[5]"
-                :props="tree_node.data.defaultProps">
+
+
+        <el-dialog title="选择门店" :visible.sync="data_list.stores.visible">
+            <el-tree default-expand-all="true" :data="data_list.stores.tree" accordion="true" show-checkbox node-key="id" ref="tree">
             </el-tree>
-            <!--<span slot="footer" class="dialog-footer">
-                <el-button @click="tree_node.visible = false">取 消</el-button>
-                <el-button type="primary" @click="tree_node.visible = false">确 定</el-button>
-            </span>-->
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="data_list.stores.visible = false">取 消</el-button>
+                <el-button type="primary" @click="select_store()">确 定</el-button>
+            </span>
         </el-dialog>
     </div>
 
     <script src="./vendor/vue/vue.min.js"></script>
     <script src="./vendor/vue/element-ui.js"></script>
 
-    <script src="./vendor/mock/yod-mock.min.js"></script>
-    <script src="./vendor/mock/mock_data.js"></script> 
+
 
     <script src="./js/util.js"></script>
     <script src="./js/request.js"></script>
+    <script src="./js/mixins.js"></script>
     <script src="./js/trade-product-export.js"></script>
-    <script src="./js/main.min.js"></script>
 
     <!-- excel 导出-->
-    <!--<script src=./vendor/excel/shim.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/shim.js"></script>
-    <!--<script src=./vendor/excel/Blob.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/Blob.js"></script>
-    <!--<script src=./vendor/excel/FileSaver.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/FileSaver.js"></script>
-    <!--<script src=./vendor/excel/swfobject.js></script>-->
-    <script src=http://apps.bdimg.com/libs/swfobject/2.2/swfobject.js></script>
-    <!--<script src=./vendor/excel/downloadify.min.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/downloadify.min.js"></script>
-    <!--<script src=./vendor/excel/base64.min.js></script>-->
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/base64.min.js"></script>
-    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/xlsx.full.min.js"></script>
-    
+
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/shim.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/Blob.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/FileSaver.js"></script>
+    <script defer async src=http://apps.bdimg.com/libs/swfobject/2.2/swfobject.js></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/downloadify.min.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/base64.min.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/xlsx.full.min.js"></script>
 </body>
 
 </html>

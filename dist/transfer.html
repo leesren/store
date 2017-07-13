@@ -89,7 +89,7 @@
                     </ul>
                 </nav>
             </div>
-            <div class="wrapper wrapper-content animated fadeInRight" id="pager_main">
+            <div class="wrapper wrapper-content animated fadeInRight my-invisi" :style="{'visibility':visibility}" id="pager_main">
 
                 <input type="hidden" id="menu_active" value="ResourceManagement-BatchImportManagement" />
                 <div class="ibox float-e-margins">
@@ -142,13 +142,7 @@
                                             从Excel中导入
                                         </my-upload>
                                     </div>
-                                    <div flex flexbox flex-center>
-                                        <label for="" style="margin:0 10px 0 40px">输入产品条形码</label>
-                                        <section flex="" class="el-input el-input--small">
-                                            <input autocomplete="off" placeholder="" size="small" type="text" @keyup.enter="submit" class="el-input__inner">
-                                        </section>
-                                        <!--<el-input v-model="formInline.name"></el-input>-->
-                                    </div>
+                                    <my-query-filter  :disabled="_disabled" @keydown-enter="keyupEnter" v-model="barcode"></my-query-filter>
                                 </div>
                             </div>
                             <div class="content-body" style="margin-top:15px">

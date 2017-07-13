@@ -71,7 +71,7 @@
             <div class="wrapper wrapper-content animated fadeInRight" id="pager_main">
 
                 <input type="hidden" id="menu_active" value="ResourceManagement-BatchImportManagement" />
-                <div class="ibox float-e-margins">
+                <div class="ibox float-e-margins my-invisi" :style="{'visibility':visibility}">
                     <div class="ibox-title" flexbox flex-center>
                         <h4 flex>库存盘点</h4>
                         <div class="ibox-tools">
@@ -145,6 +145,7 @@
 
     <script src="./js/request.js"></script>
     <script src="./js/util.js"></script>
+    <script src="./js/mixins.js"></script>
     <script src="./js/list-check.js"></script>
 </body>
 

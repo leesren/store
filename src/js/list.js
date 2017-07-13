@@ -5,7 +5,7 @@ var app = window.$app = new Vue({
     data: {
         goods_filter: {
             selected: null,
-            options: eher_util.status_data().store_status,
+            bill_status: eher_util.status_data().store_status,
             options_status: eher_util.status_data().outstore_status
         },
         orgId: '8787426330226801974',
@@ -26,7 +26,9 @@ var app = window.$app = new Vue({
     },
     created: function () {
         this.questListEntryOrder();
-
+    },
+     mounted: function() { 
+        this.visibility_view();
     },
     methods: {
         _handleChange: function () {

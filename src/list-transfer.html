@@ -73,7 +73,7 @@
             <div class="wrapper wrapper-content animated fadeInRight" id="pager_main">
 
                 <input type="hidden" id="menu_active" value="ResourceManagement-BatchImportManagement" />
-                <div class="ibox float-e-margins">
+                <div class="ibox float-e-margins  my-invisi" :style="{'visibility':visibility}">
                     <div class="ibox-title" flexbox flex-center>
                         <h4 flex>产品调拨</h4>
                         <div class="ibox-tools">
@@ -112,7 +112,7 @@
                                     <el-table-column prop="orderNo" label="调拨单号">
                                     </el-table-column>
                                     <el-table-column prop="status" label="单据状态" width="100">
-                                        <!--<template scope="scope">{{ goods_filter.outstore_status[+scope.row.statusCode + 1].text }}</template>-->
+                                        <template scope="scope">{{ goods_filter.bill_status [+scope.row.statusCode]  }}</template>
                                     </el-table-column>
                                     <el-table-column prop="orderDate" label="调拨日期">
                                     </el-table-column>
@@ -151,11 +151,10 @@
     <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/vue.min.js"></script>
     <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/element-ui.js"></script>
 
-    <script src="./vendor/mock/yod-mock.min.js"></script>
-    <script src="./vendor/mock/mock_data.js"></script>
-
+ 
     <script src="./js/request.js"></script>
     <script src="./js/util.js"></script>
+    <script src="./js/mixins.js"></script>
     <script src="./js/list-transfer.js"></script>
 </body>
 

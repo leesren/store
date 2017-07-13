@@ -5,7 +5,6 @@ var app = window.$app = new Vue({
     data: {
         orgId: '8787426330226801974',
         id: location.hash ? location.hash.slice(2) : '', // 详情的id
-        approveEmpId: '8787426330226802018', // 审核人id
         status: 0,
         activeIndex: '0',
         formInline: {
@@ -23,6 +22,7 @@ var app = window.$app = new Vue({
         tableData: [],
         tableData2: [],
         dataList: {
+            bill_status: eher_util.status_data().store_status,
             stores: [],
             in_houses: [],
             out_houses: [],
@@ -83,11 +83,10 @@ var app = window.$app = new Vue({
         },
         filters_name: function () {
             var self = this;
-            var l = this.tableData.filter(function (e) {
+            return this.tableData.filter(function (e) {
                 return self.filter_name ? (e.name).indexOf(self.filter_name) != -1 : true
             })
-            // console.log(JSON.stringify(l, null, 4));
-            return l;
+
         },
         initDataInfo: function () { // 初始化单的详情
             var self = this;
@@ -95,13 +94,13 @@ var app = window.$app = new Vue({
                 "checkInvertoryId": self.id, "start": -1, "limit": -1
             }).then(function (result) {
                 self.formInline.in_time = result.checkTime;
-                self.formInline.check_warehouse = result.storages.map(function(e){ return e.storageId});
+                self.formInline.check_warehouse = result.storages.map(function (e) { return e.storageId });
 
                 self.formInline.check_person = result.inventorycheckerId;
 
-                self.tableData   = result.list; 
-                self.formInline.desc = result.note; 
-                self.status = +1;
+                self.tableData = result.list;
+                self.formInline.desc = result.note;
+                self.status = +result.status;
                 self.selectStoreChange(self.formInline.check_warehouse);
             }, function (error) {
                 console.error(error);
@@ -136,16 +135,15 @@ var app = window.$app = new Vue({
                     return {
                         "storageId": e.storageId, //仓库
                         "productId": e.productId, //产品
-                        "beforeQuantity": e.quantity + '',  //库存数量
+                        "beforeQuantity": e.beforeQuantity + '',  //库存数量
                         "unitId": e.unitId, //单位
-                        "quantity": e.inventory_quantity + ''  //盘点数量
+                        "quantity": e.quantity + ''  //盘点数量
                     }
                 })
             }
-            var api = '/checkInvertory/new';
+            var api = '/checkInvertory/save';
             if (this.id) {
                 data.id = this.id;
-                api = '/doWareHouse/modifyTransferOrder';
             }
             var self = this;
             return new Promise(function (resolve, reject) {
@@ -176,7 +174,7 @@ var app = window.$app = new Vue({
         },
         sign: function () {
             var self = this;
-            if (this.id && this.approveEmpId)
+            if (this.id)
                 this.save('sign').then(function (e) {
                     self.$http.post('/checkInvertory/audit', { checkInvertoryId: self.id })
                         .then(function (result) {
@@ -211,7 +209,7 @@ var app = window.$app = new Vue({
             var self = this;
             if (res && res instanceof Array && res.length) {
                 res.map(function (e) {
-                    e.beforeQuantity = e.quantity; 
+                    e.beforeQuantity = e.quantity;
                     self.addItem(e);
                 })
 
@@ -249,7 +247,18 @@ var app = window.$app = new Vue({
             this.add();
         },
         keyup_enter: function () {
-            console.log('dsdsd');
+            if (!this.filter_name) return;
+            var self = this;
+            this.validator_data.isValid_form(this)
+                .then(function () {
+                    return self.queryStorageByProduct({ barcode: self.filter_name })
+                })
+                .then(function (res) {
+                    self.add_inventory(res);
+                }, function (e) {
+                    e && self.$message({ message: '查询失败', type: 'warning' });
+                })
+
         },
         query_keyword: eher_util.throttle(function (e) {
             this.filter_name = e.target.value.trim();

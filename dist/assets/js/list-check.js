@@ -1,5 +1,6 @@
 var $app = new Vue({
     el: '#pager_main',
+    mixins: [mixin],
     data: {
         goods_filter: {
             selected: null,
@@ -30,6 +31,9 @@ var $app = new Vue({
         var monthAgo = date.getFullYear() + "-" + date.getMonth() + "-" + (date.getDate() + 1);
         this.filters.startDate = eher_util.date2String(monthAgo);
         this.questListEntryOrder();
+    },
+    mounted: function () { 
+        this.visibility_view();
     },
     methods: {
         handleClick: function (nav) {

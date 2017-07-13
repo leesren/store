@@ -46,4 +46,46 @@ Vue.component('my-excle-note', {
     '<li>Excle里的数据格式是否在正确，请确认您输入的日期格式、数字格式、编号、中英文符号是否正确</li>' +
     '</ul></div>'
 })
+Vue.component('my-query-filter', {
+    template: '<div flex flexbox flex-center>' +
+    '<label for="" style="margin:0 10px 0 40px">输入产品条形码</label>' +
+    '<section flex="" class="el-input el-input--small">' +
+    '<input autocomplete="off" placeholder="筛选/查询" @blur="handleBlur" @focus="handleFocus" @input="handleInput" :value="currentValue" v-bind="$props" size="small" type="text" @keyup.enter="handleKeyEnter" class="el-input__inner query--input">' +
+    '</section>' +
+    '</div>',
+    props: {
+        value: [String, Number],
+        disabled: Boolean,
+    },
+    watch: {
+        'value'(val, oldValue) {
+            this.setCurrentValue(val);
+        }
+    },
+    data: function () {
+        return {
+            currentValue: this.value
+        }
+    },
+    methods: {
+        handleKeyEnter: function (e) {
+            this.$emit('keydown-enter', e);
+        },
+        handleInput(event) {
+            var value = event.target.value;
+            this.$emit('input', value);
+            this.setCurrentValue(value);
+        },
+        setCurrentValue(value) {
+            if (value === this.currentValue) return;
+            this.currentValue = value;
+        },
+        handleBlur(event) {
+            this.$emit('blur', event);
+        },
+        handleFocus(event) {
+            this.$emit('focus', event);
+        },
+    }
+})
 

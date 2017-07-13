@@ -73,7 +73,7 @@
             <div class="wrapper wrapper-content animated fadeInRight" id="pager_main">
 
                 <input type="hidden" id="menu_active" value="ResourceManagement-BatchImportManagement" />
-                <div class="ibox float-e-margins">
+                <div class="ibox float-e-margins  my-invisi" :style="{'visibility':visibility}">
                     <div class="ibox-title" flexbox flex-center>
                         <h4 flex>产品入库</h4>
                         <div class="ibox-tools">
@@ -103,7 +103,7 @@
                                     <el-table-column prop="orderNo" label="入库单号">
                                     </el-table-column>
                                     <el-table-column prop="status" label="单据状态" width="100">
-                                            <template  scope="scope">{{ goods_filter.options_status [scope.row.status].text }}</template >
+                                            <template  scope="scope">{{ goods_filter.bill_status[scope.row.status] }}</template >
                                     </el-table-column>
                                     <el-table-column prop="entryDate" label="入库日期">
                                     </el-table-column>

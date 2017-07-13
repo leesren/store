@@ -26,7 +26,9 @@ var app = window.$app = new Vue({
     },
     created: function () {
         this.questListEntryOrder();
-
+    },
+     mounted: function() { 
+        this.visibility_view();
     },
     methods: {
         _handleChange: function () {

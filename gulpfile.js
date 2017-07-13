@@ -28,13 +28,13 @@ gulp.task('serve', () => {
         port: PROT,
         livereload: true,
 
-        // middleware: function (connect, opt) {
-        //     return [proxyMiddleware('/api', {
-        //         // target: 'http://120.24.74.199:9001/eher',
-        //         target: 'http://192.168.10.236:8080/eher.managerment.store',
-        //         changeOrigin: true
-        //     })];
-        // }
+        middleware: function (connect, opt) {
+            return [proxyMiddleware('/api', {
+                // target: 'http://120.24.74.199:9001/eher',
+                target: 'http://192.168.10.236:8080/eher.managerment.store',
+                changeOrigin: true
+            })];
+        }
     })
 });
 

@@ -227,7 +227,6 @@ eher_util.prototype.element_table_2_table = function (id, removeContents, filena
         })
     }
     table.appendChild(_t);
-    console.log(table);
     this.export_2_excle(table, filename || '仓库');
 }
 eher_util.prototype.export_2_excle = function (table_dom, filename) {// 导出到excle
@@ -400,7 +399,7 @@ eher_util.prototype.getData_from_excle = function (target) {
 
 }
 eher_util.prototype.status_data = function (name) {// 返回通用的数据
-    var store_status = [{ value: null, text: '全部' }, { value: '0', text: '待入库' }, { value: '1', text: '已入库' }];
+    var store_status = ['未审批', '已审批'];
     var sign_status = [{ value: 0, text: '未审批' }, { value: 1, text: '已审批' }, { value: 2, text: '已删除' }];
     var outstore_status = [{ value: null, text: '全部' }, { value: 0, text: '未审批' }, { value: 1, text: '已审批' }];
     var transfer_status = [{ value: null, text: '全部' }, { value: '0', text: '待调拨' }, { value: '1', text: '已调拨' }];
@@ -563,6 +562,9 @@ dataRequest.prototype.query_stores = function (id, tolist) {
 
 dataRequest.prototype.query_hourse = function (orgId) {// 查询仓库
     return Vue.prototype.$http.post('/doResourceCommon/listStorage', { "orgId": orgId })
+}
+dataRequest.prototype.query_product_by_barcode = function (barCode) {// 查询仓库
+    return Vue.prototype.$http.post('/doResourceCommon/checkBarCode', { "barCode": barCode })
 }
 dataRequest.prototype.query_store = function (orgId) {// 查询仓库
     var self = window.$app;
