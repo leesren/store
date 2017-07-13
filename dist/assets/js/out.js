@@ -140,7 +140,16 @@ var app = window.$app = new Vue({
             eher_util.element_table_2_table('eltableBox', 7, '产品出库');
         },
         delete_confirm: function() {
-            this.dialog.deletedialogVisible = false;
+            var self = this;
+            this.$http.post('/doWareHouse/cancelDeliOrder', { id: this.id })
+                .then(function(result) {
+                    setTimeout(function() {
+                        history.go(-1);
+                    }, 400)
+                }, function(error) {
+                    self.$log(error);
+                    self.$message({ message: '删除出库单失败,code:' + error, type: 'warning' });
+                })
         },
         controlPower: function() {
             var self = this;

@@ -97,6 +97,7 @@
                             <el-button type="primary" size="small" @click="sign" v-if="id && status === 0 && hasPower">审批</el-button>
                             <el-button type="warning" size="small" @click="unsign" v-if="id && status === 1 && hasPower">取消审批</el-button>
                             <el-button type="success" size="small" @click="out_excel">导出</el-button>
+                            <el-button type="danger" size="small" @click="dialog.deletedialogVisible = true" v-if="id">删除</el-button>
                             <el-button type="primary" size="small">返回</el-button>
                         </div>
                     </div>

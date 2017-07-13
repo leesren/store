@@ -6,6 +6,7 @@ var app = window.$app = new Vue({
         id: location.hash ? location.hash.slice(2) : '', // 详情的id
         approveEmpId: '8787426330226802018', // 审核人id
         status: 0,
+        activeIndex: '0',
         formInline: {
             in_time: '',
             desc: '',
@@ -26,7 +27,22 @@ var app = window.$app = new Vue({
             out_houses: [],
             cache_house: {},
             storeList: [],
-            signerList: []
+            signerList: [],
+            tableData: {
+                '1': {
+                    list: [],
+                    total: 0,
+                    page: 1,
+                    loaded: false
+                },
+                '2': {
+                    list: [],
+                    total: 0,
+                    page: 1,
+                    loaded: false
+                },
+                size: 4
+            }
         },
         empId: '8787426330226802018',
         hasPower: false
@@ -51,8 +67,14 @@ var app = window.$app = new Vue({
             this.controlPower();
             this.initDataInfo();
         }
+        this.visibility_view();
     },
     methods: {
+        tabClick: function() {
+            if (!+this.activeIndex) return;
+            if (this.dataList.tableData[this.activeIndex].loaded) { return; }
+            this.activeIndex != 0 && this.query_in_out();
+        },
         _check_num: function(a) {
             var c = a > 0 ? 'red' : 'green';
             c = !a ? '' : c;
@@ -64,18 +86,17 @@ var app = window.$app = new Vue({
         filters_name: function() {
             var self = this;
             var l = this.tableData.filter(function(e) {
-                return self.filter_name ? (e.productName).indexOf(self.filter_name) != -1 : true
-            })
-            console.log(JSON.stringify(l, null, 4));
-
+                    return self.filter_name ? (e.productName).indexOf(self.filter_name) != -1 : true
+                })
+                // console.log(JSON.stringify(l, null, 4));
             return l;
         },
         initDataInfo: function() { // 初始化单的详情
             var self = this;
             this.$http.post('/checkInvertory/queryCheckInventoryDetail', {
                 "checkInvertoryId": self.id,
-                "start": "1",
-                "limit": "10"
+                "start": -1,
+                "limit": -1
             }).then(function(result) {
                 self.formInline.out_storeId = result.fromOrgId;
                 self.formInline.out_store = result.fromOrgName;
@@ -113,17 +134,18 @@ var app = window.$app = new Vue({
         },
         save_request: function(callback) {
             if (!this.tableData.length) { this.$message({ message: '保存失败,您未添加产品', type: 'warning' }); return; }
+            var self = this;
             var data = {
                 "inventorychecker": self.formInline.check_person + '', //盘点人
                 "acceptTime": eher_util.date2String(self.formInline.in_time), //盘点日期
                 "description": self.formInline.desc, //备注
                 "items": this.tableData.map(function(e) {
                     return {
-                        "storageId": '', //仓库
+                        "storageId": e.storageId, //仓库
                         "productId": e.productId, //产品
-                        "beforeQuantity": e.quantity, //库存数量
+                        "beforeQuantity": e.quantity + '', //库存数量
                         "unitId": e.unitId, //单位
-                        "quantity": e.inventory_quantity //盘点数量
+                        "quantity": e.inventory_quantity + '' //盘点数量
                     }
                 })
             }
@@ -229,7 +251,7 @@ var app = window.$app = new Vue({
         queryStorageByProduct: function(options) {
             var self = this;
             var obj = {
-                "storageId": this.formInline.check_warehouse + '', //仓库
+                "storageIds": this.formInline.check_warehouse, //仓库
                 "productId": null, //产品(添加产品)
                 "barcode": null, //条形码
                 "productCodes": null, //产品编号列表（excel导入）
@@ -238,7 +260,7 @@ var app = window.$app = new Vue({
             return this.$http.post('/checkInvertory/queryStorageByProduct', obj)
         },
         before_add: function() {
-            if (!this.formInline.check_warehouse) {
+            if (!this.formInline.check_warehouse.length) {
                 this.$message({ message: '请先选择仓库', type: 'warning' });
                 return;
             }
@@ -273,7 +295,7 @@ var app = window.$app = new Vue({
             var self = this;
             var _post = function() {
                 return self.$http.post('/checkInvertory/queryStorageByProduct', {
-                    "storageId": self.formInline.check_warehouse + '', //仓库
+                    "storageIds": self.formInline.check_warehouse, //仓库
                     "inventorychecker": self.formInline.check_person + '', //盘点人
                     "acceptTime": eher_util.date2String(self.formInline.in_time), //盘点日期
                     "description": self.formInline.desc, //备注
@@ -300,6 +322,38 @@ var app = window.$app = new Vue({
             }, function(error) {
                 self.$log(error);
             })
+        },
+        handleCurrentChange: function(v, type) {
+            this.dataList.tableData[type].page = v;
+            if (this.dataList.tableData[this.activeIndex].loaded) { return; }
+            this.activeIndex != 0 && this.query_in_out();
+        },
+        query_in_out: function() {
+            var t = this.dataList.tableData[this.activeIndex],
+                api;
+            if (this.activeIndex === '1') {
+                api = '/doWareHouse/listEntryOrder';
+            } else if (this.activeIndex === '2') {
+                api = '/doWareHouse/listDeliOrder';
+            }
+            var data = {
+                "orgId": this.orgId,
+                "startDate": eher_util.date2String(new Date),
+                "endDate": eher_util.date2String(new Date),
+                "status": null,
+                "type": 5, // 1 是手动入库单 5是盘点入库
+                "page": t.page,
+                "size": this.dataList.tableData.size
+            }
+            var self = this;
+            this.$http.post(api, data)
+                .then(function(result) {
+                    if (result.list) {
+                        t.list = result.list;
+                        t.total = result.total;
+                        t.loaded = true;
+                    }
+                }, function(error) {}).catch(function(error) {})
         }
     }
 })

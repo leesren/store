@@ -31,7 +31,7 @@ var app = window.$app = new Vue({
         _disabled: function() {
             return this.status === 1;
         }
-        
+
     },
     watch: {},
     created: function() {
@@ -137,7 +137,16 @@ var app = window.$app = new Vue({
             eher_util.element_table_2_table('eltableBox', 7, '产品入库');
         },
         delete_confirm: function() {
-            this.dialog.deletedialogVisible = false;
+            var self = this;
+            this.$http.post('/doWareHouse/cancelEntryOrder', { id: this.id })
+                .then(function(result) {
+                    setTimeout(function() {
+                        history.go(-1);
+                    }, 400)
+                }, function(error) {
+                    self.$log(error);
+                    self.$message({ message: '删除入库单失败,code:' + error, type: 'warning' });
+                })
         },
         controlPower: function() {
             var self = this;

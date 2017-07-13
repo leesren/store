@@ -195,7 +195,16 @@ var app = window.$app = new Vue({
         },
 
         delete_confirm: function() {
-            this.dialog.deletedialogVisible = false;
+            var self = this;
+            this.$http.post('/doWareHouse/cancelTransferOrder', { id: this.id })
+                .then(function(result) {
+                    setTimeout(function() {
+                        window.close();
+                    }, 400)
+                }, function(error) {
+                    self.$log(error);
+                    self.$message({ message: '删除调拨单失败,code:' + error, type: 'warning' });
+                })
         },
         controlPower: function() {
             var self = this;
