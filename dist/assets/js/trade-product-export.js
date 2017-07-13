@@ -25,10 +25,7 @@ window.$app = new Vue({
             size: 10,
             first_time:0
         }
-    },
-    computed: {
-
-    },
+    }, 
     created: function () {
         window.$dataRequest = this.$dataRequest = new dataRequest();
         window.$validator_data = this.$validator_data = new validator_data();

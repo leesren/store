@@ -47,13 +47,7 @@ var app = window.$app = new Vue({
         empId: '8787426330226802018',
         hasPower: false
     },
-    computed: {
-        _disabled: function() {
-            return this.status === 1;
-        },
-
-    },
-    watch: {},
+    
     created: function() {
         this.dataRequest = window.$dataRequest = new dataRequest(this.orgId);
         this.validator_data = window.$validator_data = new validator_data();

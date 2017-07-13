@@ -130,13 +130,7 @@
                                         <my-upload :disabled="_disabled" :change="_onChange" type="success" multiple accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                                             从Excel中导入
                                         </my-upload>
-                                    </div>
-                                    <!--<div flex flexbox flex-center>
-                                        <label for="" style="margin:0 10px 0 40px">输入产品条形码</label>
-                                        <section flex="" class="el-input el-input--small">
-                                            <input autocomplete="off" placeholder="筛选/查询" size="small" type="text" @keyup.enter="submit" class="el-input__inner query--input">
-                                        </section>
-                                    </div>-->
+                                    </div> 
                                     <my-query-filter  :disabled="_disabled" @keydown-enter="keyupEnter" v-model="barcode"></my-query-filter>
                                 </div>
                             </div>
