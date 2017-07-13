@@ -29,9 +29,7 @@ var app = window.$app = new Vue({
             out_houses: [],
             cache_house: {},
             storeList: []
-        },
-        empId: '8787426330226802018',
-        hasPower: false
+        }
     },
     computed: {
         _disabled: function() {
@@ -79,6 +77,9 @@ var app = window.$app = new Vue({
         selectStoreChange: function(v, type) {
             var self = this,
                 _cache = this.dataList.cache_house[v];
+            if (type == 'out') {
+                this.orgId = v;
+            }
             if (_cache) {
                 if (type === 'in') {
                     self.dataList.in_houses = _cache;
@@ -87,8 +88,7 @@ var app = window.$app = new Vue({
                 }
                 return
             }
-            var orgId = type === 'in' ? this.formInline.in_storeId : this.formInline.out_storeId;
-            self.dataRequest.query_hourse(orgId)
+            self.dataRequest.query_hourse(v)
                 .then(function(res) {
                     if (type === 'in') {
                         self.dataList.in_houses = self.dataList.cache_house[v] = res;
@@ -163,7 +163,7 @@ var app = window.$app = new Vue({
         sign: function() {
             var self = this;
             if (this.id)
-                this.save('sign').then(function (e) {
+                this.save('sign').then(function(e) {
                     self.$http.post('/doWareHouse/approveTransferOrder', { id: self.id, approveEmpId: self.approveEmpId })
                         .then(function(result) {
                             self.$message({ message: '审批成功', type: 'success' });
@@ -207,13 +207,8 @@ var app = window.$app = new Vue({
                 })
         },
         controlPower: function() {
-            var self = this;
-            var type = self.status == 0 ? '5' : '6';
-            this.$http.post('/doWareHouse/checkPermission', { empId: self.empId, type: type }).then(function(result) {
-                self.hasPower = result;
-            }, function(error) {
-                self.$log(error);
-            })
+            var type = this.status == 0 ? '5' : '6';
+            this.checkPower(type)
         }
     }
 })

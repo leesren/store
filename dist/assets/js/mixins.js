@@ -1,7 +1,7 @@
 var mixin = {
     data: {
-        approveEmpId: null,// 审核人id
-        barcode:'',
+        approveEmpId: '8787426330226802018', // 审核人id
+        barcode: '',
         dialog: {
             dialogVisible: false,
             input: '',
@@ -21,14 +21,15 @@ var mixin = {
             check_result: [],
             handson_data: {}
         },
-        visibility: ''//visible
+        visibility: '', //visible
+        hasPower: false
     },
     methods: {
-        save_excle: function (callback) {// v 用于回调
+        save_excle: function(callback) { // v 用于回调
             var self = this;
-            return new Promise(function (resolve, reject) {
+            return new Promise(function(resolve, reject) {
                 if (eher_util.check_table()) {
-                    var _seriadata = function (_res, type) {
+                    var _seriadata = function(_res, type) {
                         if (type) {
                             self.dialog.excle_result_visible = false;
                             if (callback) {
@@ -46,25 +47,25 @@ var mixin = {
                         }
                     }
                     self.validator_data.checkProductNo(self.orgId)
-                        .then(function (result) {
+                        .then(function(result) {
                             _seriadata(result, true);
-                        }, function (result) {
+                        }, function(result) {
                             _seriadata(result);
                         })
                 }
             });
         },
-        excleOpenCallback: function () {
+        excleOpenCallback: function() {
             var self = this;
-            setTimeout(function () {
+            setTimeout(function() {
                 eher_util.create_handsontable(self.excle_origin.list, 'mydialogExcle', self.excle_origin.handson_data)
             }, 100)
         },
-        _onChange: function (target) {
+        _onChange: function(target) {
             var self = this;
             eher_util.getData_from_excle(target)
-                .then(function (data) {
-                    eher_util.destory_handsontable('mydialogExcle');// 清楚handsontable 数据
+                .then(function(data) {
+                    eher_util.destory_handsontable('mydialogExcle'); // 清楚handsontable 数据
                     self.excle_origin.list = data;
                     self.excle_origin.handson_data = eher_util.excel_2_handsontable(data);
                     self.dialog.excle_result_visible = true;
@@ -72,13 +73,13 @@ var mixin = {
                 })
 
         },
-        dialogInputChange: eher_util.throttle(function (e) {
+        dialogInputChange: eher_util.throttle(function(e) {
             console.log(e);
             this.dialog.keyWord = e;
             this.dialog.current = 1;
             this.add();
         }, 800),
-        handleCommand: function (v) {
+        handleCommand: function(v) {
             this.goods_filter.selected = v;
         },
         dialogHandleCurrentChange(val) {
@@ -87,7 +88,7 @@ var mixin = {
             this.add();
         },
 
-        dialogSelectProductClose: function (v) {// v 决定是否回调
+        dialogSelectProductClose: function(v) { // v 决定是否回调
             if (this.dialog.selected === -1) return;
             var obj = this.dialog.list[this.dialog.selected];
             this.dialog.dialogVisible = false
@@ -98,16 +99,16 @@ var mixin = {
                 return Promise.resolve(obj)
             }
         },
-        dialogSelectedItem: function (item, index) {
+        dialogSelectedItem: function(item, index) {
             if (index === this.dialog.selected) {
                 this.dialog.selected = -1;
             } else {
                 this.dialog.selected = index;
             }
         },
-        addItem: function (data, index) {
+        addItem: function(data, index) {
             if (!data) return;
-            var contain = this.tableData.filter(function (el, index) {
+            var contain = this.tableData.filter(function(el, index) {
                 return el.productId === data.id
             })
             if (contain && contain.length > 0) return;
@@ -117,9 +118,9 @@ var mixin = {
             delete data.name;
             this.tableData.push(data);
         },
-        add: function () {
+        add: function(orgId) {
             var self = this;
-            this.dataRequest.listGoods(this.dialog.keyWord, this.dialog.current).then(function (result) {
+            this.dataRequest.listGoods(this.dialog.keyWord, this.dialog.current, '', orgId).then(function(result) {
                 if (result) {
                     self.dialog.list = result.list;
                     self.dialog.total = result.total;
@@ -127,20 +128,21 @@ var mixin = {
                 self.dialog.dialogVisible = true;
             })
         },
-        clear_table: function () {
+        clear_table: function() {
             eher_util.create_handsontable();
         },
-        deleteRow: function (index) {
+        deleteRow: function(index) {
             this.tableData.splice(index, 1);
         },
-        visibility_view: function () {
+        visibility_view: function() {
             this.visibility = 'visible'
         },
-        keyupEnter: function (callback) {
-            var self = this , callback = ! (callback instanceof KeyboardEvent) ;
-            return new Promise(function (resolve, reject) {
+        keyupEnter: function(callback) {
+            var self = this,
+                callback = !(callback instanceof KeyboardEvent);
+            return new Promise(function(resolve, reject) {
                 self.dataRequest.query_product_by_barcode(self.barcode)
-                    .then(function (e) {
+                    .then(function(e) {
                         if (!e) {
                             self.$message({ message: '无此产品条形码相关的产品', type: 'warning' });
                             return;
@@ -149,12 +151,20 @@ var mixin = {
                         if (callback) return resolve(e);
                         e.quantity = e.quantity || 1;
                         self.addItem(e);
-                    }, function (e) {
+                    }, function(e) {
                         self.$message({ message: '取消审批失败,code：' + e, type: 'warning' });
                         reject(e);
                     })
             })
 
+        },
+        checkPower: function(type) {
+            var self = this;
+            this.$http.post('/doWareHouse/checkPermission', { empId: self.approveEmpId, type: type }).then(function(result) {
+                self.hasPower = result;
+            }, function(error) {
+                self.$log(error);
+            })
         }
     }
 };

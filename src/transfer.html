@@ -96,8 +96,8 @@
                     <div class="ibox-title" flexbox flex-center>
                         <h4 flex>产品调拨</h4>
                         <div class="ibox-tools">
-                            <el-button type="primary" size="small" @click="sign" v-if="id && status === 0 && hasPower">审批</el-button>
-                            <el-button type="warning" size="small" @click="unsign" v-if="id && status === 1 && hasPower">取消审批</el-button>
+                            <el-button type="primary" size="small" @click="sign" v-if="status === 0 && hasPower">审批</el-button>
+                            <el-button type="warning" size="small" @click="unsign" v-if="status === 1 && hasPower">取消审批</el-button>
                             <el-button type="success" size="small" @click="out_excel">导出</el-button>
                             <el-button type="danger" size="small" @click="dialog.deletedialogVisible = true" v-if="id">删除</el-button>
                             <el-button type="primary" size="small">返回</el-button>
@@ -138,12 +138,12 @@
                                 </div>
                                 <div flexbox>
                                     <div>
-                                        <el-button type="primary" size="small" @click="add" :disabled="_disabled">选择产品</el-button>
+                                        <el-button type="primary" size="small" @click="add(orgId)" :disabled="_disabled">选择产品</el-button>
                                         <my-upload :disabled="_disabled" :change="_onChange" type="success" multiple accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                                             从Excel中导入
                                         </my-upload>
                                     </div>
-                                    <my-query-filter  :disabled="_disabled" @keydown-enter="keyupEnter" v-model="barcode"></my-query-filter>
+                                    <my-query-filter :disabled="_disabled" @keydown-enter="keyupEnter" v-model="barcode"></my-query-filter>
                                 </div>
                             </div>
                             <div class="content-body" style="margin-top:15px">

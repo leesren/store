@@ -100,41 +100,83 @@
                                 <el-button type="primary" size="small" @click="query">查询</el-button>
                             </div>
                             <div class="content-body" style="margin-top:15px;min-height:420px;" class="tablebox">
-
                                 <el-tabs v-model="activeIndex" @tab-click="handleClick">
-                                    <el-tab-pane label="调拨单" name="0"></el-tab-pane>
-                                    <el-tab-pane label="调拨出库" name="1"></el-tab-pane>
-                                    <el-tab-pane label="调拨入库" name="2"></el-tab-pane>
+                                    <el-tab-pane label="调拨单" name="0">
+                                        <el-table :data="tableData['0'].list" stripe style="width: 100%" @row-click="rowClick">
+                                            <el-table-column prop="orderNo" label="调拨单号">
+                                            </el-table-column>
+                                            <el-table-column prop="status" label="单据状态" width="100">
+                                                <template scope="scope">{{ goods_filter.outstore_status[+scope.row.statusCode + 1].text }}</template>
+                                            </el-table-column>
+                                            <el-table-column prop="orderDate" label="调拨日期">
+                                            </el-table-column>
+                                            <el-table-column prop="fromOrgName" label="调出门店">
+                                            </el-table-column>
+                                            <el-table-column prop="fromStorageName" label="调出仓库">
+                                            </el-table-column>
+                                            <el-table-column prop="toOrgName" label="调入门店">
+                                            </el-table-column>
+                                            <el-table-column prop="toStorageName" label="调入仓库">
+                                            </el-table-column>
+                                            <el-table-column prop="approveEmpName" label="审批人" width="100">
+                                            </el-table-column>
+                                            <el-table-column prop="approveTime" label="审批时间">
+                                            </el-table-column>
+                                            <el-table-column prop="note" label="备注" width="80">
+                                            </el-table-column>
+                                        </el-table>
+                                        <div v-show="tableData['0'].total" style="margin-top:10px">
+                                            <el-pagination layout="prev, pager, next" :total="tableData['0'].total" @current-change="handleCurrentChange" :current-page="tableData['0'].currentPage" :page-size="tableData.size">
+                                            </el-pagination>
+                                        </div>
+                                    </el-tab-pane>
+                                    <el-tab-pane label="调拨出库" name="1">
+                                        <el-table :data="tableData['1'].list" stripe style="width: 100%" @row-click="rowClick">
+                                            <el-table-column prop="orderNo" label="调拨单号">
+                                            </el-table-column>
+                                            <el-table-column prop="status" label="单据状态" width="100">
+                                                <template scope="scope">{{ goods_filter.outstore_status[+scope.row.statusCode + 1].text }}</template>
+                                            </el-table-column>
+                                            <el-table-column prop="orderDate" label="调拨日期">
+                                            </el-table-column>
+                                            <el-table-column prop="toOrgName" label="调入门店">
+                                            </el-table-column>
+                                            <el-table-column prop="approveEmpName" label="审批人" width="100">
+                                            </el-table-column>
+                                            <el-table-column prop="approveTime" label="审批时间">
+                                            </el-table-column>
+                                            <el-table-column prop="note" label="备注" width="80">
+                                            </el-table-column>
+                                        </el-table>
+                                        <div v-show="tableData['1'].total" style="margin-top:10px">
+                                            <el-pagination layout="prev, pager, next" :total="tableData['1'].total" @current-change="handleCurrentChange" :current-page="tableData['1'].currentPage" :page-size="tableData.size">
+                                            </el-pagination>
+                                        </div>
+                                    </el-tab-pane>
+                                    <el-tab-pane label="调拨入库" name="2">
+                                        <el-table :data="tableData['2'].list" stripe style="width: 100%" @row-click="rowClick">
+                                            <el-table-column prop="orderNo" label="调拨单号">
+                                            </el-table-column>
+                                            <el-table-column prop="status" label="单据状态" width="100">
+                                                <template scope="scope">{{ goods_filter.outstore_status[+scope.row.statusCode + 1].text }}</template>
+                                            </el-table-column>
+                                            <el-table-column prop="orderDate" label="调拨日期">
+                                            </el-table-column>
+                                            <el-table-column prop="fromOrgName" label="调出门店">
+                                            </el-table-column>
+                                            <el-table-column prop="approveEmpName" label="审批人" width="100">
+                                            </el-table-column>
+                                            <el-table-column prop="approveTime" label="审批时间">
+                                            </el-table-column>
+                                            <el-table-column prop="note" label="备注" width="80">
+                                            </el-table-column>
+                                        </el-table>
+                                        <div v-show="tableData['2'].total" style="margin-top:10px">
+                                            <el-pagination layout="prev, pager, next" :total="tableData['2'].total" @current-change="handleCurrentChange" :current-page="tableData['2'].currentPage" :page-size="tableData.size">
+                                            </el-pagination>
+                                        </div>
+                                    </el-tab-pane>
                                 </el-tabs>
-
-
-                                <el-table :data="tableData.list" stripe style="width: 100%" @row-click="rowClick">
-                                    <el-table-column prop="orderNo" label="调拨单号">
-                                    </el-table-column>
-                                    <el-table-column prop="status" label="单据状态" width="100">
-                                        <template scope="scope">{{ goods_filter.bill_status [+scope.row.statusCode]  }}</template>
-                                    </el-table-column>
-                                    <el-table-column prop="orderDate" label="调拨日期">
-                                    </el-table-column>
-                                    <el-table-column prop="fromOrgName" label="调出门店" v-if="activeIndex!=1">
-                                    </el-table-column>
-                                    <el-table-column prop="fromStorageName" label="调出仓库" v-if="activeIndex==0">
-                                    </el-table-column>
-                                    <el-table-column prop="toOrgName" label="调入门店" v-if="activeIndex!=2">
-                                    </el-table-column>
-                                    <el-table-column prop="toStorageName" label="调入仓库" v-if="activeIndex==0">
-                                    </el-table-column>
-                                    <el-table-column prop="approveEmpName" label="审批人" width="100">
-                                    </el-table-column>
-                                    <el-table-column prop="approveTime" label="审批时间">
-                                    </el-table-column>
-                                    <el-table-column prop="note" label="备注" width="80">
-                                    </el-table-column>
-                                </el-table>
-                            </div>
-                            <div v-show="tableData.total" style="margin-top:10px">
-                                <el-pagination layout="prev, pager, next" :total="tableData.total" @current-change="handleCurrentChange" :current-page="status.current">
-                                </el-pagination>
                             </div>
                         </div>
                     </div>
@@ -151,7 +193,7 @@
     <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/vue.min.js"></script>
     <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/element-ui.js"></script>
 
- 
+
     <script src="./js/request.js"></script>
     <script src="./js/util.js"></script>
     <script src="./js/mixins.js"></script>

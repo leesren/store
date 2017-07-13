@@ -69,7 +69,7 @@
                     <div class="navbar-header">
                         <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i>
                     </a>
-                    </div> 
+                    </div>
                     <ul class="nav navbar-top-links navbar-right">
                         <li>
                             <a class="logout" href="/logout">
@@ -94,8 +94,8 @@
                         <h4 flex>产品出库</h4>
                         <div class="ibox-tools">
 
-                            <el-button type="primary" size="small" @click="sign" v-if=" id &&  status === 0 && hasPower">审批</el-button>
-                            <el-button type="warning" size="small" @click="unsign" v-if=" id && status === 1 && hasPower">取消审批</el-button>
+                            <el-button type="primary" size="small" @click="sign" v-if="status === 0 && hasPower">审批</el-button>
+                            <el-button type="warning" size="small" @click="unsign" v-if="status === 1 && hasPower">取消审批</el-button>
                             <el-button type="success" size="small" @click="out_excel">导出</el-button>
                             <el-button type="danger" size="small" @click="dialog.deletedialogVisible = true" v-if="id">删除</el-button>
                             <el-button type="primary" size="small">返回</el-button>
@@ -137,7 +137,7 @@
                                             <input autocomplete="off" placeholder="筛选/查询" size="small" type="text" @keyup.enter="submit" class="el-input__inner query--input">
                                         </section>
                                     </div>-->
-                                    <my-query-filter  :disabled="_disabled" @keydown-enter="keyupEnter" v-model="barcode"></my-query-filter>
+                                    <my-query-filter :disabled="_disabled" @keydown-enter="keyupEnter" v-model="barcode"></my-query-filter>
                                 </div>
                             </div>
                             <div class="content-body" style="margin-top:15px">
