@@ -1,7 +1,7 @@
 
 window.$app = new Vue({
     el: '#wrapper',
-    mixins: [ mixin ],
+    mixins: [mixin],
     data: {
         orgId: '8787426330226801974',
         goods_filter: {
@@ -31,11 +31,11 @@ window.$app = new Vue({
                 organizationId: '',
                 productId: '',
             },
+            store_list: null,// 门店列表
             tableData_center_export: [],
             tableData_child_export: [],
             is_exporting: false,
-            size: 5
-
+            size: 10
         },
         activeName: '0',
         dialog: {
@@ -67,37 +67,33 @@ window.$app = new Vue({
             this.data_list.stores.visible = true
             if (this.dialog.first_time === 1) {
                 setTimeout(function () {
-                    self.$refs.tree.setCheckedNodes( self.data_list.stores.tree );
+                    self.$refs.tree.setCheckedNodes(self.data_list.stores.tree);
                 }, 200)
             }
         },
         select_store: function () {
-            var self = this;
-            if (self.activeName == '0') {
-                self.data_list.center_store.tableData = [];
-                self.data_list.center_store.total = 0;
-                self.data_list.center_store.page = 1;
-            } else {
-                self.data_list.child_store.tableData = [];
-                self.data_list.child_store.total = 0;
-                self.data_list.child_store.page = 1;
-            }
+            var self = this, t;
+            t = self.activeName == '0' ? self.data_list.center_store : self.data_list.child_store
+            t.tableData = [];
+            t.page = 1;
+            t.total = 0;
+            self.data_list.child_store.total = self.data_list.center_store.total = 0;// 两个tab都置空
             var nodes = this.$refs.tree.getCheckedNodes();
-
             if (nodes.length) {
+                this.store_list = nodes;
                 this.query_products(nodes);
             }
             this.data_list.stores.visible = false;
-
         },
         handleCommand: function (v) {
             this.goods_filter.selected = v;
         },
         handleTabsClick: function (tab, event) {
+
             if (this.activeName == '0' && this.data_list.center_store.total === 0) {
-                this.query_products();
+                this.query_products(this.store_list || undefined);
             } else if (this.data_list.child_store.total === 0) {
-                this.query_products();
+                this.query_products(this.store_list || undefined);
             }
         },
         handleExport: function () {
@@ -136,8 +132,6 @@ window.$app = new Vue({
                     self.data_list.dialog.productId = productId;
                     self.data_list.dialog.organizationId = organizationId;
                     self.dialog.dialogTableVisible = true;
-                    console.log(JSON.stringify(result, null, 4));
-
                 }, function (error) {
                     self.$message({ message: '查询失败,code：' + error, type: 'warning' });
                 })
@@ -148,7 +142,6 @@ window.$app = new Vue({
                 this.$dataRequest.query_stores(self.orgId)
                     .then(function (res) {
                         self.data_list.stores.tree = [res];
-
                         resolve(res);
                     }, function (e) {
                         self.$message({ message: '查询组织失败,code：' + e, type: 'warning' });
@@ -188,7 +181,7 @@ window.$app = new Vue({
                 "page": page,
                 "size": self.data_list.size
             })
-                .then(function (result) { 
+                .then(function (result) {
                     if (self.activeName == '0') {
                         self.data_list.center_store.tableData = result.list;
                         self.data_list.center_store.total = result.totalSize;

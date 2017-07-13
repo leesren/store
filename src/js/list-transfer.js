@@ -38,7 +38,6 @@ var app = new Vue({
                 this.tabIndexArray[this.activeIndex] = this.activeIndex;
                 this.questListEntryOrder();
             }
-
         },
         handleCommand: function(v) {
             this.goods_filter.selected = v;
@@ -55,7 +54,7 @@ var app = new Vue({
         rowClick: function(row, event, column) {
             console.log(row); 
             var link = this.activeIndex == 0 ? './transfer.html#/' : this.activeIndex == 1 ? './transfer-out.html#/' : './transfer-in.html#/';
-            window.open(link + row.id); 
+            window.location.href = (link + row.id); 
         },
         handleChange: function() {
             this.questListEntryOrder();

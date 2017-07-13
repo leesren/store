@@ -112,7 +112,6 @@ var app = window.$app = new Vue({
             var data = {
                 // "toOrgId": this.formInline.out_store + '',
                 "toStorageId": this.formInline.out_warehouse + '',
-                // "fromOrgId": this.formInline.in_store + '',
                 "fromStorageId": this.formInline.in_warehouse + '',
                 "orderDate": eher_util.date2String(this.formInline.in_time),
                 "note": this.formInline.desc,
@@ -134,7 +133,7 @@ var app = window.$app = new Vue({
                         }
                         self.$message({ message: '添加成功', type: 'success' });
                         setTimeout(function() {
-                            window.location.reload();
+                            window.location.href  = './list-transfer.html'
                         }, 400)
                     }, function(error) {
                         console.error(error);

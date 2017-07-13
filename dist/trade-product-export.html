@@ -99,7 +99,7 @@
                                 <el-button type="primary" size="small" @click="query_products">查询</el-button>
                                 <el-button type="success" size="small" :disabled="data_list.is_exporting" @click="handleExport">导出excel</el-button>
                             </div>
-                            <div class="content-body myel" style="margin-top:15px">
+                            <div class="content-body" style="margin-top:15px">
                                 <el-table :data="data_list.center_store.tableData" style="width: 100%">
                                     <el-table-column prop="organizationName" label="门店">
                                     </el-table-column>
