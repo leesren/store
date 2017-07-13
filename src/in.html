@@ -69,7 +69,7 @@
                     <div class="navbar-header">
                         <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i>
                     </a>
-                    </div> 
+                    </div>
                     <ul class="nav navbar-top-links navbar-right">
                         <li>
                             <a class="logout" href="/logout">
@@ -94,10 +94,10 @@
                         <h4 flex>产品出库</h4>
                         <div class="ibox-tools">
 
-                            <el-button type="primary" size="small" @click="sign" v-if=" id &&  status === 0 && hasPower">审批</el-button>
-                            <el-button type="warning" size="small" @click="unsign" v-if=" id && status === 1 && hasPower">取消审批</el-button>
+                            <el-button type="primary" size="small" @click="sign" v-if="status === 0 && hasPower">审批</el-button>
+                            <el-button type="warning" size="small" @click="unsign" v-if="status === 1 && hasPower">取消审批</el-button>
                             <el-button type="success" size="small" @click="out_excel">导出</el-button>
-                            
+
                             <el-button type="primary" size="small">返回</el-button>
                         </div>
                     </div>
@@ -130,8 +130,8 @@
                                         <my-upload :disabled="_disabled" :change="_onChange" type="success" multiple accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                                             从Excel中导入
                                         </my-upload>
-                                    </div> 
-                                    <my-query-filter  :disabled="_disabled" @keydown-enter="keyupEnter" v-model="barcode"></my-query-filter>
+                                    </div>
+                                    <my-query-filter :disabled="_disabled" @keydown-enter="keyupEnter" v-model="barcode"></my-query-filter>
                                 </div>
                             </div>
                             <div class="content-body" style="margin-top:15px">

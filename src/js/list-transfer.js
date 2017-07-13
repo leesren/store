@@ -1,6 +1,6 @@
 var app = new Vue({
     el: '#pager_main',
-    mixins: [ mixin ],
+    mixins: [mixin],
     data: {
         goods_filter: {
             selected: null,
@@ -9,8 +9,22 @@ var app = new Vue({
         },
         activeIndex: 0,
         tableData: {
-            list: [],
-            total: 0
+            '0': {
+                list: [],
+                total: 0,
+                currentPage: 1
+            },
+            '1': {
+                list: [],
+                total: 0,
+                currentPage: 1
+            },
+            '2': {
+                list: [],
+                total: 0,
+                currentPage: 1
+            },
+            size: 10,
         },
         status: {
             current: 1,
@@ -28,7 +42,7 @@ var app = new Vue({
         this.tabIndexArray[0] = '0';
         this.questListEntryOrder();
     },
-    mounted: function() { 
+    mounted: function() {
         this.visibility_view();
     },
     methods: {
@@ -51,33 +65,40 @@ var app = new Vue({
             this.questListEntryOrder();
         },
         rowClick: function(row, event, column) {
-            console.log(row); 
-            var link = this.activeIndex == 0 ? './transfer.html#/' : this.activeIndex == 1 ? './transfer-out.html#/' : './transfer-in.html#/';
-            window.location.href = (link + row.id); 
+            console.log(row);
+            var link = {
+                '0': './transfer.html#/',
+                '1': './transfer-out.html#/',
+                '2': './transfer-in.html#/'
+            }
+            window.open(link[this.activeIndex] + row.id);
         },
         handleChange: function() {
             this.questListEntryOrder();
         },
         questListEntryOrder: function() {
             if (this.status.loading) return;
-            this.status.status = true;
+            this.status.loading = true;
             var data = {
                 "orgId": this.orgId,
                 "startDate": eher_util.date2String(this.filters.startDate),
                 "endDate": eher_util.date2String(this.filters.endDate),
                 "status": this.goods_filter.selected,
                 "type": 3,
-                "page": this.status.current,
-                "size": this.status.size
+                "page": this.tableData[this.activeIndex].currentPage,
+                "size": this.tableData.size
             }
-            var self = this; 
-            var url = this.activeIndex == 0 ? '/doWareHouse/listTransferOrder' : this.activeIndex == 1 ?
-                '/doWareHouse/listDelivertyOrderFromTransfer' : '/doWareHouse/listEntryOrderFromTransfer'; 
-            this.$http.post(url, data)
+            var self = this;
+            var url = {
+                '0': '/doWareHouse/listTransferOrder',
+                '1': '/doWareHouse/listDelivertyOrderFromTransfer',
+                '2': '/doWareHouse/listEntryOrderFromTransfer'
+            }
+            this.$http.post(url[self.activeIndex], data)
                 .then(function(result) {
                     if (result.list) {
-                        self.tableData.list = result.list;
-                        self.tableData.total = result.total;
+                        self.tableData[self.activeIndex].list = result.list;
+                        self.tableData[self.activeIndex].total = result.total;
                     }
                     self.status.loading = false;
                 }, function(error) {

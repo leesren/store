@@ -21,11 +21,15 @@ var app = window.$app = new Vue({
             store_selected: '',
             signerList: [],
             signer_selected: ''
-        },
-        empId: '8787426330226802018',
-        hasPower: false
- 
-    }, 
+        }
+
+    },
+    computed: {
+        _disabled: function() {
+            return this.status === 1;
+        }
+    },
+
     watch: {},
     created: function() {
         this.dataRequest = window.$dataRequest = new dataRequest(this.orgId);
@@ -66,8 +70,8 @@ var app = window.$app = new Vue({
         },
         submit: function(e) {
 
-        }, 
-        save_request: function (callback) {
+        },
+        save_request: function(callback) {
             var data = {
                 "storageId": this.formInline.store + '',
                 "entryDate": eher_util.date2String(this.formInline.in_time),
@@ -81,52 +85,62 @@ var app = window.$app = new Vue({
                 data.id = this.id;
                 api = '/doWareHouse/modifyEntryOrder';
             }
-            var self = this; 
-            return new Promise(function (resolve, reject) {
+            var self = this;
+            return new Promise(function(resolve, reject) {
                 self.$http.post(api, data)
+<<<<<<< HEAD
                     .then(function (result) {
+=======
+                    .then(function(result) {
+
+>>>>>>> 1e63d969ac1cf7017bde2934e5e8b349b20ff40c
                         if (callback) {
                             return resolve(result);
                         }
                         self.$message({ message: '添加成功', type: 'success' });
-                        setTimeout(function () {
+                        setTimeout(function() {
                             window.location.reload();
                         }, 400)
-                    }, function (error) {
+                    }, function(error) {
                         console.error(error);
                         self.$message({ message: '添加失败,code：' + error, type: 'warning' });
-                    }).catch(function (error) {
+                    }).catch(function(error) {
                         console.error(error);
                         self.$message({ message: '添加失败', type: 'warning' });
                     })
             })
 
         },
-        save: function (callback) {
+        save: function(callback) {
             var self = this;
             return this.validator_data.isValid_form(this)
-                .then(function () {
-                    return self.save_request(callback); 
+                .then(function() {
+                    return self.save_request(callback);
                 })
         },
-        sign: function() { 
+        sign: function() {
             if (this.id) {
-                var _pp = function () {
+                var _pp = function() {
                     self.$http.post('/doWareHouse/approveEntryOrder', { id: this.id, approveEmpId: this.approveEmpId })
+<<<<<<< HEAD
                         .then(function (result) {
                             
                             
+=======
+                        .then(function(result) {
+                            self.$message({ message: '审批成功', type: 'success' });
+>>>>>>> 1e63d969ac1cf7017bde2934e5e8b349b20ff40c
                             window.location.reload()
-                        }, function (error) {
+                        }, function(error) {
                             self.$log(error);
                             self.$message({ message: '审批失败,code：' + error, type: 'warning' });
                         })
                 }
                 this.save(true)
-                    .then(function (result) {
+                    .then(function(result) {
                         _pp();
                     })
-            } 
+            }
         },
         unsign: function() {
             var self = this;
@@ -141,7 +155,7 @@ var app = window.$app = new Vue({
         },
         out_excel: function() {
             eher_util.element_table_2_table('eltableBox', 7, '产品入库');
-        }, 
+        },
         delete_confirm: function() {
             var self = this;
             this.$http.post('/doWareHouse/cancelEntryOrder', { id: this.id })
@@ -155,14 +169,9 @@ var app = window.$app = new Vue({
                 })
         },
         controlPower: function() {
-            var self = this;
-            var type = self.status == 0 ? '1' : '2';
-            this.$http.post('/doWareHouse/checkPermission', { empId: self.empId, type: type }).then(function(result) {
-                self.hasPower = result;
-            }, function(error) {
-                self.$log(error);
-            })
-        } 
+            var type = this.status == 0 ? '1' : '2';
+            this.checkPower(type);
+        }
     }
 })
 window.$dataRequest.query_store($app.orgId);

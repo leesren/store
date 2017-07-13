@@ -42,9 +42,7 @@ var app = window.$app = new Vue({
                 },
                 size: 4
             }
-        },
-        empId: '8787426330226802018',
-        hasPower: false
+        }
     },
     
     created: function() {
@@ -62,8 +60,8 @@ var app = window.$app = new Vue({
         }
         this.visibility_view();
     },
-    methods: { 
-        tabClick: function() { 
+    methods: {
+        tabClick: function() {
             if (!+this.activeIndex) return;
             if (this.dataList.tableData[this.activeIndex].loaded) { return; }
             this.activeIndex != 0 && this.query_in_out();
@@ -77,18 +75,20 @@ var app = window.$app = new Vue({
             return this.tableData2.length ? this.tableData2 : this.tableData
         },
         filters_name: function() {
-            var self = this; 
-            return this.tableData.filter(function (e) {
+            var self = this;
+            return this.tableData.filter(function(e) {
                 return self.filter_name ? (e.name).indexOf(self.filter_name) != -1 : true
-            }) 
+            })
         },
         initDataInfo: function() { // 初始化单的详情
             var self = this;
             this.$http.post('/checkInvertory/queryCheckInventoryDetail', {
-                "checkInvertoryId": self.id, "start": -1, "limit": -1
-            }).then(function (result) {
+                "checkInvertoryId": self.id,
+                "start": -1,
+                "limit": -1
+            }).then(function(result) {
                 self.formInline.in_time = result.checkTime;
-                self.formInline.check_warehouse = result.storages.map(function (e) { return e.storageId });
+                self.formInline.check_warehouse = result.storages.map(function(e) { return e.storageId });
 
                 self.formInline.check_person = result.inventorycheckerId;
 
@@ -96,7 +96,7 @@ var app = window.$app = new Vue({
                 self.formInline.desc = result.note;
                 self.status = +result.status;
                 self.selectStoreChange(self.formInline.check_warehouse);
-            }, function (error) { 
+            }, function(error) {
                 console.error(error);
             })
         },
@@ -129,9 +129,9 @@ var app = window.$app = new Vue({
                     return {
                         "storageId": e.storageId, //仓库
                         "productId": e.productId, //产品
-                        "beforeQuantity": e.beforeQuantity + '',  //库存数量
+                        "beforeQuantity": e.beforeQuantity + '', //库存数量
                         "unitId": e.unitId, //单位
-                        "quantity": e.quantity + ''  //盘点数量
+                        "quantity": e.quantity + '' //盘点数量
                     }
                 })
             }
@@ -169,9 +169,9 @@ var app = window.$app = new Vue({
         sign: function() {
             var self = this;
             if (this.id)
-                this.save('sign').then(function (e) {
+                this.save('sign').then(function(e) {
                     self.$http.post('/checkInvertory/audit', { checkInvertoryId: self.id })
-                        .then(function (result) {
+                        .then(function(result) {
                             self.$message({ message: '审批成功', type: 'success' });
                             window.location.reload()
                         }, function(error) {
@@ -184,7 +184,7 @@ var app = window.$app = new Vue({
         unsign: function() {
             var self = this;
             this.$http.post('/checkInvertory/cancelAudit', { checkInvertoryId: this.id })
-                .then(function (result) {
+                .then(function(result) {
 
                     self.$message({ message: '取消审批成功', type: 'success' });
                     window.location.reload()
@@ -213,7 +213,7 @@ var app = window.$app = new Vue({
         add_inventory: function(res) { // 添加盘点v
             var self = this;
             if (res && res instanceof Array && res.length) {
-                res.map(function (e) {
+                res.map(function(e) {
                     e.beforeQuantity = e.quantity;
                     self.addItem(e);
                 })
@@ -234,7 +234,7 @@ var app = window.$app = new Vue({
         },
         queryStorageByProduct: function(options) {
             var self = this;
-            var obj = { 
+            var obj = {
                 "storageIds": this.formInline.check_warehouse, //仓库
                 "productId": null, //产品(添加产品)
                 "barcode": null, //条形码
@@ -249,19 +249,19 @@ var app = window.$app = new Vue({
                 return;
             }
             this.add();
-        }, 
-        keyup_enter: function () {
+        },
+        keyup_enter: function() {
             if (!this.filter_name) return;
             var self = this;
             this.validator_data.isValid_form(this)
-                .then(function () {
+                .then(function() {
                     return self.queryStorageByProduct({ barcode: self.filter_name })
                 })
-                .then(function (res) {
+                .then(function(res) {
                     self.add_inventory(res);
-                }, function (e) {
+                }, function(e) {
                     e && self.$message({ message: '查询失败', type: 'warning' });
-                }) 
+                })
         },
         query_keyword: eher_util.throttle(function(e) {
             this.filter_name = e.target.value.trim();
@@ -309,13 +309,8 @@ var app = window.$app = new Vue({
 
         },
         controlPower: function() {
-            var self = this;
-            var type = self.status == 0 ? '7' : '8';
-            this.$http.post('/doWareHouse/checkPermission', { empId: self.empId, type: type }).then(function(result) {
-                self.hasPower = result;
-            }, function(error) {
-                self.$log(error);
-            })
+            var type = this.status == 0 ? '7' : '8';
+            this.checkPower(type)
         },
         handleCurrentChange: function(v, type) {
             this.dataList.tableData[type].page = v;

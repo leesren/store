@@ -86,18 +86,18 @@ if (window.Vue) {
 function handsontable_util(hottable) {
     this.table = hottable;
 }
-handsontable_util.prototype.update_col_last_header = function (text) {
+handsontable_util.prototype.update_col_last_header = function(text) {
     var h = this.table.getColHeader();
     h[h.length - 1] = text;
     this.table.updateSettings({
         colHeaders: h
     }, false)
 }
-handsontable_util.prototype.highlight_col = function (row, column) {
+handsontable_util.prototype.highlight_col = function(row, column) {
     var td = this.table.getCell(row, column);
     td.classList.add('htInvalid');
 }
-handsontable_util.prototype._remove_excle_item = function () {
+handsontable_util.prototype._remove_excle_item = function() {
     if (!window.hottabel) return;
     var selectRow = hottabel.getSelected();
     try {
@@ -108,9 +108,10 @@ handsontable_util.prototype._remove_excle_item = function () {
     }
 
 }
-function eher_util() { }
 
-eher_util.prototype.removeElementById = function (id) {
+function eher_util() {}
+
+eher_util.prototype.removeElementById = function(id) {
     if (id) {
         var el = document.getElementById(id);
         if (el) {
@@ -120,7 +121,7 @@ eher_util.prototype.removeElementById = function (id) {
         }
     }
 }
-eher_util.prototype.createElementById = function (id, hookid) {
+eher_util.prototype.createElementById = function(id, hookid) {
     var $el = document.getElementById(id);
     if (!$el) {
         throw new Error('the element which id=' + id + ' is not contain in dom tree,please check it against');
@@ -131,17 +132,17 @@ eher_util.prototype.createElementById = function (id, hookid) {
     $el.remove();
     $hookel.append(div);
 }
-eher_util.prototype.excel_2_handsontable = function (excel_data) {
+eher_util.prototype.excel_2_handsontable = function(excel_data) {
     var numberic_pattern = /\d+/;
-    var _colums = function (_h) {
+    var _colums = function(_h) {
         function renderButtons(instance, td, row, col, prop, value, cellProperties) {
             td.innerHTML = '<div style="text-align:center;color:red"><button onclick="hot_util._remove_excle_item()" type="primary" style="color:#20a0ff" class="el-button el-button--text el-button--small" type="button">移除</button></div>';
         }
-        return [{ data: _h[0], type: 'text' },//allowInvalid: false,
-        { data: _h[1], type: 'text' },
-        { data: _h[2], type: 'numeric' },
-        { data: _h[3], type: 'numeric' },
-        { data: 'Delete', renderer: renderButtons }
+        return [{ data: _h[0], type: 'text' }, //allowInvalid: false,
+            { data: _h[1], type: 'text' },
+            { data: _h[2], type: 'numeric' },
+            { data: _h[3], type: 'numeric' },
+            { data: 'Delete', renderer: renderButtons }
         ]
     }
     if (!excel_data) {
@@ -170,9 +171,10 @@ eher_util.prototype.excel_2_handsontable = function (excel_data) {
         data: list
     }
 }
-eher_util.prototype.check_table = function () {
-    var _validte = this.validate(), _isvalid = true;;
-    var _checknum = function (value, row, column) {
+eher_util.prototype.check_table = function() {
+    var _validte = this.validate(),
+        _isvalid = true;;
+    var _checknum = function(value, row, column) {
         var td = hottabel.getCell(row, column);
         if (!_validte.isNumeric(value, 1)) {
             td.classList.add('htInvalid');
@@ -181,7 +183,7 @@ eher_util.prototype.check_table = function () {
             td.classList.remove('htInvalid');
         }
     }
-    var _checkword = function (value, row, column) {
+    var _checkword = function(value, row, column) {
         var td = hottabel.getCell(row, column);
         if (!value) return;
         if (!_validte.minLength(value.trim(), 1)) {
@@ -193,7 +195,8 @@ eher_util.prototype.check_table = function () {
     }
     var data = hottabel.getData();
     for (var i = 0, len = data.length; i < len; i++) {
-        var row = i; changes = data;
+        var row = i;
+        changes = data;
         _checkword(changes[i][0], row, 0);
         _checkword(changes[i][1], row, 1);
         _checknum(changes[i][2], row, 2);
@@ -203,7 +206,7 @@ eher_util.prototype.check_table = function () {
 }
 
 
-eher_util.prototype.create_handsontable = function (ss, domId, handson_data) {
+eher_util.prototype.create_handsontable = function(ss, domId, handson_data) {
     // this.createElementById('tablebox', 'tablehook')
     var excelObj = handson_data || this.excel_2_handsontable(ss);
     var hotElement = document.getElementById(domId || 'tablebox');
@@ -211,7 +214,7 @@ eher_util.prototype.create_handsontable = function (ss, domId, handson_data) {
 
     var hotSettings = {
         data: excelObj.data,
-        columns: excelObj.colums,// handsontable 表格字段配置
+        columns: excelObj.colums, // handsontable 表格字段配置
         stretchH: 'all',
         // width: table_width,
         autoWrapRow: true,
@@ -222,8 +225,8 @@ eher_util.prototype.create_handsontable = function (ss, domId, handson_data) {
         removeRowPlugin: true,
         manualColumnResize: true,
         manualRowResize: true,
-        afterChange: function (changes, source) {
-            var _checknum = function (value, row, column) {
+        afterChange: function(changes, source) {
+            var _checknum = function(value, row, column) {
                 var td = hottabel.getCell(row, column);
                 if (!_validte.isNumeric(value, 1)) {
                     td.classList.add('htInvalid');
@@ -231,7 +234,7 @@ eher_util.prototype.create_handsontable = function (ss, domId, handson_data) {
                     td.classList.remove('htInvalid');
                 }
             }
-            var _checkword = function (value, row, column) {
+            var _checkword = function(value, row, column) {
                 var td = hottabel.getCell(row, column);
                 if (!_validte.minLength(value.trim(), 1)) {
                     td.classList.add('htInvalid');
@@ -243,15 +246,15 @@ eher_util.prototype.create_handsontable = function (ss, domId, handson_data) {
                 return;
 
             }
-            var _doIsClear = function () {
+            var _doIsClear = function() {
                 if (hottabel.getColHeader().length != changes.length) return false;
                 var isClear = true;
-                changes.forEach(function (e) {
+                changes.forEach(function(e) {
                     if ((e[3] + '').trim() != '') {
                         isClear = false;
                     }
                 });
-                if (isClear) {// 是不是清空
+                if (isClear) { // 是不是清空
                     if (!window.hottabel) return isClear;
                     var selectRow = hottabel.getSelected();
                     try {
@@ -296,7 +299,7 @@ eher_util.prototype.s2ab = function s2ab(s) {
 }
 
 
-eher_util.prototype.element_table_2_table = function (id, removeContents, filename) {// 把element-ui 对应的table，转化成标准table
+eher_util.prototype.element_table_2_table = function(id, removeContents, filename) { // 把element-ui 对应的table，转化成标准table
     var $table = $('#' + id);
     if (!$table) { return }
     var _thead = $table.find('thead');
@@ -307,14 +310,14 @@ eher_util.prototype.element_table_2_table = function (id, removeContents, filena
     table.appendChild($.clone(_thead[0]));
     var _t = $.clone(_tbody[0]);
     if (removeContents) {
-        $(_t).find('tr').each(function (index, el) {
+        $(_t).find('tr').each(function(index, el) {
             $($(el).find('td')[removeContents]).html('');
         })
     }
     table.appendChild(_t);
     this.export_2_excle(table, filename || '仓库');
 }
-eher_util.prototype.export_2_excle = function (table_dom, filename) {// 导出到excle
+eher_util.prototype.export_2_excle = function(table_dom, filename) { // 导出到excle
     var type = 'xlsx';
     var wb = XLSX.utils.table_to_book(table_dom, { sheet: "Sheet JS" });
     var wbout = XLSX.write(wb, { bookType: type, bookSST: true, type: 'binary' });
@@ -323,14 +326,15 @@ eher_util.prototype.export_2_excle = function (table_dom, filename) {// 导出�
         saveAs(new Blob([eher_util.s2ab(wbout)], { type: "application/octet-stream" }), fname);
     } catch (e) { if (typeof console != 'undefined') console.log(e, wbout); }
 }
-eher_util.prototype.date2String = function (date) {// 导出到excle
+eher_util.prototype.date2String = function(date) { // 导出到excle
     if (!(date instanceof Date)) {
         console.warn("您给的参数不是Date 实例");
         return date;
     }
     let year = date.getFullYear();
     let month = date.getMonth() + 1;
-    let m = "" + month, d = "";
+    let m = "" + month,
+        d = "";
     if (month < 10) {
         m = "0" + month;
     }
@@ -342,7 +346,7 @@ eher_util.prototype.date2String = function (date) {// 导出到excle
     }
     return year + '-' + m + '-' + d;
 }
-eher_util.prototype.date_month = function (date) {
+eher_util.prototype.date_month = function(date) {
     if (!(date instanceof Date)) {
         console.warn("您给的参数不是Date 实例");
         return date;
@@ -352,46 +356,48 @@ eher_util.prototype.date_month = function (date) {
     arr.pop();
     return arr.join('-');
 }
-eher_util.prototype.destory_handsontable = function (id) {
+eher_util.prototype.destory_handsontable = function(id) {
     if (!window.hottabel) return;
     hottabel.destroy();
     var $dom = $('#' + id);
     if (!$dom) return;
     $dom.removeAttr('style').removeAttr('class').removeAttr('data-originalstyle');
 }
-eher_util.prototype.convert_handsontable_2_excle = function () {
-    if (!window.hottabel) throw 'not init hondsontable instance ...'
-    var data = hottabel.getSourceData();
-    var list = [], headers = hottabel.getColHeader();
-    for (var i = 0; i < data.length; i++) {
-        var item = data[i], l = [];
-        l.push(item[headers[0]]);
-        l.push(item[headers[1]]);
-        l.push(item[headers[2]]);
-        l.push(item[headers[3]]);
-        list.push(l);
+eher_util.prototype.convert_handsontable_2_excle = function() {
+        if (!window.hottabel) throw 'not init hondsontable instance ...'
+        var data = hottabel.getSourceData();
+        var list = [],
+            headers = hottabel.getColHeader();
+        for (var i = 0; i < data.length; i++) {
+            var item = data[i],
+                l = [];
+            l.push(item[headers[0]]);
+            l.push(item[headers[1]]);
+            l.push(item[headers[2]]);
+            l.push(item[headers[3]]);
+            list.push(l);
+        }
+        return list;
     }
-    return list;
-}
-/*
-* 频率控制 返回函数连续调用时，fn 执行频率限定为每多少时间执行一次
-* @param fn {function}  需要调用的函数
-* @param delay  {number}    延迟时间，单位毫秒
-* @param immediate  {bool} 给 immediate参数传递false 绑定的函数先执行，而不是delay后后执行。
-* @return {function}实际调用函数
-*/
-eher_util.prototype.throttle = function (func, wait, options) {
+    /*
+     * 频率控制 返回函数连续调用时，fn 执行频率限定为每多少时间执行一次
+     * @param fn {function}  需要调用的函数
+     * @param delay  {number}    延迟时间，单位毫秒
+     * @param immediate  {bool} 给 immediate参数传递false 绑定的函数先执行，而不是delay后后执行。
+     * @return {function}实际调用函数
+     */
+eher_util.prototype.throttle = function(func, wait, options) {
     var context, args, result;
     var timeout = null;
     var previous = 0;
     if (!options) options = {};
-    var later = function () {
+    var later = function() {
         previous = options.leading === false ? 0 : Date.now();
         timeout = null;
         result = func.apply(context, args);
         if (!timeout) context = args = null;
     };
-    return function () {
+    return function() {
         var now = Date.now();
         if (!previous && options.leading === false) previous = now;
         var remaining = wait - (now - previous);
@@ -412,17 +418,17 @@ eher_util.prototype.throttle = function (func, wait, options) {
     };
 };
 /*
-* 空闲控制 返回函数连续调用时，空闲时间必须大于或等于 delay，fn 才会执行
-* @param fn {function}  要调用的函数
-* @param delay   {number}    空闲时间
-* @param immediate  {bool} 给 immediate参数传递false 绑定的函数先执行，而不是delay后后执行。
-* @return {function}实际调用函数
-*/
+ * 空闲控制 返回函数连续调用时，空闲时间必须大于或等于 delay，fn 才会执行
+ * @param fn {function}  要调用的函数
+ * @param delay   {number}    空闲时间
+ * @param immediate  {bool} 给 immediate参数传递false 绑定的函数先执行，而不是delay后后执行。
+ * @return {function}实际调用函数
+ */
 
-eher_util.prototype.debounce = function (func, wait, immediate) {
+eher_util.prototype.debounce = function(func, wait, immediate) {
     var timeout, args, context, timestamp, result;
 
-    var later = function () {
+    var later = function() {
         var last = Date.now() - timestamp;
 
         if (last < wait && last >= 0) {
@@ -436,7 +442,7 @@ eher_util.prototype.debounce = function (func, wait, immediate) {
         }
     };
 
-    return function () {
+    return function() {
         context = this;
         args = arguments;
         timestamp = Date.now();
@@ -450,15 +456,15 @@ eher_util.prototype.debounce = function (func, wait, immediate) {
         return result;
     };
 };
-eher_util.prototype.getData_from_excle = function (target) {
-    return new Promise(function (resolve, reject) {
+eher_util.prototype.getData_from_excle = function(target) {
+    return new Promise(function(resolve, reject) {
         var files = target.files;
 
         if (!files || files.length === 0) { return reject() }
 
         var file = files[0];
         var fileReader = new FileReader();
-        fileReader.onload = function (e) {
+        fileReader.onload = function(e) {
             var filename = file.name;
             // call 'xlsx' to read the file  
             var binary = "";
@@ -477,13 +483,13 @@ eher_util.prototype.getData_from_excle = function (target) {
             }
         };
         fileReader.readAsArrayBuffer(file);
-        var showme = function (ss) {
+        var showme = function(ss) {
             resolve(ss)
         }
     })
 
 }
-eher_util.prototype.status_data = function (name) {// 返回通用的数据
+eher_util.prototype.status_data = function(name) { // 返回通用的数据
     var store_status = ['未审批', '已审批'];
     var sign_status = [{ value: 0, text: '未审批' }, { value: 1, text: '已审批' }, { value: 2, text: '已删除' }];
     var outstore_status = [{ value: null, text: '全部' }, { value: 0, text: '未审批' }, { value: 1, text: '已审批' }];
@@ -495,8 +501,8 @@ eher_util.prototype.status_data = function (name) {// 返回通用的数据
         transfer_status: transfer_status,
     }
 }
-eher_util.prototype.remove_mutiple_2_list = function (a, b) {// 两数组重复
-    for (var i = 0, len = a.length; i < len; i++) {// 去重处理
+eher_util.prototype.remove_mutiple_2_list = function(a, b) { // 两数组重复
+    for (var i = 0, len = a.length; i < len; i++) { // 去重处理
         if (!b.length) {
             b.push(a[i]);
             continue;
@@ -514,24 +520,28 @@ eher_util.prototype.remove_mutiple_2_list = function (a, b) {// 两数组重复
     }
 }
 
-eher_util.prototype.validate = function (v, type, options) {
+eher_util.prototype.validate = function(v, type, options) {
     function IsNumeric(input) {
         return (+input) == input && ('' + input).trim().length > 0;
     }
+
     function isDate(d) {
         if (window.moment) {
             return window.moment(d).isValid()
         }
         return Date.parse(d) + '' != 'NaN'
     }
+
     function isEmptyInputValue(value) {
         return value == null || value.length === 0;
     }
+
     function isEmail(v) {
         var EMAIL_REGEXP =
             /^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/;
         return EMAIL_REGEXP.test(v)
     }
+
     function min(v, _min) {
         if (isEmptyInputValue(v) || isEmptyInputValue(_min)) {
             return false;
@@ -539,6 +549,7 @@ eher_util.prototype.validate = function (v, type, options) {
         const value = parseFloat(v);
         return !isNaN(value) && value < min
     }
+
     function max(v, _max) {
         if (isEmptyInputValue(v) || isEmptyInputValue(_max)) {
             return false;
@@ -546,9 +557,10 @@ eher_util.prototype.validate = function (v, type, options) {
         const value = parseFloat(v);
         return !isNaN(value) && value > _max
     }
+
     function minLength(v, len) {
         if (isEmptyInputValue(v)) {
-            return false;  // don't validate empty values to allow optional controls
+            return false; // don't validate empty values to allow optional controls
         }
         var length = v ? v.length : 0;
         return length >= len
@@ -569,8 +581,9 @@ eher_util.prototype.validate = function (v, type, options) {
         isNumeric: IsNumeric
     }
 }
-eher_util.prototype.build_brand_stores_2_eltree = function (list) {
+eher_util.prototype.build_brand_stores_2_eltree = function(list) {
     if (!list) return;
+
     function storeinfo(store) {
         if (store instanceof Array) {
             for (var j = 0; j < store.length; j++) {
@@ -595,9 +608,10 @@ eher_util.prototype.build_brand_stores_2_eltree = function (list) {
     storeinfo(list);
     return list;
 }
-eher_util.prototype.get_brand_stores = function (brandTree) {
-    if(!brandTree) return;
+eher_util.prototype.get_brand_stores = function(brandTree) {
+    if (!brandTree) return;
     var l = [];
+
     function storeinfo(store) {
         if (store instanceof Array) {
             for (var j = 0; j < store.length; j++) {
@@ -625,72 +639,76 @@ eher_util.prototype.get_brand_stores = function (brandTree) {
 function dataRequest(orgId) {
     this.orgId = orgId;
 }
-dataRequest.prototype.listGoods = function (keyWord, page, size) {
+dataRequest.prototype.listGoods = function(keyWord, page, size, orgId) {
     var data = {
         orgId: this.orgId,
         keyWord: keyWord,
         page: page || 1,
         size: size || 10
     }
+    if (orgId) {
+        data.orgId = orgId;
+    }
     return Vue.prototype.$http.post('/doResourceCommon/listGoods', data)
 }
-dataRequest.prototype.query_stores = function (id, tolist) {
-    return new Promise(function (resolve, reject) {
+dataRequest.prototype.query_stores = function(id, tolist) {
+    return new Promise(function(resolve, reject) {
         Vue.prototype.$http.post('/doResourceCommon/listOrgTree', { "orgId": id })
-            .then(function (result) {
+            .then(function(result) {
                 resolve(tolist ? eher_util.get_brand_stores(result) : eher_util.build_brand_stores_2_eltree(result));
-            }, function (e) {
+            }, function(e) {
                 reject(e);
             })
     });
 }
 
-dataRequest.prototype.query_hourse = function (orgId) {// 查询仓库
+dataRequest.prototype.query_hourse = function(orgId) { // 查询仓库
     return Vue.prototype.$http.post('/doResourceCommon/listStorage', { "orgId": orgId })
 }
-dataRequest.prototype.query_product_by_barcode = function (barCode) {// 查询仓库
+dataRequest.prototype.query_product_by_barcode = function(barCode) { // 查询仓库
     return Vue.prototype.$http.post('/doResourceCommon/checkBarCode', { "barCode": barCode })
 }
-dataRequest.prototype.query_store = function (orgId) {// 查询仓库
+dataRequest.prototype.query_store = function(orgId) { // 查询仓库
     var self = window.$app;
     if (!self) { return }
-    return new Promise(function (reslove, reject) {
+    return new Promise(function(reslove, reject) {
         self.$http.post('/doResourceCommon/listStorage', { "orgId": orgId })
-            .then(function (result) {
+            .then(function(result) {
                 if (result && result.length > 0) {
                     if (self.dataList && self.dataList.storeList) {
                         self.dataList.storeList = result;
                     }
                     reslove(result);
                 }
-            }, function (error) {
+            }, function(error) {
                 console.error(error);
                 reject(error);
-            }).catch(function (error) {
+            }).catch(function(error) {
                 console.error(error);
                 reject(error);
             })
     })
 
 }
-dataRequest.prototype.query_signer = function (orgId) {// 审核人
+dataRequest.prototype.query_signer = function(orgId) { // 审核人
     var self = window.$app;
     if (!self) { return }
     self.$http.post('/doResourceCommon/listEmployee', { "orgId": orgId })
-        .then(function (result) {
+        .then(function(result) {
             if (result && result.length > 0) {
                 self.dataList.signerList = result;
             }
-        }, function (error) {
+        }, function(error) {
             console.error(error);
-        }).catch(function (error) {
+        }).catch(function(error) {
             console.error(error);
         })
 };
-function validator_data() { }
 
-validator_data.prototype.isvalid_handsontable = function () {
-    return new Promise(function (resolve, reject) {
+function validator_data() {}
+
+validator_data.prototype.isvalid_handsontable = function() {
+    return new Promise(function(resolve, reject) {
         var dd = hottabel.getData();
         if (dd.length === 0) {
             return reject();
@@ -718,9 +736,9 @@ validator_data.prototype.isvalid_handsontable = function () {
                     is_valid.push({ r: index, c: j })
                     continue;
                 }
-                if (excelObj.htabel_header[j].validator
-                    && excelObj.htabel_header[j].date_format
-                    && !moment(el, 'YYYY-MM-DD HH:mm:ss', true).isValid()) {
+                if (excelObj.htabel_header[j].validator &&
+                    excelObj.htabel_header[j].date_format &&
+                    !moment(el, 'YYYY-MM-DD HH:mm:ss', true).isValid()) {
                     is_valid.push({ r: index, c: j })
                     continue;
                 }
@@ -748,8 +766,8 @@ validator_data.prototype.isvalid_handsontable = function () {
     })
 
 }
-validator_data.prototype.isValid_form = function (self) {
-    return new Promise(function (resolve, reject) {
+validator_data.prototype.isValid_form = function(self) {
+    return new Promise(function(resolve, reject) {
         self.$refs.ruleForm.validate((valid) => {
             if (valid) {
                 resolve();
@@ -761,24 +779,27 @@ validator_data.prototype.isValid_form = function (self) {
     });
 }
 
-validator_data.prototype.covert_handsontable_data = function (hottable) {
+validator_data.prototype.covert_handsontable_data = function(hottable) {
     var hot = hottable || window['hottabel'];
     if (!hot) throw 'hondsontable not init ...';
     var source_data = hot.getSourceData();
     var result = [];
-    source_data.forEach(function (el, index) {
+    source_data.forEach(function(el, index) {
         result.push(eher_util.handsontable_data_2_obj(el));
     })
     return result;
 }
-validator_data.prototype.checkProductNo = function (orgId) {
+validator_data.prototype.checkProductNo = function(orgId) {
     if (!orgId) return Promise.reject('参数错误');
-    var isValid = function (result) {
-        return new Promise(function (resolve, reject) {
+    var isValid = function(result) {
+        return new Promise(function(resolve, reject) {
             if (!(result instanceof Array)) reject([]);
-            var _isValid = true, l = [], _checkResult = '';
+            var _isValid = true,
+                l = [],
+                _checkResult = '';
             for (var i = 0, len = result.length; i < len; i++) {
-                var el = result[i], tmp = {};
+                var el = result[i],
+                    tmp = {};
                 if (el && el.valid == 0) {
                     _isValid = false;
                 }
@@ -804,12 +825,12 @@ validator_data.prototype.checkProductNo = function (orgId) {
     if (!valid_excle_data) return;
 
     var key = $app.excle_origin.handson_data.header[0];
-    var listNo = valid_excle_data.map(function (el) {
+    var listNo = valid_excle_data.map(function(el) {
         return el[key]
     })
 
     return Vue.prototype.$http.post('/doResourceCommon/checkProductNo', { orgId: orgId, productNoList: listNo })
-        .then(function (result) {
+        .then(function(result) {
             return isValid(result);
         })
 }
@@ -818,7 +839,6 @@ validator_data.prototype.checkProductNo = function (orgId) {
 window.eher_util = new eher_util();
 window.validator_data = validator_data;
 window.dataRequest = dataRequest;
-
 Vue.component('my-upload', {
     template: '<div class="my-upload" style="width:auto" :class="__disabled()">'
     + '<button class="el-button--small  el-button" :disabled="disabled" :class="_class()" @click="handleClick"><slot>上传文件</slot> </button>'
@@ -935,7 +955,8 @@ var mixin = window.mixin = {
             check_result: [],
             handson_data: {}
         },
-        visibility: ''//visible
+        visibility: '', //visible
+        hasPower: false
     },
     computed: {
         _disabled: function () {
@@ -943,11 +964,11 @@ var mixin = window.mixin = {
         }
     },
     methods: {
-        save_excle: function (callback) {// v 用于回调
+        save_excle: function(callback) { // v 用于回调
             var self = this;
-            return new Promise(function (resolve, reject) {
+            return new Promise(function(resolve, reject) {
                 if (eher_util.check_table()) {
-                    var _seriadata = function (_res, type) {
+                    var _seriadata = function(_res, type) {
                         if (type) {
                             self.dialog.excle_result_visible = false;
                             if (!(callback instanceof MouseEvent)) {
@@ -965,25 +986,25 @@ var mixin = window.mixin = {
                         }
                     }
                     self.validator_data.checkProductNo(self.orgId)
-                        .then(function (result) {
+                        .then(function(result) {
                             _seriadata(result, true);
-                        }, function (result) {
+                        }, function(result) {
                             _seriadata(result);
                         })
                 }
             });
         },
-        excleOpenCallback: function () {
+        excleOpenCallback: function() {
             var self = this;
-            setTimeout(function () {
+            setTimeout(function() {
                 eher_util.create_handsontable(self.excle_origin.list, 'mydialogExcle', self.excle_origin.handson_data)
             }, 100)
         },
-        _onChange: function (target) {
+        _onChange: function(target) {
             var self = this;
             eher_util.getData_from_excle(target)
-                .then(function (data) {
-                    eher_util.destory_handsontable('mydialogExcle');// 清楚handsontable 数据
+                .then(function(data) {
+                    eher_util.destory_handsontable('mydialogExcle'); // 清楚handsontable 数据
                     self.excle_origin.list = data;
                     self.excle_origin.handson_data = eher_util.excel_2_handsontable(data);
                     self.dialog.excle_result_visible = true;
@@ -991,13 +1012,13 @@ var mixin = window.mixin = {
                 })
 
         },
-        dialogInputChange: eher_util.throttle(function (e) {
+        dialogInputChange: eher_util.throttle(function(e) {
             console.log(e);
             this.dialog.keyWord = e;
             this.dialog.current = 1;
             this.add();
         }, 800),
-        handleCommand: function (v) {
+        handleCommand: function(v) {
             this.goods_filter.selected = v;
         },
         dialogHandleCurrentChange(val) {
@@ -1006,7 +1027,7 @@ var mixin = window.mixin = {
             this.add();
         },
 
-        dialogSelectProductClose: function (v) {// v 决定是否回调
+        dialogSelectProductClose: function(v) { // v 决定是否回调
             if (this.dialog.selected === -1) return;
             var obj = this.dialog.list[this.dialog.selected];
             this.dialog.dialogVisible = false
@@ -1017,16 +1038,16 @@ var mixin = window.mixin = {
                 return Promise.resolve(obj)
             }
         },
-        dialogSelectedItem: function (item, index) {
+        dialogSelectedItem: function(item, index) {
             if (index === this.dialog.selected) {
                 this.dialog.selected = -1;
             } else {
                 this.dialog.selected = index;
             }
         },
-        addItem: function (data, index) {
+        addItem: function(data, index) {
             if (!data) return;
-            var contain = this.tableData.filter(function (el, index) {
+            var contain = this.tableData.filter(function(el, index) {
                 return el.productId === data.id
             })
             if (contain && contain.length > 0) return;
@@ -1036,9 +1057,9 @@ var mixin = window.mixin = {
             delete data.name;
             this.tableData.push(data);
         },
-        add: function () {
+        add: function(orgId) {
             var self = this;
-            this.dataRequest.listGoods(this.dialog.keyWord, this.dialog.current).then(function (result) {
+            this.dataRequest.listGoods(this.dialog.keyWord, this.dialog.current, '', orgId).then(function(result) {
                 if (result) {
                     self.dialog.list = result.list;
                     self.dialog.total = result.total;
@@ -1046,10 +1067,10 @@ var mixin = window.mixin = {
                 self.dialog.dialogVisible = true;
             })
         },
-        clear_table: function () {
+        clear_table: function() {
             eher_util.create_handsontable();
         },
-        deleteRow: function (index) {
+        deleteRow: function(index) {
             this.tableData.splice(index, 1);
         },
         visibility_view: function () {
@@ -1061,8 +1082,9 @@ var mixin = window.mixin = {
         keyupEnter: function (callback) {
             var self = this, callback = !(callback instanceof KeyboardEvent);
             return new Promise(function (resolve, reject) {
+
                 self.dataRequest.query_product_by_barcode(self.barcode)
-                    .then(function (e) {
+                    .then(function(e) {
                         if (!e) {
                             self.$message({ message: '无此产品条形码相关的产品', type: 'warning' });
                             return;
@@ -1071,12 +1093,20 @@ var mixin = window.mixin = {
                         if (callback) return resolve(e);
                         e.quantity = e.quantity || 1;
                         self.addItem(e);
-                    }, function (e) {
+                    }, function(e) {
                         self.$message({ message: '取消审批失败,code：' + e, type: 'warning' });
                         reject(e);
                     })
             })
 
+        },
+        checkPower: function(type) {
+            var self = this;
+            this.$http.post('/doWareHouse/checkPermission', { empId: self.approveEmpId, type: type }).then(function(result) {
+                self.hasPower = result;
+            }, function(error) {
+                self.$log(error);
+            })
         }
     }
 };
