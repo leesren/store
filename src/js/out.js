@@ -1,10 +1,14 @@
-
 var app = window.$app = new Vue({
     el: '#wrapper',
     mixins: [mixin],
     data: {
         orgId: '8787426330226801974',
+<<<<<<< HEAD
         id: location.hash.slice(2) || '',// 详情的id
+=======
+        id: location.hash.slice(2) || '', // 详情的id
+        approveEmpId: '8787426330226802018', // 审核人id
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
         status: 0,
         formInline: {
             buyer: '',
@@ -23,64 +27,86 @@ var app = window.$app = new Vue({
             store_selected: '',
             signerList: [],
             signer_selected: ''
+<<<<<<< HEAD
         }
+=======
+        },
+        empId: '8787426330226802018',
+        hasPower: false
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
     },
     computed: {
-        _disabled: function () {
+        _disabled: function() {
             return this.status === 1;
         }
     },
-    watch: {
-    },
-    created: function () {
+    watch: {},
+    created: function() {
         this.dataRequest = window.$dataRequest = new dataRequest(this.orgId);
         this.validator_data = window.$validator_data = new validator_data();
     },
-    mounted: function () {
+    mounted: function() {
 
         if (this.id) {
+            this.controlPower();
             this.initDataInfo();
         }
         this.visibility_view();
     },
     methods: {
-        initDataInfo: function () {// 初始化单的详情
+        initDataInfo: function() { // 初始化单的详情
             var self = this;
             this.$http.post('/doWareHouse/queryDeliDetail', { "id": this.id })
-                .then(function (result) {
+                .then(function(result) {
                     self.formInline.in_time = result.deliveryDate;
                     self.formInline.buyer = result.receiveEmpId;
                     self.formInline.store = result.storageId;
                     self.formInline.desc = result.note;
                     self.tableData = result.itemList;
                     self.status = result.status;
-                }, function (error) {
+                }, function(error) {
                     console.error(error);
                 })
         },
+<<<<<<< HEAD
         _change: function (v) {
+=======
+        _change: function(v) {
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
             var newObj = Object.assign({}, this.tableData[v])
             Vue.set(this.tableData, v, newObj);
         },
-        _count: function (i) {
+        _count: function(i) {
             var el = this.tableData[i];
             return (el.price * el.quantity).toFixed(2);
         },
+<<<<<<< HEAD
         submit: function (e) {
+=======
+        submit: function(e) {
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
 
         },
-        clear_table: function () {
+        clear_table: function() {
             eher_util.create_handsontable();
         },
 
+<<<<<<< HEAD
         save_request: function (callback) {
+=======
+        save_request: function(data) {
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
             if (!this.tableData.length) { this.$message({ message: '保存失败,您未添加产品', type: 'warning' }); return; }
             var data = {
                 "storageId": this.formInline.store + '',
                 "deliveryDate": eher_util.date2String(this.formInline.in_time),
                 "note": this.formInline.desc,
                 "receiveEmpId": this.formInline.buyer + '',
+<<<<<<< HEAD
                 "operatorId": this.approveEmpId,// 不填
+=======
+                "operatorId": this.approveEmpId, // 不填
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
                 "itemList": this.tableData
             }
             var api = '/doWareHouse/saveDeliOrder';
@@ -89,6 +115,7 @@ var app = window.$app = new Vue({
                 api = '/doWareHouse/modifyDeliOrder';
             }
             var self = this;
+<<<<<<< HEAD
             return new Promise(function (resolve) {
                 self.$http.post(api, data)
                     .then(function (result) {
@@ -114,10 +141,33 @@ var app = window.$app = new Vue({
             return this.validator_data.isValid_form(this)
                 .then(function () {
                     return self.save_request();
+=======
+            this.$http.post(api, data)
+                .then(function(result) {
+                    self.$message({ message: '添加成功', type: 'success' });
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 400)
+                }, function(error) {
+                    console.error(error);
+                    self.$message({ message: '添加失败,code：' + error, type: 'warning' });
+                }).catch(function(error) {
+                    console.error(error);
+                    self.$message({ message: '添加失败', type: 'warning' });
+                })
+
+        },
+        save: function() {
+            var self = this;
+            this.validator_data.isValid_form(this)
+                .then(function() {
+                    self.save_request();
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
                 })
         },
-        sign: function () {
+        sign: function() {
             var self = this;
+<<<<<<< HEAD
             if (this.id) {
                 var _pp = function () {
                     self.$http.post('/doWareHouse/approveDeliOrder', { id: this.id, approveEmpId: this.approveEmpId })
@@ -135,23 +185,57 @@ var app = window.$app = new Vue({
                     })
             }
 
+=======
+            if (this.id && this.approveEmpId)
+                this.$http.post('/doWareHouse/approveDeliOrder', { id: this.id, approveEmpId: this.approveEmpId })
+                .then(function(result) {
+                    self.$message({ message: '审批成功', type: 'success' });
+                    window.location.reload()
+                }, function(error) {
+                    self.$log(error);
+                    self.$message({ message: '审批失败,code：' + error, type: 'warning' });
+                })
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
         },
-        unsign: function () {
+        unsign: function() {
             var self = this;
             this.$http.post('/doWareHouse/antiApproveDeliOrder', { id: this.id, empId: this.approveEmpId })
-                .then(function (result) {
+                .then(function(result) {
                     self.$message({ message: '取消审批成功', type: 'success' });
                     window.location.reload()
-                }, function (error) {
+                }, function(error) {
                     self.$log(error);
                     self.$message({ message: '取消审批失败,code：' + error, type: 'warning' });
                 })
         },
-        out_excel: function () {
+        out_excel: function() {
             eher_util.element_table_2_table('eltableBox', 7, '产品出库');
         },
+<<<<<<< HEAD
         delete_confirm: function () {
             this.dialog.deletedialogVisible = false;
+=======
+        delete_confirm: function() {
+            var self = this;
+            this.$http.post('/doWareHouse/cancelDeliOrder', { id: this.id })
+                .then(function(result) {
+                    setTimeout(function() {
+                        history.go(-1);
+                    }, 400)
+                }, function(error) {
+                    self.$log(error);
+                    self.$message({ message: '删除出库单失败,code:' + error, type: 'warning' });
+                })
+        },
+        controlPower: function() {
+            var self = this;
+            var type = self.status == 0 ? '3' : '4';
+            this.$http.post('/doWareHouse/checkPermission', { empId: self.empId, type: type }).then(function(result) {
+                self.hasPower = result;
+            }, function(error) {
+                self.$log(error);
+            })
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
         }
     }
 })

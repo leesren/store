@@ -29,33 +29,36 @@ var app = window.$app = new Vue({
             out_houses: [],
             cache_house: {},
             storeList: []
-        }
+        },
+        empId: '8787426330226802018',
+        hasPower: false
     },
     computed: {
-        _disabled: function () {
+        _disabled: function() {
             return this.status === 1;
         }
     },
     watch: {},
-    created: function () {
+    created: function() {
         this.dataRequest = window.$dataRequest = new dataRequest(this.orgId);
         this.validator_data = window.$validator_data = new validator_data();
     },
-    mounted: function () {
+    mounted: function() {
         var self = this;
-        this.dataRequest.query_stores(this.orgId, 'tolist').then(function (e) {
+        this.dataRequest.query_stores(this.orgId, 'tolist').then(function(e) {
             self.dataList.stores = e;
         })
         if (this.id) {
+            this.controlPower();
             this.initDataInfo();
         }
         this.visibility_view();
     },
     methods: {
-        initDataInfo: function () { // 初始化单的详情
+        initDataInfo: function() { // 初始化单的详情
             var self = this;
             this.$http.post('/doWareHouse/queryTransferDetail', { "id": this.id })
-                .then(function (result) {
+                .then(function(result) {
                     self.formInline.out_storeId = result.fromOrgId;
                     self.formInline.out_store = result.fromOrgName;
                     self.formInline.out_warehouse = result.fromStorageId;
@@ -69,11 +72,11 @@ var app = window.$app = new Vue({
                     self.status = +result.statusCode;
                     self.selectStoreChange(self.formInline.in_storeId, 'in');
                     self.selectStoreChange(self.formInline.out_storeId, 'out');
-                }, function (error) {
+                }, function(error) {
                     console.error(error);
                 })
         },
-        selectStoreChange: function (v, type) {
+        selectStoreChange: function(v, type) {
             var self = this,
                 _cache = this.dataList.cache_house[v];
             if (_cache) {
@@ -86,31 +89,31 @@ var app = window.$app = new Vue({
             }
             var orgId = type === 'in' ? this.formInline.in_storeId : this.formInline.out_storeId;
             self.dataRequest.query_hourse(orgId)
-                .then(function (res) {
+                .then(function(res) {
                     if (type === 'in') {
                         self.dataList.in_houses = self.dataList.cache_house[v] = res;
                     } else {
                         self.dataList.out_houses = self.dataList.cache_house[v] = res;
                     }
-                }, function (error) {
+                }, function(error) {
                     self.$message({ message: '仓库查询失败,code：' + error, type: 'warning' });
                 })
         },
-        _change: function (v) {
+        _change: function(v) {
             var newObj = Object.assign({}, this.tableData[v])
             Vue.set(this.tableData, v, newObj);
         },
-        _count: function (i) {
+        _count: function(i) {
             var el = this.tableData[i];
             return (el.price * el.quantity).toFixed(2);
         },
-        handleCommand: function (v) {
+        handleCommand: function(v) {
             this.goods_filter.selected = v;
         },
-        submit: function (e) {
+        submit: function(e) {
 
         },
-        save_request: function (callback) {
+        save_request: function(callback) {
             if (!this.tableData.length) { this.$message({ message: '保存失败,您未添加产品', type: 'warning' }); return; }
             var data = {
                 // "toOrgId": this.formInline.out_store + '',
@@ -129,20 +132,20 @@ var app = window.$app = new Vue({
                 api = '/doWareHouse/modifyTransferOrder';
             }
             var self = this;
-            return new Promise(function (resolve, reject) {
+            return new Promise(function(resolve, reject) {
                 self.$http.post(api, data)
-                    .then(function (result) {
+                    .then(function(result) {
                         if (callback) {
                             return resolve(result)
                         }
                         self.$message({ message: '添加成功', type: 'success' });
-                        setTimeout(function () {
+                        setTimeout(function() {
                             window.location.reload();
                         }, 400)
-                    }, function (error) {
+                    }, function(error) {
                         console.error(error);
                         self.$message({ message: '添加失败,code：' + error, type: 'warning' });
-                    }).catch(function (error) {
+                    }).catch(function(error) {
                         console.error(error);
                         self.$message({ message: '添加失败', type: 'warning' });
                     })
@@ -150,49 +153,72 @@ var app = window.$app = new Vue({
 
 
         },
-        save: function (type) {
+        save: function(type) {
             var self = this;
             return this.validator_data.isValid_form(this)
-                .then(function () {
+                .then(function() {
                     return self.save_request(typeof type === 'string');
                 })
         },
-        sign: function () {
+        sign: function() {
             var self = this;
+<<<<<<< HEAD
             if (this.id)
                 this.save('sign').then(function (e) {
+=======
+            if (this.id && this.approveEmpId)
+                this.save('sign').then(function(e) {
+>>>>>>> 74424e46916a2280fee12fe4328f0da87f7d556e
                     self.$http.post('/doWareHouse/approveTransferOrder', { id: self.id, approveEmpId: self.approveEmpId })
-                        .then(function (result) {
+                        .then(function(result) {
                             self.$message({ message: '审批成功', type: 'success' });
-                            setTimeout(function () {
+                            setTimeout(function() {
                                 window.location.reload();
                             }, 400)
-                        }, function (error) {
+                        }, function(error) {
                             self.$log(error);
                             self.$message({ message: '审批失败,code：' + error, type: 'warning' });
                         })
                 })
 
         },
-        unsign: function () {
+        unsign: function() {
             var self = this;
             this.$http.post('/doWareHouse/antiApproveTransferOrder', { id: this.id, empId: this.approveEmpId })
-                .then(function (result) {
+                .then(function(result) {
                     self.$message({ message: '取消审批成功', type: 'success' });
-                    setTimeout(function () {
+                    setTimeout(function() {
                         window.location.reload();
                     }, 400)
-                }, function (error) {
+                }, function(error) {
                     self.$log(error);
                     self.$message({ message: '取消审批失败,code：' + error, type: 'warning' });
                 })
         },
-        out_excel: function () {
+        out_excel: function() {
             eher_util.element_table_2_table('eltableBox', 7, '调拨单');
         },
 
-        delete_confirm: function () {
-            this.dialog.deletedialogVisible = false;
+        delete_confirm: function() {
+            var self = this;
+            this.$http.post('/doWareHouse/cancelTransferOrder', { id: this.id })
+                .then(function(result) {
+                    setTimeout(function() {
+                        window.close();
+                    }, 400)
+                }, function(error) {
+                    self.$log(error);
+                    self.$message({ message: '删除调拨单失败,code:' + error, type: 'warning' });
+                })
+        },
+        controlPower: function() {
+            var self = this;
+            var type = self.status == 0 ? '5' : '6';
+            this.$http.post('/doWareHouse/checkPermission', { empId: self.empId, type: type }).then(function(result) {
+                self.hasPower = result;
+            }, function(error) {
+                self.$log(error);
+            })
         }
     }
 })
