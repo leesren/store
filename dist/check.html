@@ -14,7 +14,6 @@
     <!-- Mainly scripts -->
     <script src="./vendor/jquery-2.1.1.js"></script>
     <script src="./vendor/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="http://at.alicdn.com/t/font_1473762766_7074292.css">
     <link rel="stylesheet" href="http://indevtest.oss-cn-shenzhen.aliyuncs.com/element-ui.css">
     <link rel="stylesheet" href="./css/index.css">
     <link rel="stylesheet" href="http://indevtest.oss-cn-shenzhen.aliyuncs.com/handsontable.full.min.css">
@@ -98,7 +97,7 @@
                     </ul>
                 </nav>
             </div>
-            <div class="wrapper wrapper-content animated fadeInRight" id="pager_main">
+            <div class="wrapper wrapper-content animated fadeInRight my-invisi" id="pager_main" :style="{'visibility':visibility}">
 
                 <input type="hidden" id="menu_active" value="ResourceManagement-BatchImportManagement" />
                 <div class="ibox float-e-margins">
@@ -108,91 +107,151 @@
                             <el-button type="primary" size="small" @click="sign" v-if="id && status === 0 && hasPower">审批</el-button>
                             <el-button type="warning" size="small" @click="unsign" v-if="id && status === 1 && hasPower">取消审批</el-button>
                             <el-button type="success" size="small" @click="out_excel">导出</el-button>
-                            <el-button type="danger" size="small" @click="dialog.deletedialogVisible = true">删除</el-button>
+                            <el-button type="danger" size="small" @click="dialog.deletedialogVisible = true" v-if="id">删除</el-button>
                             <el-button type="primary" size="small">返回</el-button>
                         </div>
                     </div>
                     <div class="ibox-content miboxcontent">
                         <div class="form-horizontal">
-                            <div class="op-header">
-                                <div flexbox>
-                                    <el-form :inline="true" :model="formInline" :rules="formInlineRules" ref="ruleForm" class="demo-form-inline">
-                                        <el-form-item label="盘点日期" prop="in_time">
-                                            <el-date-picker :disabled="_disabled" size="small" type="date" placeholder="选择日期" v-model="formInline.in_time" style="width: 100%;"></el-date-picker>
-                                        </el-form-item>
-                                        <el-form-item class="store_select-box" label="仓库" prop="check_warehouse">
-                                            <el-select :disabled="_disabled" size="small" multiple v-model="formInline.check_warehouse" placeholder="请选择">
-                                                <el-option v-for="item in dataList.storeList" :value="item.id" :label="item.name"></el-option>
-                                            </el-select>
-                                        </el-form-item>
-                                        <el-form-item label="盘点人" prop="check_person">
-                                            <el-select :disabled="_disabled" size="small" v-model="formInline.check_person" placeholder="请选择">
-                                                <el-option v-for="item in dataList.signerList" :value="item.id" :label="item.name"></el-option>
-                                            </el-select>
-                                        </el-form-item>
-                                        <el-form-item label="备注">
-                                            <el-input :disabled="_disabled" v-model="formInline.desc" placeholder="可选" size="small"></el-input>
-                                        </el-form-item>
-                                    </el-form>
-                                </div>
-                                <div flexbox>
-                                    <div>
-                                        <el-button type="info" size="small" @click="generateCheckInventories" :disabled="_disabled">自动生成盘点单</el-button>
-                                        <el-button type="primary" size="small" @click="before_add" :disabled="!formInline.check_warehouse">选择产品</el-button>
-                                        <my-upload :disabled="!formInline.check_warehouse" :change="_onChange" type="success" multiple accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
-                                            从Excel中导入
-                                        </my-upload>
+                            <el-tabs v-model="activeIndex" type="card" @tab-click="tabClick">
+                                <el-tab-pane label="盘点" name="0">
+                                    <div class="op-header">
+                                        <div flexbox>
+                                            <el-form :inline="true" :model="formInline" :rules="formInlineRules" ref="ruleForm" class="demo-form-inline">
+                                                <el-form-item label="盘点日期" prop="in_time">
+                                                    <el-date-picker :disabled="_disabled" size="small" type="date" placeholder="选择日期" v-model="formInline.in_time" style="width: 100%;"></el-date-picker>
+                                                </el-form-item>
+                                                <el-form-item class="store_select-box" label="仓库" prop="check_warehouse">
+                                                    <el-select :disabled="_disabled" size="small" multiple v-model="formInline.check_warehouse" placeholder="请选择">
+                                                        <el-option v-for="item in dataList.storeList" :value="item.id" :label="item.name"></el-option>
+                                                    </el-select>
+                                                </el-form-item>
+                                                <el-form-item label="盘点人" prop="check_person">
+                                                    <el-select :disabled="_disabled" size="small" v-model="formInline.check_person" placeholder="请选择">
+                                                        <el-option v-for="item in dataList.signerList" :value="item.id" :label="item.name"></el-option>
+                                                    </el-select>
+                                                </el-form-item>
+                                                <el-form-item label="备注">
+                                                    <el-input :disabled="_disabled" v-model="formInline.desc" placeholder="可选" size="small"></el-input>
+                                                </el-form-item>
+                                            </el-form>
+                                        </div>
+                                        <div flexbox>
+                                            <div>
+                                                <el-button type="info" size="small" @click="generateCheckInventories" :disabled="!formInline.check_warehouse.length">自动生成盘点单</el-button>
+                                                <el-button type="primary" size="small" @click="before_add" :disabled="!formInline.check_warehouse.length">选择产品</el-button>
+                                                <my-upload :disabled="!formInline.check_warehouse.length" :change="_onChange" type="success" multiple accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                                                    从Excel中导入
+                                                </my-upload>
+                                            </div>
+                                            <div flex flexbox flex-center>
+                                                <label for="" style="margin:0 10px 0 40px">输入产品条形码</label>
+                                                <section flex="" class="el-input el-input--small">
+                                                    <input autocomplete="off" v-on:keyup.enter="keyup_enter" placeholder="筛选/查询" @input="query_keyword" size="small" type="text" @keyup.enter="submit" class="el-input__inner">
+                                                </section>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div flex flexbox flex-center>
-                                        <label for="" style="margin:0 10px 0 40px">输入产品条形码</label>
-                                        <section flex="" class="el-input el-input--small">
-                                            <input autocomplete="off" v-on:keyup.enter="keyup_enter" placeholder="" @input="query_keyword" size="small" type="text" @keyup.enter="submit" class="el-input__inner">
-                                        </section>
+                                    <div class="content-body" style="margin-top:15px">
+                                        <div id="tablehook">
+                                            <div id="tablebox"></div>
+                                            <div>
+                                                <el-table :data="gettableData()" style="width: 100%" id="eltableBox">
+                                                    <el-table-column prop="code" label="产品编号">
+                                                    </el-table-column>
+                                                    <el-table-column prop="productName" label="产品名称">
+                                                    </el-table-column>
+                                                    <el-table-column prop="categoryName" label="品类">
+                                                    </el-table-column>
+                                                    <el-table-column prop="storageName" label="仓库">
+                                                    </el-table-column>
+                                                    <el-table-column label="盘点数量" width="100">
+                                                        <template scope="scope">
+                                                            <el-input :disabled="_disabled" v-model="scope.row.inventory_quantity"></el-input>
+                                                        </template>
+                                                    </el-table-column>
+                                                    <el-table-column prop="quantity" label="库存数量" width="100">
+                                                    </el-table-column>
+                                                    <el-table-column label="盈亏数量" width="100">
+                                                        <template scope="scope">
+                                                            <span :style="_check_num(scope.row.inventory_quantity-scope.row.quantity)">{{scope.row.inventory_quantity-scope.row.quantity}}</span>
+                                                        </template>
+                                                    </el-table-column>
+                                                    <el-table-column prop="unit" label="单位" width="80">
+                                                    </el-table-column>
+                                                    <el-table-column prop="specification" label="规格" width="80">
+                                                    </el-table-column>
+                                                    <el-table-column label="操作" width="100">
+                                                        <template scope="scope">
+                                                            <el-button :disabled="_disabled" @click.native.prevent="deleteRow(scope.$index)" type="text" size="small">移除</el-button>
+                                                        </template>
+                                                    </el-table-column>
+                                                </el-table>
+                                            </div>
+                                            <div style="text-align:center;margin:32px 0 0 0" v-show="tableData.length">
+                                                <el-button :plain="true" type="danger" @click="dialog.deletedialogVisible = true"> 删除 </el-button>
+                                                <el-button type="info" v-if="!_disabled" @click="save"> 保存 </el-button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="content-body" style="margin-top:15px">
-                                <div id="tablehook">
-                                    <div id="tablebox"></div>
-                                    <div>
-                                        <el-table :data="gettableData()" style="width: 100%" id="eltableBox">
-                                            <el-table-column prop="code" label="产品编号">
-                                            </el-table-column>
-                                            <el-table-column prop="productName" label="产品名称">
-                                            </el-table-column>
-                                            <el-table-column prop="categoryName" label="品类">
-                                            </el-table-column>
-                                            <el-table-column prop="storageName" label="仓库">
-                                            </el-table-column>
-                                            <el-table-column label="盘点数量" width="100">
-                                                <template scope="scope">
-                                                    <el-input :disabled="_disabled" v-model="scope.row.inventory_quantity"></el-input>
-                                                </template>
-                                            </el-table-column>
-                                            <el-table-column prop="quantity" label="库存数量" width="100">
-                                            </el-table-column>
-                                            <el-table-column label="盈亏数量" width="100">
-                                                <template scope="scope">
-                                                    <span :style="_check_num(scope.row.inventory_quantity-scope.row.quantity)">{{scope.row.inventory_quantity-scope.row.quantity}}</span>
-                                                </template>
-                                            </el-table-column>
-                                            <el-table-column prop="unit" label="单位" width="80">
-                                            </el-table-column>
-                                            <el-table-column prop="specification" label="规格" width="80">
-                                            </el-table-column>
-                                            <el-table-column label="操作" width="100">
-                                                <template scope="scope">
-                                                    <el-button :disabled="_disabled" @click.native.prevent="deleteRow(scope.$index)" type="text" size="small">移除</el-button>
-                                                </template>
-                                            </el-table-column>
-                                        </el-table>
+                                </el-tab-pane>
+                                <el-tab-pane label="盘盈入库" name="1">
+                                    <el-table :data="dataList.tableData['1'].list" stripe style="width: 100%">
+                                        <el-table-column prop="orderNo" label="入库单号">
+                                        </el-table-column>
+                                        <el-table-column prop="status" label="单据状态" width="100">
+                                            <template scope="scope" v-text="scope.row.status"></template>
+                                        </el-table-column>
+                                        <el-table-column prop="entryDate" label="入库日期">
+                                        </el-table-column>
+                                        <el-table-column prop="storageName" label="仓库">
+                                        </el-table-column>
+                                        <el-table-column prop="purchaseEmpName" label="采购人">
+                                        </el-table-column>
+                                        <el-table-column prop="createTime" label="创建时间">
+                                        </el-table-column>
+                                        <el-table-column prop="approveEmpName" label="审批人" width="100">
+                                        </el-table-column>
+                                        <el-table-column prop="approveTime" label="审批时间">
+                                        </el-table-column>
+                                        <el-table-column prop="note" label="备注" width="80">
+                                        </el-table-column>
+                                    </el-table>
+                                    <div v-show="dataList.tableData['1'].total" style="margin-top:10px">
+                                        <el-pagination layout="prev, pager, next" :total="dataList.tableData['1'].total" :current-page="dataList.tableData['1'].page" :page-size="dataList.tableData.size">
+                                        </el-pagination>
                                     </div>
-                                    <div style="text-align:center;margin:32px 0 0 0" v-show="tableData.length">
-                                        <el-button :plain="true" type="danger" @click="dialog.deletedialogVisible = true"> 删除 </el-button>
-                                        <el-button type="info" v-if="!_disabled" @click="save"> 保存 </el-button>
+                                </el-tab-pane>
+                                <el-tab-pane label="盘亏出库" name="2">
+                                    <el-table :data="dataList.tableData['2'].list" stripe style="width: 100%">
+                                        <el-table-column prop="orderNo" label="出库单号">
+                                        </el-table-column>
+                                        <el-table-column prop="status" label="单据状态" width="100">
+                                            <template scope="scope">{{ scope.row.status}}</template>
+                                        </el-table-column>
+                                        <el-table-column prop="deliveryDate" label="出库日期">
+                                        </el-table-column>
+
+                                        <el-table-column prop="storageName" label="仓库">
+                                        </el-table-column>
+                                        <el-table-column prop="receiveEmpName" label="领取人">
+                                        </el-table-column>
+                                        <el-table-column prop="createTime" label="创建时间">
+                                        </el-table-column>
+                                        <el-table-column prop="approveEmpName" label="审批人" width="100">
+                                        </el-table-column>
+                                        <el-table-column prop="approveTime" label="审批时间">
+                                        </el-table-column>
+                                        <el-table-column prop="note" label="备注" width="80">
+                                        </el-table-column>
+                                    </el-table>
+                                    <div v-show="dataList.tableData['2'].total" style="margin-top:10px">
+                                        <el-pagination layout="prev, pager, next" :total="dataList.tableData['2'].total" @current-change="handleCurrentChange($event,'2')" :current-page="dataList.tableData['2'].page" :page-size="dataList.tableData.size">
+                                        </el-pagination>
                                     </div>
-                                </div>
-                            </div>
+                                </el-tab-pane>
+                            </el-tabs>
+
                         </div>
                     </div>
                 </div>
@@ -209,8 +268,7 @@
                 <el-input v-model="dialog.input" placeholder="搜索" @change="dialogInputChange"></el-input>
                 <div class="data-list-content" style="margin:10px 0">
                     <div class="list-group" v-show="dialog.list.length">
-                        <a href="#" @click="dialogSelectedItem(el,index)" class="list-group-item" v-for="(el,index) in dialog.list" :class=" { 'active':dialog.selected ===index} ">
-                            {{ el.name }}
+                        <a href="#" @click="dialogSelectedItem(el,index)" class="list-group-item" v-for="(el,index) in dialog.list" :class=" { 'active':dialog.selected ===index} " v-text="el.name">
                         </a>
                     </div>
                 </div>
@@ -229,30 +287,12 @@
         <el-dialog title="提示" :visible.sync="dialog.deletedialogVisible" size="tiny">
             <span>确定要删除该条盘点单吗？</span>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialog.deletedialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="delete_confirm">确 定</el-button>
-            </span>
+                        <el-button @click="dialog.deletedialogVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="delete_confirm">确 定</el-button>
+                    </span>
         </el-dialog>
         <el-dialog title="Excle导入结果" @open="excleOpenCallback" :close-on-click-modal="false" :visible.sync="dialog.excle_result_visible">
-            <!--<div class="my-dialog-box">
-                <el-table :data="dialog.excle_result_tableData" style="width: 100%">
-                    <el-table-column prop="numberCode" label="产品编号" width="180">
-                    </el-table-column>
-                    <el-table-column prop="productName" label="产品名称">
-                    </el-table-column>
-                    <el-table-column prop="quantity" label="数量" width="120">
-                    </el-table-column>
-                    <el-table-column prop="price" label="单价" width="120">
-                    </el-table-column>
-                    <el-table-column prop="desc" label="描述" min-width="140">
-                        <template scope="scope">
-                            <el-tag type="danger" v-for="el in scope.row._checkMsg">
-                                {{el}}
-                            </el-tag>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </div>-->
+
             <div class="my-dialog-box" id="mydialogExcle">
             </div>
             <div v-show="excle_origin.check_result.length">
@@ -264,13 +304,16 @@
                 <my-excle-note></my-excle-note>
             </div>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialog.excle_result_visible = false">取 消</el-button>
-                <el-button type="primary" @click="before_save_excle">确 定</el-button>
-            </span>
+                        <el-button @click="dialog.excle_result_visible = false">取 消</el-button>
+                        <el-button type="primary" @click="before_save_excle">确 定</el-button>
+                    </span>
         </el-dialog>
     </div>
     <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/vue.min.js"></script>
     <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/element-ui.js"></script>
+
+    <script src="./js/concat.base.js"></script>
+    <script src="./js/check.js"></script>
     <!-- excel 导出-->
     <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/shim.js"></script>
     <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/Blob.js"></script>
@@ -278,14 +321,9 @@
     <script defer async src=http://apps.bdimg.com/libs/swfobject/2.2/swfobject.js></script>
     <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/downloadify.min.js"></script>
     <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/base64.min.js"></script>
-
-    <script defer src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/xlsx.full.min.js"></script>
-    <script defer async src="./vendor/handson-table/handsontable.full.min.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/xlsx.full.min.js"></script>
+    <script defer async src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/handsontable.full.min.js"></script>
     <script defer async src="http://apps.bdimg.com/libs/moment/2.8.3/moment.js"></script>
-
-    <script src="./js/concat.base.js"></script>
-
-    <script src="./js/check.js"></script>
 </body>
 
 </html>

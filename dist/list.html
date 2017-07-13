@@ -103,7 +103,7 @@
                                     <el-table-column prop="orderNo" label="入库单号">
                                     </el-table-column>
                                     <el-table-column prop="status" label="单据状态" width="100">
-                                            <template  scope="scope">{{ goods_filter.bill_status[scope.row.status] }}</template >
+                                            <template  scope="scope">{{ goods_filter.options_status [scope.row.status].text }}</template >
                                     </el-table-column>
                                     <el-table-column prop="entryDate" label="入库日期">
                                     </el-table-column>
