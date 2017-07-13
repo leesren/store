@@ -3,7 +3,6 @@ window.$app = new Vue({
     el: '#wrapper',
     mixins: [mixin],
     data: {
-        orgId: '8787426330226801974',
         goods_filter: { 
             startDate: eher_util.date2String(new Date),
             endDate: eher_util.date2String(new Date),

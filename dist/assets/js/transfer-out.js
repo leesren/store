@@ -2,7 +2,6 @@ var app = window.$app = new Vue({
     el: '#wrapper',
     mixins: [mixin],
     data: {
-        orgId: '8787426330226801974',
         id: location.hash.slice(2) || '', // 详情的id
         status: 0,
         formInline: {},

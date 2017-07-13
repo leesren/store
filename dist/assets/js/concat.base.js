@@ -911,10 +911,11 @@ Vue.component('my-query-filter', {
 })
 
 
-var mixin = {
+var mixin = window.mixin = {
     data: {
         approveEmpId: null,// 审核人id
-        barcode:'',
+        barcode: '',
+        orgId: '8787426330226801974',
         dialog: {
             dialogVisible: false,
             input: '',
@@ -936,8 +937,8 @@ var mixin = {
         },
         visibility: ''//visible
     },
-     computed: {
-        _disabled: function() {
+    computed: {
+        _disabled: function () {
             return this.status === 1;
         }
     },
@@ -949,7 +950,7 @@ var mixin = {
                     var _seriadata = function (_res, type) {
                         if (type) {
                             self.dialog.excle_result_visible = false;
-                            if ( ! (callback instanceof MouseEvent)) {
+                            if (!(callback instanceof MouseEvent)) {
                                 return resolve(_res);
                             }
                             eher_util.remove_mutiple_2_list(_res, self.tableData)
@@ -1052,10 +1053,13 @@ var mixin = {
             this.tableData.splice(index, 1);
         },
         visibility_view: function () {
-            this.visibility = 'visible'
+            var el = $('.my-invisi')
+            if (el) {
+                el.removeClass('my-invisi');
+            }
         },
         keyupEnter: function (callback) {
-            var self = this , callback = ! (callback instanceof KeyboardEvent) ;
+            var self = this, callback = !(callback instanceof KeyboardEvent);
             return new Promise(function (resolve, reject) {
                 self.dataRequest.query_product_by_barcode(self.barcode)
                     .then(function (e) {

@@ -21,25 +21,25 @@
         .my-dialog-box .data-list-content .list-group-item:hover {
             background-color: #fafafa;
         }
-        
+
         .my-dialog-box .data-list-content a.list-group-item.active {
             background-color: #b4d7f5;
             border: 1px solid #b4d7f5;
             color: #1f2d3d
         }
-        
+
         .handsontable td.htInvalid {
             background-color: #ff4c42!important
         }
-        
+
         .el-button--danger.is-plain {
             color: #ff4949;
         }
-        
+
         .store_select-box .el-input--small .el-input__inner {
             height: 30px !important;
         }
-        
+
         .store_select-box .el-select__tags {
             height: 30px;
             overflow: hidden
@@ -97,7 +97,7 @@
                     </ul>
                 </nav>
             </div>
-            <div class="wrapper wrapper-content animated fadeInRight my-invisi" id="pager_main" :style="{'visibility':visibility}">
+            <div class="wrapper wrapper-content animated fadeInRight my-invisi" id="pager_main">
 
                 <input type="hidden" id="menu_active" value="ResourceManagement-BatchImportManagement" />
                 <div class="ibox float-e-margins">
@@ -146,7 +146,8 @@
                                             <div flex flexbox flex-center>
                                                 <label for="" style="margin:0 10px 0 40px">输入产品条形码</label>
                                                 <section flex="" class="el-input el-input--small">
-                                                    <input autocomplete="off" v-on:keyup.enter="keyup_enter" placeholder="筛选/查询" @input="query_keyword" size="small" type="text" @keyup.enter="submit" class="el-input__inner query--input">
+                                                    <input autocomplete="off" v-on:keyup.enter="keyup_enter" placeholder="筛选/查询" @input="query_keyword" size="small" type="text"
+                                                        @keyup.enter="submit" class="el-input__inner query--input">
                                                 </section>
                                             </div>
                                         </div>
@@ -217,7 +218,8 @@
                                         </el-table-column>
                                     </el-table>
                                     <div v-show="dataList.tableData['1'].total" style="margin-top:10px">
-                                        <el-pagination layout="prev, pager, next" :total="dataList.tableData['1'].total" :current-page="dataList.tableData['1'].page" :page-size="dataList.tableData.size">
+                                        <el-pagination layout="prev, pager, next" :total="dataList.tableData['1'].total" :current-page="dataList.tableData['1'].page"
+                                            :page-size="dataList.tableData.size">
                                         </el-pagination>
                                     </div>
                                 </el-tab-pane>
@@ -245,7 +247,8 @@
                                         </el-table-column>
                                     </el-table>
                                     <div v-show="dataList.tableData['2'].total" style="margin-top:10px">
-                                        <el-pagination layout="prev, pager, next" :total="dataList.tableData['2'].total" @current-change="handleCurrentChange($event,'2')" :current-page="dataList.tableData['2'].page" :page-size="dataList.tableData.size">
+                                        <el-pagination layout="prev, pager, next" :total="dataList.tableData['2'].total" @current-change="handleCurrentChange($event,'2')"
+                                            :current-page="dataList.tableData['2'].page" :page-size="dataList.tableData.size">
                                         </el-pagination>
                                     </div>
                                 </el-tab-pane>
@@ -262,51 +265,54 @@
                 </div>
             </div>
         </div>
-        <el-dialog title="产品列表" :visible.sync="dialog.dialogVisible">
-            <div class="my-dialog-box">
-                <el-input v-model="dialog.input" placeholder="搜索" @change="dialogInputChange"></el-input>
-                <div class="data-list-content" style="margin:10px 0">
-                    <div class="list-group" v-show="dialog.list.length">
-                        <a href="#" @click="dialogSelectedItem(el,index)" class="list-group-item" v-for="(el,index) in dialog.list" :class=" { 'active':dialog.selected ===index} " v-text="el.name">
+        <div class="my-invisi">
+            <el-dialog title="产品列表" :visible.sync="dialog.dialogVisible">
+                <div class="my-dialog-box">
+                    <el-input v-model="dialog.input" placeholder="搜索" @change="dialogInputChange"></el-input>
+                    <div class="data-list-content" style="margin:10px 0">
+                        <div class="list-group" v-show="dialog.list.length">
+                            <a href="#" @click="dialogSelectedItem(el,index)" class="list-group-item" v-for="(el,index) in dialog.list" :class=" { 'active':dialog.selected ===index} "
+                                v-text="el.name">
                         </a>
+                        </div>
                     </div>
-                </div>
-                <div class="data-pager">
-                    <el-pagination @current-change="dialogHandleCurrentChange" :current-page="dialog.current" layout="prev, pager, next" :total="dialog.total">
-                    </el-pagination>
-                </div>
-                <div style="text-align:right">
-                    <span slot="footer" class="dialog-footer">
+                    <div class="data-pager">
+                        <el-pagination @current-change="dialogHandleCurrentChange" :current-page="dialog.current" layout="prev, pager, next" :total="dialog.total">
+                        </el-pagination>
+                    </div>
+                    <div style="text-align:right">
+                        <span slot="footer" class="dialog-footer">
                         <el-button @click="dialog.dialogVisible = false">取 消</el-button>
                         <el-button type="primary" @click="before_dialogSelectProductClose()">确 定</el-button>
                     </span>
+                    </div>
                 </div>
-            </div>
-        </el-dialog>
-        <el-dialog title="提示" :visible.sync="dialog.deletedialogVisible" size="tiny">
-            <span>确定要删除该条盘点单吗？</span>
-            <span slot="footer" class="dialog-footer">
+            </el-dialog>
+            <el-dialog title="提示" :visible.sync="dialog.deletedialogVisible" size="tiny">
+                <span>确定要删除该条盘点单吗？</span>
+                <span slot="footer" class="dialog-footer">
                         <el-button @click="dialog.deletedialogVisible = false">取 消</el-button>
                         <el-button type="primary" @click="delete_confirm">确 定</el-button>
                     </span>
-        </el-dialog>
-        <el-dialog title="Excle导入结果" @open="excleOpenCallback" :close-on-click-modal="false" :visible.sync="dialog.excle_result_visible">
+            </el-dialog>
+            <el-dialog title="Excle导入结果" @open="excleOpenCallback" :close-on-click-modal="false" :visible.sync="dialog.excle_result_visible">
 
-            <div class="my-dialog-box" id="mydialogExcle">
-            </div>
-            <div v-show="excle_origin.check_result.length">
-                <template v-for="(el,index) in excle_origin.check_result">
-                    <el-tag type="danger" v-if="el._checkMsg">{{ el.numberCode +'：'+ el._checkMsg }}</el-tag>
-                </template>
-            </div>
-            <div class="color-gray" style="margin-top:12px;color:#999; " v-show="excle_origin.check_result.length">
-                <my-excle-note></my-excle-note>
-            </div>
-            <span slot="footer" class="dialog-footer">
+                <div class="my-dialog-box" id="mydialogExcle">
+                </div>
+                <div v-show="excle_origin.check_result.length">
+                    <template v-for="(el,index) in excle_origin.check_result">
+                        <el-tag type="danger" v-if="el._checkMsg">{{ el.numberCode +'：'+ el._checkMsg }}</el-tag>
+                    </template>
+                </div>
+                <div class="color-gray" style="margin-top:12px;color:#999; " v-show="excle_origin.check_result.length">
+                    <my-excle-note></my-excle-note>
+                </div>
+                <span slot="footer" class="dialog-footer">
                         <el-button @click="dialog.excle_result_visible = false">取 消</el-button>
                         <el-button type="primary" @click="before_save_excle">确 定</el-button>
                     </span>
-        </el-dialog>
+            </el-dialog>
+        </div>
     </div>
     <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/vue.min.js"></script>
     <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/element-ui.js"></script>

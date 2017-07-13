@@ -99,6 +99,7 @@ gulp.task('concat', () => {
     var dir = './src/js';
     gulp.src([dir + '/request.js', dir + '/util.js', dir + '/customer_module.js', dir + '/mixins.js'])
         .pipe(concat('concat.base.js'))
+        .pipe(size())
         .pipe(gulp.dest(dir))
 });
 

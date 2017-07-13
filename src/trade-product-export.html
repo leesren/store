@@ -74,7 +74,7 @@
                     </ul>
                 </nav>
             </div>
-            <div class="wrapper wrapper-content animated fadeInRight my-invisi" :style="{'visibility':visibility}" id="pager_main">
+            <div class="wrapper wrapper-content animated fadeInRight my-invisi" id="pager_main">
 
                 <input type="hidden" id="menu_active" value="ResourceManagement-BatchImportManagement" />
                 <div class="ibox float-e-margins">
@@ -95,7 +95,7 @@
                                     <span>到</span>
                                     <el-date-picker size="small" format="yyyy-MM-dd" v-model="goods_filter.endDate" type="date" placeholder="选择日期">
                                     </el-date-picker>
-                                </div> 
+                                </div>
                                 <el-button type="primary" size="small" @click="query_products">查询</el-button>
                                 <el-button type="success" size="small" :disabled="data_list.is_exporting" @click="handleExport">导出excel</el-button>
                             </div>
@@ -167,19 +167,20 @@
         </div>
 
 
-
-        <el-dialog title="选择门店" :visible.sync="data_list.stores.visible">
-            <el-tree default-expand-all="true" :data="data_list.stores.tree" accordion="true" show-checkbox node-key="id" ref="tree">
-            </el-tree>
-            <span slot="footer" class="dialog-footer">
+        <div class="my-invisi">
+            <el-dialog title="选择门店" :visible.sync="data_list.stores.visible">
+                <el-tree default-expand-all="true" :data="data_list.stores.tree" accordion="true" show-checkbox node-key="id" ref="tree">
+                </el-tree>
+                <span slot="footer" class="dialog-footer">
                 <el-button @click="data_list.stores.visible = false">取 消</el-button>
                 <el-button type="primary" @click="select_store()">确 定</el-button>
             </span>
-        </el-dialog>
+            </el-dialog>
+        </div>
     </div>
 
-    <script src="./vendor/vue/vue.min.js"></script>
-    <script src="./vendor/vue/element-ui.js"></script>
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/vue.min.js"></script>
+    <script src="http://indevtest.oss-cn-shenzhen.aliyuncs.com/element-ui.js"></script>
 
 
 

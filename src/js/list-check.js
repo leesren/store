@@ -6,7 +6,6 @@ var $app = new Vue({
             selected: null,
             outstore_status: eher_util.status_data().outstore_status
         },
-        orgId: '8787426330226801975',
         activeIndex: '0',
         tableData: {
             '0': {

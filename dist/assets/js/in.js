@@ -2,7 +2,6 @@ var app = window.$app = new Vue({
     el: '#wrapper',
     mixins: [mixin],
     data: {
-        orgId: '8787426330226801974',
         id: location.hash ? location.hash.slice(2) : '',// 详情的id 
         status: 0,
         formInline: {
@@ -86,7 +85,6 @@ var app = window.$app = new Vue({
             return new Promise(function (resolve, reject) {
                 self.$http.post(api, data)
                     .then(function (result) {
-                        
                         if (callback) {
                             return resolve(result);
                         }
@@ -116,7 +114,8 @@ var app = window.$app = new Vue({
                 var _pp = function () {
                     self.$http.post('/doWareHouse/approveEntryOrder', { id: this.id, approveEmpId: this.approveEmpId })
                         .then(function (result) {
-                            self.$message({ message: '审批成功', type: 'success' });
+                            
+                            
                             window.location.reload()
                         }, function (error) {
                             self.$log(error);

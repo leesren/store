@@ -7,7 +7,6 @@ var app = new Vue({
             bill_status: eher_util.status_data().store_status,
             outstore_status: eher_util.status_data().transfer_status
         },
-        orgId: '8787426330226801974',
         activeIndex: 0,
         tableData: {
             list: [],

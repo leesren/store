@@ -3,7 +3,6 @@ window.$app = new Vue({
     el: '#wrapper',
     mixins: [mixin],
     data: {
-        orgId: '8787426330226801974',
         goods_filter: {
             value: '',
             month: eher_util.date_month(new Date)
