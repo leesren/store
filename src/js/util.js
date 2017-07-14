@@ -1,18 +1,18 @@
 function handsontable_util(hottable) {
     this.table = hottable;
 }
-handsontable_util.prototype.update_col_last_header = function(text) {
+handsontable_util.prototype.update_col_last_header = function (text) {
     var h = this.table.getColHeader();
     h[h.length - 1] = text;
     this.table.updateSettings({
         colHeaders: h
     }, false)
 }
-handsontable_util.prototype.highlight_col = function(row, column) {
+handsontable_util.prototype.highlight_col = function (row, column) {
     var td = this.table.getCell(row, column);
     td.classList.add('htInvalid');
 }
-handsontable_util.prototype._remove_excle_item = function() {
+handsontable_util.prototype._remove_excle_item = function () {
     if (!window.hottabel) return;
     var selectRow = hottabel.getSelected();
     try {
@@ -24,9 +24,9 @@ handsontable_util.prototype._remove_excle_item = function() {
 
 }
 
-function eher_util() {}
+function eher_util() { }
 
-eher_util.prototype.removeElementById = function(id) {
+eher_util.prototype.removeElementById = function (id) {
     if (id) {
         var el = document.getElementById(id);
         if (el) {
@@ -36,7 +36,7 @@ eher_util.prototype.removeElementById = function(id) {
         }
     }
 }
-eher_util.prototype.createElementById = function(id, hookid) {
+eher_util.prototype.createElementById = function (id, hookid) {
     var $el = document.getElementById(id);
     if (!$el) {
         throw new Error('the element which id=' + id + ' is not contain in dom tree,please check it against');
@@ -47,17 +47,17 @@ eher_util.prototype.createElementById = function(id, hookid) {
     $el.remove();
     $hookel.append(div);
 }
-eher_util.prototype.excel_2_handsontable = function(excel_data) {
+eher_util.prototype.excel_2_handsontable = function (excel_data) {
     var numberic_pattern = /\d+/;
-    var _colums = function(_h) {
+    var _colums = function (_h) {
         function renderButtons(instance, td, row, col, prop, value, cellProperties) {
             td.innerHTML = '<div style="text-align:center;color:red"><button onclick="hot_util._remove_excle_item()" type="primary" style="color:#20a0ff" class="el-button el-button--text el-button--small" type="button">移除</button></div>';
         }
         return [{ data: _h[0], type: 'text' }, //allowInvalid: false,
-            { data: _h[1], type: 'text' },
-            { data: _h[2], type: 'numeric' },
-            { data: _h[3], type: 'numeric' },
-            { data: 'Delete', renderer: renderButtons }
+        { data: _h[1], type: 'text' },
+        { data: _h[2], type: 'numeric' },
+        { data: _h[3], type: 'numeric' },
+        { data: 'Delete', renderer: renderButtons }
         ]
     }
     if (!excel_data) {
@@ -86,10 +86,10 @@ eher_util.prototype.excel_2_handsontable = function(excel_data) {
         data: list
     }
 }
-eher_util.prototype.check_table = function() {
+eher_util.prototype.check_table = function () {
     var _validte = this.validate(),
         _isvalid = true;;
-    var _checknum = function(value, row, column) {
+    var _checknum = function (value, row, column) {
         var td = hottabel.getCell(row, column);
         if (!_validte.isNumeric(value, 1)) {
             td.classList.add('htInvalid');
@@ -98,7 +98,7 @@ eher_util.prototype.check_table = function() {
             td.classList.remove('htInvalid');
         }
     }
-    var _checkword = function(value, row, column) {
+    var _checkword = function (value, row, column) {
         var td = hottabel.getCell(row, column);
         if (!value) return;
         if (!_validte.minLength(value.trim(), 1)) {
@@ -121,7 +121,7 @@ eher_util.prototype.check_table = function() {
 }
 
 
-eher_util.prototype.create_handsontable = function(ss, domId, handson_data) {
+eher_util.prototype.create_handsontable = function (ss, domId, handson_data) {
     // this.createElementById('tablebox', 'tablehook')
     var excelObj = handson_data || this.excel_2_handsontable(ss);
     var hotElement = document.getElementById(domId || 'tablebox');
@@ -140,8 +140,8 @@ eher_util.prototype.create_handsontable = function(ss, domId, handson_data) {
         removeRowPlugin: true,
         manualColumnResize: true,
         manualRowResize: true,
-        afterChange: function(changes, source) {
-            var _checknum = function(value, row, column) {
+        afterChange: function (changes, source) {
+            var _checknum = function (value, row, column) {
                 var td = hottabel.getCell(row, column);
                 if (!_validte.isNumeric(value, 1)) {
                     td.classList.add('htInvalid');
@@ -149,7 +149,7 @@ eher_util.prototype.create_handsontable = function(ss, domId, handson_data) {
                     td.classList.remove('htInvalid');
                 }
             }
-            var _checkword = function(value, row, column) {
+            var _checkword = function (value, row, column) {
                 var td = hottabel.getCell(row, column);
                 if (!_validte.minLength(value.trim(), 1)) {
                     td.classList.add('htInvalid');
@@ -161,10 +161,10 @@ eher_util.prototype.create_handsontable = function(ss, domId, handson_data) {
                 return;
 
             }
-            var _doIsClear = function() {
+            var _doIsClear = function () {
                 if (hottabel.getColHeader().length != changes.length) return false;
                 var isClear = true;
-                changes.forEach(function(e) {
+                changes.forEach(function (e) {
                     if ((e[3] + '').trim() != '') {
                         isClear = false;
                     }
@@ -214,7 +214,7 @@ eher_util.prototype.s2ab = function s2ab(s) {
 }
 
 
-eher_util.prototype.element_table_2_table = function(id, removeContents, filename) { // 把element-ui 对应的table，转化成标准table
+eher_util.prototype.element_table_2_table = function (id, removeContents, filename) { // 把element-ui 对应的table，转化成标准table
     var $table = $('#' + id);
     if (!$table) { return }
     var _thead = $table.find('thead');
@@ -225,14 +225,14 @@ eher_util.prototype.element_table_2_table = function(id, removeContents, filenam
     table.appendChild($.clone(_thead[0]));
     var _t = $.clone(_tbody[0]);
     if (removeContents) {
-        $(_t).find('tr').each(function(index, el) {
+        $(_t).find('tr').each(function (index, el) {
             $($(el).find('td')[removeContents]).html('');
         })
     }
     table.appendChild(_t);
     this.export_2_excle(table, filename || '仓库');
 }
-eher_util.prototype.export_2_excle = function(table_dom, filename) { // 导出到excle
+eher_util.prototype.export_2_excle = function (table_dom, filename) { // 导出到excle
     var type = 'xlsx';
     var wb = XLSX.utils.table_to_book(table_dom, { sheet: "Sheet JS" });
     var wbout = XLSX.write(wb, { bookType: type, bookSST: true, type: 'binary' });
@@ -241,7 +241,7 @@ eher_util.prototype.export_2_excle = function(table_dom, filename) { // 导出�
         saveAs(new Blob([eher_util.s2ab(wbout)], { type: "application/octet-stream" }), fname);
     } catch (e) { if (typeof console != 'undefined') console.log(e, wbout); }
 }
-eher_util.prototype.date2String = function(date) { // 导出到excle
+eher_util.prototype.date2String = function (date) { // 导出到excle
     if (!(date instanceof Date)) {
         console.warn("您给的参数不是Date 实例");
         return date;
@@ -261,7 +261,7 @@ eher_util.prototype.date2String = function(date) { // 导出到excle
     }
     return year + '-' + m + '-' + d;
 }
-eher_util.prototype.date_month = function(date) {
+eher_util.prototype.date_month = function (date) {
     if (!(date instanceof Date)) {
         console.warn("您给的参数不是Date 实例");
         return date;
@@ -271,48 +271,57 @@ eher_util.prototype.date_month = function(date) {
     arr.pop();
     return arr.join('-');
 }
-eher_util.prototype.destory_handsontable = function(id) {
+
+eher_util.prototype.last_month = function (date,days) {
+    if (!(date instanceof Date)) {
+        console.warn("您给的参数不是Date 实例");
+        return this.date2String(date);
+    } 
+    var gap = Date.now() - 24 * 60 * 60 * 1000 * (days || 30);// 间隔30天
+    return this.date2String(new Date(gap));
+}
+eher_util.prototype.destory_handsontable = function (id) {
     if (!window.hottabel) return;
     hottabel.destroy();
     var $dom = $('#' + id);
     if (!$dom) return;
     $dom.removeAttr('style').removeAttr('class').removeAttr('data-originalstyle');
 }
-eher_util.prototype.convert_handsontable_2_excle = function() {
-        if (!window.hottabel) throw 'not init hondsontable instance ...'
-        var data = hottabel.getSourceData();
-        var list = [],
-            headers = hottabel.getColHeader();
-        for (var i = 0; i < data.length; i++) {
-            var item = data[i],
-                l = [];
-            l.push(item[headers[0]]);
-            l.push(item[headers[1]]);
-            l.push(item[headers[2]]);
-            l.push(item[headers[3]]);
-            list.push(l);
-        }
-        return list;
+eher_util.prototype.convert_handsontable_2_excle = function () {
+    if (!window.hottabel) throw 'not init hondsontable instance ...'
+    var data = hottabel.getSourceData();
+    var list = [],
+        headers = hottabel.getColHeader();
+    for (var i = 0; i < data.length; i++) {
+        var item = data[i],
+            l = [];
+        l.push(item[headers[0]]);
+        l.push(item[headers[1]]);
+        l.push(item[headers[2]]);
+        l.push(item[headers[3]]);
+        list.push(l);
     }
-    /*
-     * 频率控制 返回函数连续调用时，fn 执行频率限定为每多少时间执行一次
-     * @param fn {function}  需要调用的函数
-     * @param delay  {number}    延迟时间，单位毫秒
-     * @param immediate  {bool} 给 immediate参数传递false 绑定的函数先执行，而不是delay后后执行。
-     * @return {function}实际调用函数
-     */
-eher_util.prototype.throttle = function(func, wait, options) {
+    return list;
+}
+/*
+ * 频率控制 返回函数连续调用时，fn 执行频率限定为每多少时间执行一次
+ * @param fn {function}  需要调用的函数
+ * @param delay  {number}    延迟时间，单位毫秒
+ * @param immediate  {bool} 给 immediate参数传递false 绑定的函数先执行，而不是delay后后执行。
+ * @return {function}实际调用函数
+ */
+eher_util.prototype.throttle = function (func, wait, options) {
     var context, args, result;
     var timeout = null;
     var previous = 0;
     if (!options) options = {};
-    var later = function() {
+    var later = function () {
         previous = options.leading === false ? 0 : Date.now();
         timeout = null;
         result = func.apply(context, args);
         if (!timeout) context = args = null;
     };
-    return function() {
+    return function () {
         var now = Date.now();
         if (!previous && options.leading === false) previous = now;
         var remaining = wait - (now - previous);
@@ -340,10 +349,10 @@ eher_util.prototype.throttle = function(func, wait, options) {
  * @return {function}实际调用函数
  */
 
-eher_util.prototype.debounce = function(func, wait, immediate) {
+eher_util.prototype.debounce = function (func, wait, immediate) {
     var timeout, args, context, timestamp, result;
 
-    var later = function() {
+    var later = function () {
         var last = Date.now() - timestamp;
 
         if (last < wait && last >= 0) {
@@ -357,7 +366,7 @@ eher_util.prototype.debounce = function(func, wait, immediate) {
         }
     };
 
-    return function() {
+    return function () {
         context = this;
         args = arguments;
         timestamp = Date.now();
@@ -371,15 +380,15 @@ eher_util.prototype.debounce = function(func, wait, immediate) {
         return result;
     };
 };
-eher_util.prototype.getData_from_excle = function(target) {
-    return new Promise(function(resolve, reject) {
+eher_util.prototype.getData_from_excle = function (target) {
+    return new Promise(function (resolve, reject) {
         var files = target.files;
 
         if (!files || files.length === 0) { return reject() }
 
         var file = files[0];
         var fileReader = new FileReader();
-        fileReader.onload = function(e) {
+        fileReader.onload = function (e) {
             var filename = file.name;
             // call 'xlsx' to read the file  
             var binary = "";
@@ -398,13 +407,13 @@ eher_util.prototype.getData_from_excle = function(target) {
             }
         };
         fileReader.readAsArrayBuffer(file);
-        var showme = function(ss) {
+        var showme = function (ss) {
             resolve(ss)
         }
     })
 
 }
-eher_util.prototype.status_data = function(name) { // 返回通用的数据
+eher_util.prototype.status_data = function (name) { // 返回通用的数据
     var store_status = ['未审批', '已审批'];
     var sign_status = [{ value: 0, text: '未审批' }, { value: 1, text: '已审批' }, { value: 2, text: '已删除' }];
     var outstore_status = [{ value: null, text: '全部' }, { value: 0, text: '未审批' }, { value: 1, text: '已审批' }];
@@ -416,7 +425,7 @@ eher_util.prototype.status_data = function(name) { // 返回通用的数据
         transfer_status: transfer_status,
     }
 }
-eher_util.prototype.remove_mutiple_2_list = function(a, b) { // 两数组重复
+eher_util.prototype.remove_mutiple_2_list = function (a, b) { // 两数组重复
     for (var i = 0, len = a.length; i < len; i++) { // 去重处理
         if (!b.length) {
             b.push(a[i]);
@@ -435,7 +444,7 @@ eher_util.prototype.remove_mutiple_2_list = function(a, b) { // 两数组重复
     }
 }
 
-eher_util.prototype.validate = function(v, type, options) {
+eher_util.prototype.validate = function (v, type, options) {
     function IsNumeric(input) {
         return (+input) == input && ('' + input).trim().length > 0;
     }
@@ -496,7 +505,7 @@ eher_util.prototype.validate = function(v, type, options) {
         isNumeric: IsNumeric
     }
 }
-eher_util.prototype.build_brand_stores_2_eltree = function(list) {
+eher_util.prototype.build_brand_stores_2_eltree = function (list) {
     if (!list) return;
 
     function storeinfo(store) {
@@ -523,7 +532,7 @@ eher_util.prototype.build_brand_stores_2_eltree = function(list) {
     storeinfo(list);
     return list;
 }
-eher_util.prototype.get_brand_stores = function(brandTree) {
+eher_util.prototype.get_brand_stores = function (brandTree) {
     if (!brandTree) return;
     var l = [];
 
@@ -554,7 +563,7 @@ eher_util.prototype.get_brand_stores = function(brandTree) {
 function dataRequest(orgId) {
     this.orgId = orgId;
 }
-dataRequest.prototype.listGoods = function(keyWord, page, size, orgId) {
+dataRequest.prototype.listGoods = function (keyWord, page, size, orgId) {
     var data = {
         orgId: this.orgId,
         keyWord: keyWord,
@@ -566,64 +575,64 @@ dataRequest.prototype.listGoods = function(keyWord, page, size, orgId) {
     }
     return Vue.prototype.$http.post('/doResourceCommon/listGoods', data)
 }
-dataRequest.prototype.query_stores = function(id, tolist) {
-    return new Promise(function(resolve, reject) {
+dataRequest.prototype.query_stores = function (id, tolist) {
+    return new Promise(function (resolve, reject) {
         Vue.prototype.$http.post('/doResourceCommon/listOrgTree', { "orgId": id })
-            .then(function(result) {
+            .then(function (result) {
                 resolve(tolist ? eher_util.get_brand_stores(result) : eher_util.build_brand_stores_2_eltree(result));
-            }, function(e) {
+            }, function (e) {
                 reject(e);
             })
     });
 }
 
-dataRequest.prototype.query_hourse = function(orgId) { // 查询仓库
+dataRequest.prototype.query_hourse = function (orgId) { // 查询仓库
     return Vue.prototype.$http.post('/doResourceCommon/listStorage', { "orgId": orgId })
 }
-dataRequest.prototype.query_product_by_barcode = function(barCode) { // 查询仓库
+dataRequest.prototype.query_product_by_barcode = function (barCode) { // 查询仓库
     return Vue.prototype.$http.post('/doResourceCommon/checkBarCode', { "barCode": barCode })
 }
-dataRequest.prototype.query_store = function(orgId) { // 查询仓库
+dataRequest.prototype.query_store = function (orgId) { // 查询仓库
     var self = window.$app;
     if (!self) { return }
-    return new Promise(function(reslove, reject) {
+    return new Promise(function (reslove, reject) {
         self.$http.post('/doResourceCommon/listStorage', { "orgId": orgId })
-            .then(function(result) {
+            .then(function (result) {
                 if (result && result.length > 0) {
                     if (self.dataList && self.dataList.storeList) {
                         self.dataList.storeList = result;
                     }
                     reslove(result);
                 }
-            }, function(error) {
+            }, function (error) {
                 console.error(error);
                 reject(error);
-            }).catch(function(error) {
+            }).catch(function (error) {
                 console.error(error);
                 reject(error);
             })
     })
 
 }
-dataRequest.prototype.query_signer = function(orgId) { // 审核人
+dataRequest.prototype.query_signer = function (orgId) { // 审核人
     var self = window.$app;
     if (!self) { return }
     self.$http.post('/doResourceCommon/listEmployee', { "orgId": orgId })
-        .then(function(result) {
+        .then(function (result) {
             if (result && result.length > 0) {
                 self.dataList.signerList = result;
             }
-        }, function(error) {
+        }, function (error) {
             console.error(error);
-        }).catch(function(error) {
+        }).catch(function (error) {
             console.error(error);
         })
 };
 
-function validator_data() {}
+function validator_data() { }
 
-validator_data.prototype.isvalid_handsontable = function() {
-    return new Promise(function(resolve, reject) {
+validator_data.prototype.isvalid_handsontable = function () {
+    return new Promise(function (resolve, reject) {
         var dd = hottabel.getData();
         if (dd.length === 0) {
             return reject();
@@ -681,8 +690,8 @@ validator_data.prototype.isvalid_handsontable = function() {
     })
 
 }
-validator_data.prototype.isValid_form = function(self) {
-    return new Promise(function(resolve, reject) {
+validator_data.prototype.isValid_form = function (self) {
+    return new Promise(function (resolve, reject) {
         self.$refs.ruleForm.validate((valid) => {
             if (valid) {
                 resolve();
@@ -694,20 +703,20 @@ validator_data.prototype.isValid_form = function(self) {
     });
 }
 
-validator_data.prototype.covert_handsontable_data = function(hottable) {
+validator_data.prototype.covert_handsontable_data = function (hottable) {
     var hot = hottable || window['hottabel'];
     if (!hot) throw 'hondsontable not init ...';
     var source_data = hot.getSourceData();
     var result = [];
-    source_data.forEach(function(el, index) {
+    source_data.forEach(function (el, index) {
         result.push(eher_util.handsontable_data_2_obj(el));
     })
     return result;
 }
-validator_data.prototype.checkProductNo = function(orgId) {
+validator_data.prototype.checkProductNo = function (orgId) {
     if (!orgId) return Promise.reject('参数错误');
-    var isValid = function(result) {
-        return new Promise(function(resolve, reject) {
+    var isValid = function (result) {
+        return new Promise(function (resolve, reject) {
             if (!(result instanceof Array)) reject([]);
             var _isValid = true,
                 l = [],
@@ -740,12 +749,12 @@ validator_data.prototype.checkProductNo = function(orgId) {
     if (!valid_excle_data) return;
 
     var key = $app.excle_origin.handson_data.header[0];
-    var listNo = valid_excle_data.map(function(el) {
+    var listNo = valid_excle_data.map(function (el) {
         return el[key]
     })
 
     return Vue.prototype.$http.post('/doResourceCommon/checkProductNo', { orgId: orgId, productNoList: listNo })
-        .then(function(result) {
+        .then(function (result) {
             return isValid(result);
         })
 }

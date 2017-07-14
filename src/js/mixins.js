@@ -2,7 +2,8 @@ var mixin = window.mixin = {
     data: {
         approveEmpId: null,// 审核人id
         barcode: '',
-        orgId: '8787426330226801974',
+        id: order_id || '',
+        orgId: orgId || null,
         dialog: {
             dialogVisible: false,
             input: '',
@@ -23,6 +24,7 @@ var mixin = window.mixin = {
             handson_data: {}
         },
         visibility: '', //visible
+        is_saving:false,
         hasPower: false
     },
     computed: {
