@@ -1,7 +1,7 @@
 Vue.component('my-upload', {
     template: '<div class="my-upload" style="width:auto" :class="__disabled()">'
-    + '<button class="el-button--small  el-button" :disabled="disabled" :class="_class()" @click="handleClick"><slot>上传文件</slot> </button>'
-    + '<input class="el-upload__input" type="file" ref="input" @change="_onChange" :accept="accept"></input>'
+    + '<button class="el-button--small  el-button " :disabled="disabled" :class="_class()" @click="handleClick"><slot>上传文件</slot> </button>'
+    + '<input class="el-upload__input myel-upload__input" type="file" ref="input" @change="_onChange" :accept="accept"></input>'
     + '</div>',
     props: {
         multiple: {

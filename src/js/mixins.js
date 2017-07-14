@@ -124,9 +124,9 @@ var mixin = window.mixin = {
             delete data.name;
             this.tableData.push(data);
         },
-        add: function(orgId) {
+        add: function() {
             var self = this;
-            this.dataRequest.listGoods(this.dialog.keyWord, this.dialog.current, '', orgId).then(function(result) {
+            this.dataRequest.listGoods(this.dialog.keyWord, this.dialog.current, '', this.orgId).then(function(result) {
                 if (result) {
                     self.dialog.list = result.list;
                     self.dialog.total = result.total;

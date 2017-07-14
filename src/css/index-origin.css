@@ -22,19 +22,19 @@
   -ms-flex-pack: end;
   justify-content: flex-end; }
 
-.page-wrapper-instock .ibox-title {
+.wrapper .ibox-title {
   padding: 0 12px; }
 
-.page-wrapper-instock .miboxcontent {
+.wrapper .miboxcontent {
   top: inherit; }
 
-.page-wrapper-instock .el-form--inline .el-form-item__label {
+.wrapper .el-form--inline .el-form-item__label {
   width: 80px; }
 
-.page-wrapper-instock .my-upload {
+.wrapper .my-upload {
   display: inline-block;
   padding: 6px 12px; }
-  .page-wrapper-instock .my-upload input {
+  .wrapper .my-upload input {
     display: none; }
 .myel .el-table tr{cursor: pointer;}
 .myel .el-select .el-input__inner {width: 86px;}
@@ -58,7 +58,7 @@
   .myel .el-date-editor.el-input{
      width: 124px;
   }
+  .myel-upload__input{display: none !important}
   .el-input--small .el-input__inner.query--input{width: 315px}
   .gap-top{padding-top: 10px;border-top: 1px dashed #f3f3f3;}
  
-

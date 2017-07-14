@@ -38,7 +38,7 @@ window.$app = new Vue({
         },
         activeName: '0',
         dialog: {
-            gridData: instock_mockdata,
+            gridData: [],
             dialogTableVisible: false,
             first_time: 0,
         }

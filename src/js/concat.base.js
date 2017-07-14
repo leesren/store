@@ -841,8 +841,8 @@ window.validator_data = validator_data;
 window.dataRequest = dataRequest;
 Vue.component('my-upload', {
     template: '<div class="my-upload" style="width:auto" :class="__disabled()">'
-    + '<button class="el-button--small  el-button" :disabled="disabled" :class="_class()" @click="handleClick"><slot>上传文件</slot> </button>'
-    + '<input class="el-upload__input" type="file" ref="input" @change="_onChange" :accept="accept"></input>'
+    + '<button class="el-button--small  el-button " :disabled="disabled" :class="_class()" @click="handleClick"><slot>上传文件</slot> </button>'
+    + '<input class="el-upload__input myel-upload__input" type="file" ref="input" @change="_onChange" :accept="accept"></input>'
     + '</div>',
     props: {
         multiple: {
@@ -1057,9 +1057,9 @@ var mixin = window.mixin = {
             delete data.name;
             this.tableData.push(data);
         },
-        add: function(orgId) {
+        add: function() {
             var self = this;
-            this.dataRequest.listGoods(this.dialog.keyWord, this.dialog.current, '', orgId).then(function(result) {
+            this.dataRequest.listGoods(this.dialog.keyWord, this.dialog.current, '', this.orgId).then(function(result) {
                 if (result) {
                     self.dialog.list = result.list;
                     self.dialog.total = result.total;

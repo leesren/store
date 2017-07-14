@@ -87,13 +87,8 @@ var app = window.$app = new Vue({
             }
             var self = this;
             return new Promise(function(resolve, reject) {
-                self.$http.post(api, data)
-<<<<<<< HEAD
-                    .then(function (result) {
-=======
-                    .then(function(result) {
-
->>>>>>> 1e63d969ac1cf7017bde2934e5e8b349b20ff40c
+                self.$http.post(api, data) 
+                    .then(function(result) { 
                         if (callback) {
                             return resolve(result);
                         }
@@ -121,15 +116,9 @@ var app = window.$app = new Vue({
         sign: function() {
             if (this.id) {
                 var _pp = function() {
-                    self.$http.post('/doWareHouse/approveEntryOrder', { id: this.id, approveEmpId: this.approveEmpId })
-<<<<<<< HEAD
-                        .then(function (result) {
-                            
-                            
-=======
+                    self.$http.post('/doWareHouse/approveEntryOrder', { id: this.id, approveEmpId: this.approveEmpId }) 
                         .then(function(result) {
                             self.$message({ message: '审批成功', type: 'success' });
->>>>>>> 1e63d969ac1cf7017bde2934e5e8b349b20ff40c
                             window.location.reload()
                         }, function(error) {
                             self.$log(error);
